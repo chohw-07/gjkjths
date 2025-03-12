@@ -1012,6 +1012,9 @@
     // 테마 모드를 저장하는 메모리 내 변수 (localStorage 대신 사용)
     let currentTheme = 'dark';
     
+    // 급식 데이터 캐시 저장소 - 월별로 관리
+    const mealDataCache = {};
+    
     // 모든 명언 목록 (전체 명언)
     const QUOTES = [
       { text: "삶이 있는 한 희망은 있다", author: "키케로" },
@@ -1302,6 +1305,8 @@
         currentDate.setDate(currentDate.getDate() - 1);
         dateSelector.value = formatDate(currentDate);
         updateCurrentDateDisplay(currentDate);
+        
+        // 날짜에 해당하는 급식 정보 표시
         fetchMealData(dateSelector.value);
       });
       
@@ -1310,6 +1315,8 @@
         currentDate.setDate(currentDate.getDate() + 1);
         dateSelector.value = formatDate(currentDate);
         updateCurrentDateDisplay(currentDate);
+        
+        // 날짜에 해당하는 급식 정보 표시
         fetchMealData(dateSelector.value);
       });
     }
@@ -1357,20 +1364,40 @@
       quoteAuthor.textContent = `- ${quote.author}`;
     }
     
-    // 급식 데이터 가져오기 - 실제 NEIS API 사용
+    // 급식 데이터 가져오기 - 월 단위로 요청하여 캐싱
     function fetchMealData(date) {
       // 로딩 표시
       loadingElement.classList.remove('d-none');
       mealContainer.classList.add('d-none');
       
+      // 날짜에서 년월 추출 (YYYYMM)
+      const dateObj = new Date(date);
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const yearMonth = `${year}${month}`;
+      
+      // 선택한 날짜의 일(day)
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const fullDate = `${yearMonth}${day}`;
+      
+      // 이미 캐시에 해당 월 데이터가 있는지 확인
+      if (mealDataCache[yearMonth]) {
+        // 캐시에서 데이터 로드
+        loadingElement.classList.add('d-none');
+        mealContainer.classList.remove('d-none');
+        displayMealFromCache(fullDate, yearMonth);
+        return;
+      }
+      
       // API 호출 파라미터
       const educationCode = "R10"; // 경기도 교육청 코드
       const schoolCode = "8750225"; // 학교 코드
-      const mealDate = date.replace(/-/g, ""); // 날짜 형식 변환 (YYYYMMDD)
       const apiKey = "dd0625245ee24939a5d7c24a3353ef67"; // API 키
       
-      // NEIS API URL 구성
-      const neisUrl = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${apiKey}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${educationCode}&SD_SCHUL_CODE=${schoolCode}&MLSV_YMD=${mealDate}`;
+      // NEIS API URL 구성 - 월 단위로 요청 (날짜 범위를 지정하지 않고 월만 지정)
+      const neisUrl = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${apiKey}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${educationCode}&SD_SCHUL_CODE=${schoolCode}&MLSV_YMD=${yearMonth}`;
+      
+      console.log(`API 요청: ${neisUrl}`);
       
       // API 요청
       fetch(neisUrl)
@@ -1385,13 +1412,20 @@
           loadingElement.classList.add('d-none');
           mealContainer.classList.remove('d-none');
           
+          // API 응답에 오류 코드가 있는지 확인
           if (data.RESULT) {
             // 급식 정보가 없는 경우 (API에서 오류 코드 반환)
             if (data.RESULT.CODE === 'INFO-200') {
-              showNoMealMessage("해당 날짜에 등록된 급식 정보가 없습니다.");
-              showToast('info', "해당 날짜에 등록된 급식 정보가 없습니다.");
+              // 캐시에 빈 데이터 저장 (불필요한 재요청 방지)
+              mealDataCache[yearMonth] = {};
+              showNoMealMessage("해당 월에 등록된 급식 정보가 없습니다.");
+              showToast('info', "해당 월에 등록된 급식 정보가 없습니다.");
               return;
             }
+            // 다른 API 오류인 경우
+            showToast('error', `API 오류: ${data.RESULT.MESSAGE}`);
+            showNoMealMessage(`API 오류: ${data.RESULT.MESSAGE}`);
+            return;
           }
           
           if (data.mealServiceDietInfo && 
@@ -1401,13 +1435,18 @@
             const meals = data.mealServiceDietInfo[1].row;
             
             if (meals.length > 0) {
-              processMealData(meals);
+              // 일자별로 급식 데이터 구성하여 캐시에 저장
+              processAndCacheMealData(meals, yearMonth);
+              // 현재 선택된 날짜의 급식 정보 표시
+              displayMealFromCache(fullDate, yearMonth);
               showToast('success', '급식 정보를 성공적으로 불러왔습니다!');
             } else {
-              showNoMealMessage();
+              mealDataCache[yearMonth] = {};
+              showNoMealMessage("해당 월에 등록된 급식 정보가 없습니다.");
             }
           } else {
-            showNoMealMessage();
+            mealDataCache[yearMonth] = {};
+            showNoMealMessage("해당 월에 등록된 급식 정보가 없습니다.");
           }
         })
         .catch(error => {
@@ -1418,34 +1457,57 @@
         });
     }
     
-    // NEIS API 급식 데이터 처리
-    function processMealData(meals) {
-      // 급식 유형별 데이터 분류
-      const mealTypes = {
-        '조식': [],
-        '중식': [],
-        '석식': []
-      };
+    // 급식 데이터 처리 및 캐싱
+    function processAndCacheMealData(meals, yearMonth) {
+      // 캐시 객체 초기화
+      if (!mealDataCache[yearMonth]) {
+        mealDataCache[yearMonth] = {};
+      }
       
-      // 급식 데이터를 유형별로 분류
+      // 각 급식을 일자별로 분류
       meals.forEach(meal => {
-        if (meal.MMEAL_SC_NM in mealTypes) {
-          mealTypes[meal.MMEAL_SC_NM].push(meal);
+        const date = meal.MLSV_YMD; // YYYYMMDD 형식의 날짜
+        const mealType = meal.MMEAL_SC_NM; // 조식, 중식, 석식
+        
+        // 해당 일자의 캐시가 없으면 초기화
+        if (!mealDataCache[yearMonth][date]) {
+          mealDataCache[yearMonth][date] = {
+            '조식': [],
+            '중식': [],
+            '석식': []
+          };
         }
+        
+        // 메뉴 파싱 및 저장
+        const menuItems = parseMealMenu(meal.DDISH_NM || '');
+        mealDataCache[yearMonth][date][mealType] = menuItems;
       });
       
+      console.log(`${yearMonth} 월 급식 데이터 캐싱 완료:`, mealDataCache[yearMonth]);
+    }
+    
+    // 캐시된 데이터에서 급식 정보 표시
+    function displayMealFromCache(date, yearMonth) {
+      // 해당 날짜의 급식 데이터가 있는지 확인
+      if (!mealDataCache[yearMonth] || !mealDataCache[yearMonth][date]) {
+        showNoMealMessage(`${date.slice(0, 4)}년 ${date.slice(4, 6)}월 ${date.slice(6, 8)}일에 등록된 급식 정보가 없습니다.`);
+        return;
+      }
+      
+      const mealData = mealDataCache[yearMonth][date];
+      
       // 각 급식 목록 업데이트
-      updateMealList(breakfastList, parseMealMenu(mealTypes['조식'][0]?.DDISH_NM || ''), '조식');
-      updateMealList(lunchList, parseMealMenu(mealTypes['중식'][0]?.DDISH_NM || ''), '중식');
-      updateMealList(dinnerList, parseMealMenu(mealTypes['석식'][0]?.DDISH_NM || ''), '석식');
+      updateMealList(breakfastList, mealData['조식'] || [], '조식');
+      updateMealList(lunchList, mealData['중식'] || [], '중식');
+      updateMealList(dinnerList, mealData['석식'] || [], '석식');
       
       // 모든 메뉴가 비어있는지 확인
       if (
-        mealTypes['조식'].length === 0 && 
-        mealTypes['중식'].length === 0 && 
-        mealTypes['석식'].length === 0
+        (!mealData['조식'] || mealData['조식'].length === 0) && 
+        (!mealData['중식'] || mealData['중식'].length === 0) && 
+        (!mealData['석식'] || mealData['석식'].length === 0)
       ) {
-        showNoMealMessage();
+        showNoMealMessage(`${date.slice(0, 4)}년 ${date.slice(4, 6)}월 ${date.slice(6, 8)}일에 등록된 급식 정보가 없습니다.`);
       }
     }
     
@@ -1454,10 +1516,13 @@
       if (!menuStr) return [];
       
       // <br/>를 구분자로 사용하여 메뉴 항목을 분리
-      // 정규식으로 알레르기 정보(숫자)와 기타 문자 제거
+      // 정규식으로 알레르기 정보(숫자, 쉼표, 점 포함)와 기타 문자 제거
       return menuStr
         .split('<br/>')
-        .map(item => item.replace(/\([0-9.]+\)/g, '').trim())
+        .map(item => {
+          // 알레르기 정보 괄호 제거 (숫자, 쉼표, 점 포함)
+          return item.replace(/\([0-9.,]+\)/g, '').trim();
+        })
         .filter(item => item.length > 0);
     }
     
