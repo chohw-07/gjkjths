@@ -1,0 +1,5269 @@
+  <!-- HTML에 모달 디버깅 스크립트 추가 -->
+  <script>
+    // 페이지 로딩 후 모달 디버깅 실행
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("모달 디버깅 스크립트 실행");
+      
+      // 모달 요소 확인
+      const usageGuideModal = document.getElementById('usageGuideModal');
+      const mealDetailModal = document.getElementById('mealDetailModal');
+      const shareModal = document.getElementById('shareModal');
+      
+      if (usageGuideModal) {
+        console.log('사용 가이드 모달 발견됨');
+        // 초기 스타일 설정
+        usageGuideModal.style.display = 'none';
+        usageGuideModal.style.opacity = '0';
+        usageGuideModal.style.visibility = 'hidden';
+      } else {
+        console.error('사용 가이드 모달 찾을 수 없음');
+      }
+      
+      if (mealDetailModal) {
+        console.log('메뉴 상세 모달 발견됨');
+        // 초기 스타일 설정
+        mealDetailModal.style.display = 'none';
+        mealDetailModal.style.opacity = '0';
+        mealDetailModal.style.visibility = 'hidden';
+      } else {
+        console.error('메뉴 상세 모달 찾을 수 없음');
+      }
+      
+      if (shareModal) {
+        console.log('공유 모달 발견됨');
+        // 초기 스타일 설정
+        shareModal.style.display = 'none';
+        shareModal.style.opacity = '0';
+        shareModal.style.visibility = 'hidden';
+      } else {
+        console.error('공유 모달 찾을 수 없음');
+      }
+      
+      // 모달 표시 함수 재정의
+      if (typeof window.showUsageGuideModal === 'function') {
+        const originalShowUsageGuideModal = window.showUsageGuideModal;
+        window.showUsageGuideModal = function() {
+          console.log('사용 가이드 모달 표시 함수 호출됨');
+          if (usageGuideModal) {
+            usageGuideModal.style.display = 'flex';
+            usageGuideModal.style.opacity = '1';
+            usageGuideModal.style.visibility = 'visible';
+            usageGuideModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            console.log('사용 가이드 모달이 이제 표시됨');
+          }
+        };
+      }
+      
+      // 사용 가이드 링크 이벤트 처리
+      const usageGuideLink = document.getElementById('showUsageGuide');
+      if (usageGuideLink) {
+        console.log('사용 가이드 링크 발견됨');
+        // 기존 이벤트 제거
+        usageGuideLink.onclick = null;
+        
+        // 새 이벤트 추가
+        usageGuideLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('사용 가이드 링크 클릭됨');
+          
+          // 강제로 모달 표시
+          if (usageGuideModal) {
+            usageGuideModal.style.display = 'flex';
+            usageGuideModal.style.opacity = '1';
+            usageGuideModal.style.visibility = 'visible';
+            usageGuideModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            console.log('사용 가이드 모달 강제 표시됨');
+          }
+          
+          return false;
+        });
+      } else {
+        console.error('사용 가이드 링크 찾을 수 없음');
+      }
+    });
+  </script><!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>경공 급식</title>
+  <meta property="og:title" content="경공 급식" />
+  <meta property="og:description" content="오늘의 급식을 확인해보세요! 간편하고 빠른 급식 조회 서비스입니다." />
+  <meta property="og:url" content="https://yourdomain.com" />
+  <meta property="og:image" content="https://yourdomain.com/path/to/image.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#4c6ef5" />
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <!-- Pretendard 폰트 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Swiper.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.css" />
+  <!-- AOS Animation -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+
+  <style>
+    /* BMJUA 폰트 추가 */
+    @font-face { 
+      font-family: 'BMJUA'; 
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff'); 
+      font-weight: normal; 
+      font-style: normal; 
+    }
+
+    :root {
+      --primary-color: #4c6ef5;
+      --primary-light: #748ffc;
+      --primary-dark: #3b5bdb;
+      --secondary-color: #fd7e14;
+      --secondary-light: #ff922b;
+      --secondary-dark: #e8590c;
+      --success-color: #12b886;
+      --warning-color: #fab005;
+      --danger-color: #fa5252;
+      --info-color: #15aabf;
+      
+      --dark-bg: #121212;
+      --dark-card: #1e1e1e;
+      --dark-surface: #292929;
+      --dark-surface-2: #333333;
+      --dark-text: #ffffff;
+      --dark-text-secondary: #adb5bd;
+      
+      --light-bg: #f8f9fa;
+      --light-card: #ffffff;
+      --light-surface: #f1f3f5;
+      --light-surface-2: #e9ecef;
+      --light-text: #212529;
+      --light-text-secondary: #6c757d;
+      
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+      --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+      
+      --transition: all 0.3s ease;
+      --transition-fast: all 0.15s ease;
+      --transition-slow: all 0.5s ease;
+      
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-full: 9999px;
+      
+      --font-sans: 'BMJUA', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    /* Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      height: -webkit-fill-available;
+    }
+    
+
+    /* 이미지 면책 문구 스타일 */
+    .meal-image-disclaimer {
+      text-align: center;
+      color: #8c8c8c; /* 회색 */
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      font-style: italic;
+      padding: 0 1rem;
+    }
+
+    .dark-mode .meal-image-disclaimer {
+      color: #aaaaaa; /* 다크모드에서 더 밝은 회색 */
+    }
+
+
+
+
+    body {
+      font-family: var(--font-sans);
+      transition: var(--transition);
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      overflow-x: hidden;
+      position: relative;
+      background-attachment: fixed;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: var(--transition);
+    }
+
+
+
+    .guide-section {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark-mode .guide-section {
+        border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .guide-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .guide-section h4 {
+        color: var(--primary-color);
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .dark-mode .guide-section h4 {
+        color: var(--primary-light);
+    }
+    
+    .guide-section ul {
+        margin-top: 0.8rem;
+        padding-left: 1.5rem;
+    }
+    
+    .guide-section li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .usage-guide-content {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+
+
+
+
+    /* Theme Modes */
+    .dark-mode {
+      background: linear-gradient(135deg, #121212, #1e1e1e);
+      color: var(--dark-text);
+    }
+    
+    .light-mode {
+      background: linear-gradient(135deg, #f0f8ff, #e6f2ff);
+      color: var(--light-text);
+    }
+    
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    
+    .dark-mode header {
+      background-color: rgba(30, 30, 30, 0.8);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .light-mode header {
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .navbar {
+      padding: 0.8rem 1.5rem;
+      margin-bottom: 0;
+      transition: var(--transition);
+    }
+    
+    .brand-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      position: relative;
+    }
+    
+    .brand-title::after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      transition: width 0.3s ease;
+      border-radius: var(--radius-full);
+    }
+    
+    .brand-title:hover::after {
+      width: 100%;
+    }
+    
+    /* Container Layouts */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .page-section {
+      padding: 2rem 0;
+    }
+    
+    /* 메인 콘텐츠 레이아웃 개선 */
+    main {
+      padding-top: 2rem; /* 상단바와 메인 콘텐츠 사이에 공백 추가 */
+    }
+    
+    /* 카드 레이아웃 개선 */
+    .card {
+      background: transparent;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      overflow: hidden;
+      border: none;
+      height: auto; /* 높이 자동 조정으로 변경 */
+      margin-bottom: 2rem; /* 카드 간 간격 추가 */
+    }
+    
+    .dark-mode .card {
+      background-color: var(--dark-card);
+      color: var(--dark-text);
+    }
+    
+    .light-mode .card {
+      background-color: var(--light-card);
+      color: var(--light-text);
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .card-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dark-mode .card-title {
+      color: var(--primary-light);
+    }
+    
+    .card-title::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40px;
+      height: 3px;
+      background-color: var(--primary-color);
+      border-radius: var(--radius-full);
+    }
+    
+    .dark-mode .card-title::after {
+      background-color: var(--primary-light);
+    }
+    
+    .main-card {
+      margin-bottom: 2rem;
+      padding: 2rem;
+    }
+    
+    @media (min-width: 768px) {
+      .main-card {
+        padding: 2.5rem;
+      }
+    }
+    
+    /* Date Selection */
+    .date-navigation {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    
+    .date-navigation::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--primary-light), transparent);
+      opacity: 0.5;
+    }
+    
+    .current-date {
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-full);
+      transition: var(--transition);
+      background-color: rgba(76, 110, 245, 0.1);
+      color: var(--primary-color);
+      flex-grow: 1;
+      margin: 0 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .dark-mode .current-date {
+      background-color: rgba(116, 143, 252, 0.15);
+      color: var(--primary-light);
+    }
+    
+    .date-nav-btn {
+      background-color: transparent;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .date-nav-btn {
+      color: var(--primary-light);
+    }
+    
+    .date-nav-btn::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      top: 0;
+      left: 0;
+      transform: scale(0);
+      opacity: 0;
+      transition: var(--transition);
+    }
+    
+    .date-nav-btn:hover::before {
+      transform: scale(1);
+      opacity: 0.1;
+    }
+    
+    .dark-mode .date-nav-btn:hover::before {
+      background-color: var(--primary-light);
+    }
+    
+    .date-nav-btn i {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Date Form */
+    .date-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    
+    @media (min-width: 576px) {
+      .date-form {
+        flex-direction: row;
+        align-items: flex-end;
+      }
+    }
+    
+    .form-group {
+      flex-grow: 1;
+      position: relative;
+    }
+    
+    .date-label {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: block;
+      transition: var(--transition);
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .date-label {
+      color: var(--primary-light);
+    }
+    
+    .date-input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius-sm);
+      border: 2px solid #dee2e6;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 1rem;
+      transition: var(--transition);
+      background-color: transparent;
+    }
+    
+    .dark-mode .date-input {
+      border-color: var(--dark-surface-2);
+      color: var(--dark-text);
+    }
+    
+    .light-mode .date-input {
+      border-color: #dee2e6;
+      color: var(--light-text);
+    }
+    
+    .date-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(76, 110, 245, 0.2);
+    }
+    
+    /* Buttons */
+    .btn {
+      font-weight: 700;
+      padding: 0.9rem 1.5rem;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::after {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      top: 0;
+      left: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .btn:hover::after {
+      transform: translateX(0);
+    }
+    
+    .btn:active {
+      transform: scale(0.98);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(to right, var(--primary-dark), var(--primary-color));
+      box-shadow: 0 4px 12px rgba(59, 91, 219, 0.3);
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(to right, var(--secondary-color), var(--secondary-dark));
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: linear-gradient(to right, var(--secondary-dark), var(--secondary-color));
+      box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .btn-outline {
+      border-color: var(--primary-light);
+      color: var(--primary-light);
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .dark-mode .btn-outline:hover {
+      background-color: var(--primary-light);
+    }
+    
+    .btn-icon {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .btn-icon {
+      color: var(--dark-text);
+    }
+    
+    .light-mode .btn-icon {
+      color: var(--light-text);
+    }
+    
+    .btn-icon:hover {
+      transform: scale(1.1);
+    }
+    
+    .btn-icon::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: currentColor;
+      border-radius: 50%;
+      top: 0;
+      left: 0;
+      transform: scale(0);
+      opacity: 0;
+      transition: var(--transition);
+    }
+    
+    .btn-icon:hover::before {
+      transform: scale(1);
+      opacity: 0.1;
+    }
+    
+    /* Meal Tabs */
+    .meal-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-radius: var(--radius-full);
+      background-color: rgba(76, 110, 245, 0.1);
+      padding: 0.3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .dark-mode .meal-tabs {
+      background-color: rgba(116, 143, 252, 0.15);
+    }
+    
+    .meal-tab {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      background-color: transparent;
+      border: none;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--primary-color);
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    
+    .dark-mode .meal-tab {
+      color: var(--primary-light);
+    }
+    
+    .meal-tab.active {
+      color: white;
+    }
+    
+    .meal-tabs .tab-indicator {
+      position: absolute;
+      top: 0.3rem;
+      left: 0.3rem;
+      height: calc(100% - 0.6rem);
+      border-radius: var(--radius-full);
+      background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+      transition: var(--transition);
+      z-index: 0;
+    }
+    
+    /* Meal Content */
+    .meal-container {
+      margin-top: 1.5rem;
+    }
+    
+    .meal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    
+    .meal-date {
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-full);
+      display: inline-block;
+      transition: var(--transition);
+      animation: pulse 2s infinite;
+    }
+    
+    .dark-mode .meal-date {
+      background-color: var(--dark-surface);
+      color: var(--primary-light);
+    }
+    
+    .light-mode .meal-date {
+      background-color: rgba(76, 110, 245, 0.1);
+      color: var(--primary-dark);
+    }
+    
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(76, 110, 245, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 6px rgba(76, 110, 245, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(76, 110, 245, 0);
+      }
+    }
+    
+    .meal-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 1.2rem;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+    }
+    
+    .dark-mode .meal-title {
+      color: var(--primary-light);
+    }
+    
+    .meal-title i {
+      font-size: 1.2rem;
+    }
+    
+    .meal-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      justify-content: start;
+    }
+    
+    .meal-stat {
+      background-color: rgba(76, 110, 245, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .meal-stat {
+      background-color: rgba(116, 143, 252, 0.15);
+      color: var(--primary-light);
+    }
+    
+    .meal-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    
+    .dark-mode .meal-list {
+      background-color: var(--dark-surface);
+    }
+    
+    .light-mode .meal-list {
+      background-color: var(--light-surface);
+    }
+    
+    .meal-item {
+      position: relative;
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: var(--transition);
+    }
+    
+    .dark-mode .meal-item {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .meal-item:last-child {
+      border-bottom: none;
+    }
+    
+    .meal-item:hover {
+      background-color: rgba(76, 110, 245, 0.05);
+    }
+    
+    .dark-mode .meal-item:hover {
+      background-color: rgba(116, 143, 252, 0.05);
+    }
+    
+    .meal-name {
+      font-weight: 600;
+      position: relative;
+      padding-left: 1.5rem;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .meal-name::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      transition: var(--transition);
+    }
+    
+    .dark-mode .meal-name::before {
+      background-color: var(--primary-light);
+    }
+    
+    .meal-item:hover .meal-name {
+      transform: translateX(5px);
+    }
+    
+    .meal-tag {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .tag-allergen {
+      background-color: rgba(250, 82, 82, 0.1);
+      color: var(--danger-color);
+    }
+    
+    .tag-origin {
+      background-color: rgba(18, 184, 134, 0.1);
+      color: var(--success-color);
+    }
+    
+    .tag-nutrition {
+      background-color: rgba(250, 176, 5, 0.1);
+      color: var(--warning-color);
+    }
+    
+    .meal-item-right {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    
+    .meal-info, .meal-share, .meal-search {
+      font-size: 0.9rem;
+      padding: 0.4rem;
+      background-color: transparent;
+      color: inherit;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      position: relative;
+    }
+    
+    .meal-info::before, 
+    .meal-share::before,
+    .meal-search::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: currentColor;
+      border-radius: 50%;
+      top: 0;
+      left: 0;
+      transform: scale(0);
+      opacity: 0;
+      transition: var(--transition);
+    }
+    
+    .meal-info:hover::before, 
+    .meal-share:hover::before,
+    .meal-search:hover::before {
+      transform: scale(1);
+      opacity: 0.1;
+    }
+    
+    /* Loading Animation */
+    .loading-container {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+    
+    .loading-spinner {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      margin: 0 auto;
+      perspective: 800px;
+    }
+    
+    .loading-cube {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      animation: cube-spin 2s infinite linear;
+    }
+    
+    .loading-face {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border: 3px solid var(--primary-color);
+      background-color: rgba(76, 110, 245, 0.1);
+      text-align: center;
+      line-height: 60px;
+    }
+    
+    .dark-mode .loading-face {
+      border-color: var(--primary-light);
+      background-color: rgba(116, 143, 252, 0.1);
+    }
+    
+    .face-front { transform: translateZ(30px); }
+    .face-back { transform: rotateY(180deg) translateZ(30px); }
+    .face-right { transform: rotateY(90deg) translateZ(30px); }
+    .face-left { transform: rotateY(-90deg) translateZ(30px); }
+    .face-top { transform: rotateX(90deg) translateZ(30px); }
+    .face-bottom { transform: rotateX(-90deg) translateZ(30px); }
+    
+    @keyframes cube-spin {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+    
+    .loading-text {
+      margin-top: 1.5rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      animation: pulse-text 1.5s infinite;
+    }
+    
+    .dark-mode .loading-text {
+      color: var(--primary-light);
+    }
+    
+    @keyframes pulse-text {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* No Meal Message */
+    .no-meal-message {
+      text-align: center;
+      padding: 3rem 1rem;
+      border-radius: var(--radius);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    
+    .dark-mode .no-meal-message {
+      background-color: var(--dark-surface);
+      color: var(--dark-text);
+    }
+    
+    .light-mode .no-meal-message {
+      background-color: var(--light-surface);
+      color: var(--light-text);
+    }
+    
+    .no-meal-icon {
+      font-size: 3.5rem;
+      width: 100px;
+      height: 100px;
+      background-color: rgba(76, 110, 245, 0.1);
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    
+    .dark-mode .no-meal-icon {
+      background-color: rgba(116, 143, 252, 0.1);
+      color: var(--primary-light);
+    }
+    
+    .no-meal-icon::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 3px solid var(--primary-color);
+      border-radius: 50%;
+      opacity: 0.5;
+      animation: ripple 1.5s infinite;
+    }
+    
+    .dark-mode .no-meal-icon::after {
+      border-color: var(--primary-light);
+    }
+    
+    @keyframes ripple {
+      0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+    
+    .no-meal-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .no-meal-title {
+      color: var(--primary-light);
+    }
+    
+    .no-meal-text {
+      font-size: 1.1rem;
+      opacity: 0.8;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+      color: inherit;
+    }
+    
+    /* 주간 캘린더 개선 */
+    .weekly-calendar {
+      margin: 2rem 0;
+      overflow: hidden;
+      position: relative;
+      border-radius: var(--radius);
+      padding: 1rem 0;
+    }
+    
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding: 0 1rem;
+    }
+    
+    .calendar-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .calendar-title {
+      color: var(--primary-light);
+    }
+    
+    .calendar-title i {
+      font-size: 1.2rem;
+    }
+    
+    .weekday-container {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 0.7rem;
+      padding: 0.5rem 1rem;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      min-height: 150px; /* 최소 높이 설정 */
+    }
+    
+    .weekday-container::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .weekday-card {
+      min-width: 100px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      scroll-snap-align: start;
+      transition: var(--transition);
+      cursor: pointer;
+      flex-shrink: 0;
+      border: 2px solid transparent;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      height: 130px; /* 높이 고정 */
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .dark-mode .weekday-card {
+      background-color: var(--dark-surface);
+      color: var(--dark-text);
+    }
+    
+    .light-mode .weekday-card {
+      background-color: var(--light-surface);
+      color: var(--light-text);
+    }
+    
+    .weekday-card.active {
+      border-color: var(--primary-color);
+      transform: scale(1.03);
+    }
+    
+    .dark-mode .weekday-card.active {
+      border-color: var(--primary-light);
+    }
+    
+    .weekday-header {
+      text-align: center;
+      padding: 0.7rem 0;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      background-color: rgba(76, 110, 245, 0.1);
+      flex-shrink: 0;
+    }
+    
+    .weekday-card.active .weekday-header {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .dark-mode .weekday-card.active .weekday-header {
+      background-color: var(--primary-light);
+    }
+    
+    .dark-mode .weekday-header {
+      background-color: rgba(116, 143, 252, 0.15);
+      color: var(--dark-text);
+    }
+    
+    .weekday-name {
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .weekday-date {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-top: 0.2rem;
+    }
+    
+    .weekday-body {
+      padding: 0.8rem;
+      text-align: center;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .weekday-meals {
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow-y: auto;
+    }
+    
+    .weekday-meal {
+      background-color: rgba(76, 110, 245, 0.05);
+      padding: 0.4rem;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+    }
+    
+    .dark-mode .weekday-meal {
+      background-color: var(--dark-surface-2);
+      color: var(--dark-text);
+    }
+    
+    /* Quote Card */
+    .quote-card {
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      padding: 2rem;
+      border-radius: var(--radius);
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    
+    .dark-mode .quote-card {
+      background-color: var(--dark-card);
+      color: var(--dark-text);
+    }
+    
+    .light-mode .quote-card {
+      background-color: var(--light-card);
+      color: var(--light-text);
+      box-shadow: var(--shadow);
+    }
+    
+    .quote-card::before {
+      content: '"';
+      position: absolute;
+      top: -30px;
+      left: 10px;
+      font-size: 10rem;
+      opacity: 0.05;
+      font-family: Georgia, serif;
+    }
+    
+    .quote-label {
+      font-size: 0.9rem;
+      color: var(--primary-color);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dark-mode .quote-label {
+      color: var(--primary-light);
+    }
+    
+    .quote-label::after {
+      content: "";
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 30px;
+      height: 2px;
+      background-color: var(--primary-color);
+      border-radius: var(--radius-full);
+    }
+    
+    .dark-mode .quote-label::after {
+      background-color: var(--primary-light);
+    }
+    
+    .quote-text {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+      color: inherit;
+    }
+    
+    .quote-author {
+      margin-top: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      text-align: right;
+      font-size: 1.1rem;
+    }
+    
+    .dark-mode .quote-author {
+      color: var(--primary-light);
+    }
+    
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      width: 90%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      pointer-events: none;
+    }
+    
+    .toast {
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: auto;
+      transition: var(--transition);
+      opacity: 0;
+      transform: translateY(50px) scale(0.9);
+      animation: toast-in 0.3s ease forwards, toast-out 0.3s ease forwards 3.7s;
+    }
+    
+    @keyframes toast-in {
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes toast-out {
+      to {
+        transform: translateY(-20px) scale(0.9);
+        opacity: 0;
+      }
+    }
+    
+    .toast-success {
+      background-color: #12b886;
+      color: white;
+      border-left: 5px solid #0ca678;
+    }
+    
+    .toast-error {
+      background-color: #fa5252;
+      color: white;
+      border-left: 5px solid #e03131;
+    }
+    
+    .toast-warning {
+      background-color: #fab005;
+      color: white;
+      border-left: 5px solid #f59f00;
+    }
+    
+    .toast-info {
+      background-color: var(--primary-color);
+      color: white;
+      border-left: 5px solid var(--primary-dark);
+    }
+    
+    .toast-content {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    
+    .toast-icon {
+      font-size: 1.2rem;
+    }
+    
+    .toast-message {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    
+    .toast-close {
+      background: none;
+      border: none;
+      color: white;
+      opacity: 0.8;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      transition: var(--transition-fast);
+    }
+    
+    .toast-close:hover {
+      opacity: 1;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Background Effects */
+    .background-shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+      pointer-events: none;
+    }
+    
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.4;
+      transition: var(--transition-slow);
+      animation-duration: 20s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+      will-change: transform;
+    }
+    
+    .dark-mode .shape {
+      opacity: 0.15;
+    }
+    
+    @keyframes float-1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(5%, 10%) scale(1.1); }
+      50% { transform: translate(10%, 5%) scale(1); }
+      75% { transform: translate(5%, -5%) scale(0.9); }
+    }
+    
+    @keyframes float-2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(-10%, 5%) scale(0.9); }
+      50% { transform: translate(-5%, 10%) scale(1.1); }
+      75% { transform: translate(-5%, 5%) scale(1); }
+    }
+    
+    @keyframes float-3 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(10%, -10%) scale(1.1); }
+      50% { transform: translate(5%, -5%) scale(0.9); }
+      75% { transform: translate(-5%, -10%) scale(1); }
+    }
+    
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      z-index: 1050;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+    
+    .modal-backdrop.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-dialog {
+      width: 95%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: var(--radius);
+      transition: var(--transition);
+      transform: translateY(20px) scale(0.95);
+    }
+    
+    .modal-backdrop.show .modal-dialog {
+      transform: translateY(0) scale(1);
+    }
+    
+    .dark-mode .modal-dialog {
+      background-color: var(--dark-card);
+      color: var(--dark-text);
+    }
+    
+    .light-mode .modal-dialog {
+      background-color: var(--light-card);
+      color: var(--light-text);
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .dark-mode .modal-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary-color);
+      margin: 0;
+    }
+    
+    .dark-mode .modal-title {
+      color: var(--primary-light);
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      line-height: 1;
+      padding: 0.3rem;
+      cursor: pointer;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .modal-close {
+      color: var(--primary-light);
+    }
+    
+    .modal-close:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark-mode .modal-close:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+      color: inherit;
+    }
+    
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+    
+    .dark-mode .modal-footer {
+      border-top-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Meal Detail Modal */
+    .meal-detail-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .meal-detail-image {
+      width: 100%;
+      height: 180px;
+      background-position: center;
+      background-size: cover;
+      border-radius: var(--radius-sm);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .meal-detail-image-placeholder {
+      font-size: 3rem;
+      color: white;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    .meal-detail-header {
+      text-align: center;
+    }
+    
+    .meal-detail-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .meal-detail-title {
+      color: var(--primary-light);
+    }
+    
+    .meal-detail-description {
+      font-size: 1rem;
+      line-height: 1.6;
+      opacity: 0.8;
+      color: inherit;
+    }
+    
+    .meal-detail-section {
+      margin-bottom: 1.2rem;
+    }
+    
+    .meal-detail-section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .dark-mode .meal-detail-section-title {
+      color: var(--primary-light);
+    }
+    
+    .meal-nutrition {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.8rem;
+    }
+    
+    .nutrition-item {
+      background-color: rgba(76, 110, 245, 0.05);
+      border-radius: var(--radius-sm);
+      padding: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .dark-mode .nutrition-item {
+      background-color: rgba(116, 143, 252, 0.05);
+    }
+    
+    .nutrition-value {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .nutrition-value {
+      color: var(--primary-light);
+    }
+    
+    .nutrition-label {
+      font-size: 0.8rem;
+      margin-top: 0.3rem;
+      opacity: 0.8;
+      color: inherit;
+    }
+    
+    .meal-allergens {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .allergen-tag {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-full);
+      background-color: rgba(250, 82, 82, 0.1);
+      color: var(--danger-color);
+    }
+    
+    .meal-actions-row {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+    
+    .meal-action-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      background-color: rgba(76, 110, 245, 0.1);
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .meal-action-btn {
+      background-color: rgba(116, 143, 252, 0.1);
+      color: var(--primary-light);
+    }
+    
+    .meal-action-btn:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .dark-mode .meal-action-btn:hover {
+      background-color: var(--primary-light);
+    }
+    
+    /* Share Modal */
+    .share-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    
+    .share-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      background-color: rgba(76, 110, 245, 0.05);
+      transition: var(--transition);
+      cursor: pointer;
+      gap: 0.5rem;
+    }
+    
+    .dark-mode .share-item {
+      background-color: rgba(116, 143, 252, 0.05);
+      color: var(--dark-text);
+    }
+    
+    .share-item:hover {
+      background-color: var(--primary-color);
+      color: white;
+      transform: translateY(-3px);
+    }
+    
+    .dark-mode .share-item:hover {
+      background-color: var(--primary-light);
+    }
+    
+    .share-icon {
+      font-size: 1.5rem;
+    }
+    
+    .share-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .share-link-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: var(--radius-sm);
+      border: 2px solid #dee2e6;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      transition: var(--transition);
+      margin-top: 1rem;
+    }
+    
+    .dark-mode .share-link-input {
+      background-color: var(--dark-surface);
+      border-color: var(--dark-surface-2);
+      color: var(--dark-text);
+    }
+    
+    .share-link-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    
+    /* Calendar & Schedule */
+    .calendar-wrapper {
+      margin-top: 2rem;
+      overflow: hidden;
+      border-radius: var(--radius);
+    }
+    
+    .dark-mode .calendar-wrapper {
+      background-color: var(--dark-card);
+    }
+    
+    .light-mode .calendar-wrapper {
+      background-color: var(--light-card);
+      box-shadow: var(--shadow);
+    }
+    
+    .calendar-nav {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .calendar-nav-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .calendar-nav-btn {
+      color: var(--primary-light);
+    }
+    
+    .calendar-nav-btn:hover {
+      background-color: rgba(76, 110, 245, 0.1);
+    }
+    
+    .dark-mode .calendar-nav-btn:hover {
+      background-color: rgba(116, 143, 252, 0.1);
+    }
+    
+    /* 날씨 정보 */
+    .weather-info {
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      background-color: rgba(76, 110, 245, 0.05);
+      gap: 1rem;
+    }
+    
+    .dark-mode .weather-info {
+      background-color: rgba(116, 143, 252, 0.05);
+    }
+    
+    .weather-icon {
+      font-size: 2rem;
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .weather-icon {
+      color: var(--primary-light);
+    }
+    
+    .weather-details {
+      flex-grow: 1;
+    }
+    
+    .weather-temp {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: inherit;
+    }
+    
+    .weather-desc {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      color: inherit;
+    }
+    
+    /* 앱 배너 */
+    .app-banner {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .app-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--primary-color);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .app-content {
+      flex-grow: 1;
+    }
+    
+    .app-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 0.3rem;
+    }
+    
+    .app-desc {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .app-btn {
+      background-color: white;
+      color: var(--primary-color);
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+    }
+    
+    .app-btn:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+    }
+        /* 설정 스타일 */
+    .settings-section {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .dark-mode .settings-section {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .settings-section:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .settings-section h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dark-mode .settings-section h4 {
+      color: var(--primary-light);
+    }
+
+    .settings-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: rgba(76, 110, 245, 0.05);
+      border-radius: var(--radius-sm);
+    }
+
+    .dark-mode .settings-item {
+      background-color: rgba(116, 143, 252, 0.05);
+    }
+
+    .settings-item-info {
+      flex-grow: 1;
+    }
+
+    .settings-item-title {
+      font-weight: 700;
+    }
+
+    .settings-item-desc {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      margin-top: 0.3rem;
+    }
+    /* 애니메이션 */
+    @keyframes float-slow {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      50% {
+        transform: translate(10px, 15px);
+      }
+    }
+    
+    @keyframes float-medium {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      50% {
+        transform: translate(-15px, 10px);
+      }
+    }
+    
+    @keyframes float-fast {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      50% {
+        transform: translate(15px, -10px);
+      }
+    }
+    
+    @keyframes fade-up {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    /* 반응형 */
+    @media (max-width: 768px) {
+      .brand-title {
+        font-size: 1.6rem;
+      }
+      
+      .main-card {
+        padding: 1.5rem;
+      }
+      
+      .card-title {
+        font-size: 1.4rem;
+      }
+      
+      .meal-title {
+        font-size: 1.2rem;
+      }
+      
+      .quote-text {
+        font-size: 1.1rem;
+      }
+    }
+    
+    /* 접근성 */
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+    
+    button:focus, 
+    input:focus {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+    
+    .dark-mode button:focus, 
+    .dark-mode input:focus {
+      outline-color: var(--primary-light);
+    }
+    
+    a:focus {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 4px;
+    }
+    
+    .dark-mode a:focus {
+      outline-color: var(--primary-light);
+    }
+    
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--primary-color);
+      color: white;
+      padding: 8px;
+      z-index: 1100;
+      transition: top 0.3s;
+    }
+    
+    .skip-link:focus {
+      top: 0;
+    }
+
+    /* 푸터 스타일 개선 */
+    footer {
+      padding: 2rem 0;
+      margin-top: 3rem;
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+    
+    .dark-mode footer {
+      background-color: rgba(0, 0, 0, 0.2);
+      color: var(--dark-text);
+    }
+    
+    .light-mode footer {
+      background-color: rgba(240, 240, 240, 0.6);
+      color: var(--light-text);
+    }
+    
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      text-align: center;
+    }
+    
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    
+    .footer-link {
+      color: inherit;
+      opacity: 0.8;
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+    
+    .footer-link:hover {
+      opacity: 1;
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .footer-link:hover {
+      color: var(--primary-light);
+    }
+    
+    @media (min-width: 768px) {
+      .footer-content {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+      }
+    }
+
+    /* 추가 스타일 */
+    .meal-detail-no-image {
+      width: 100%;
+      height: 240px;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .dark-mode .meal-detail-no-image {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+    }
+    
+    .meal-detail-image-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+    }
+    
+    .meal-detail-image-placeholder i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .meal-detail-image-placeholder p {
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    /* 정보 항목 스타일 */
+    .info-item {
+      margin-bottom: 1.2rem;
+      padding: 1rem;
+      background-color: rgba(76, 110, 245, 0.05);
+      border-radius: var(--radius-sm);
+    }
+    
+    .dark-mode .info-item {
+      background-color: rgba(116, 143, 252, 0.05);
+    }
+    
+    .info-label {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .dark-mode .info-label {
+      color: var(--primary-light);
+    }
+    
+    .info-value {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    /* 모달 CSS 완전 재구현 */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      z-index: 10000;
+      display: none; /* 초기에는 숨김 */
+      opacity: 0;
+      visibility: hidden;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .modal-backdrop.show {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    
+    .modal-dialog {
+      width: 95%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: var(--radius);
+      transition: transform 0.3s ease;
+      transform: translateY(20px) scale(0.95);
+      background-color: var(--dark-card);
+      color: var(--dark-text);
+      z-index: 10001;
+      position: relative;
+      pointer-events: auto !important;
+    }
+    
+    .light-mode .modal-dialog {
+      background-color: var(--light-card);
+      color: var(--light-text);
+    }
+    
+    .modal-backdrop.show .modal-dialog {
+      transform: translateY(0) scale(1);
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: auto !important;
+      position: relative;
+      z-index: 10002;
+    }
+    
+    .light-mode .modal-header {
+      border-bottom-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary-light);
+      margin: 0;
+    }
+    
+    .light-mode .modal-title {
+      color: var(--primary-color);
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      line-height: 1;
+      padding: 0.3rem;
+      cursor: pointer !important;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      color: var(--primary-light);
+      z-index: 10003;
+      position: relative;
+    }
+    
+    .light-mode .modal-close {
+      color: var(--primary-color);
+    }
+    
+    .modal-close:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .light-mode .modal-close:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+      color: inherit;
+      pointer-events: auto !important;
+      position: relative;
+      z-index: 10002;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      pointer-events: auto !important;
+      position: relative;
+      z-index: 10002;
+    }
+    
+    .light-mode .modal-footer {
+      border-top-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    /* 모달 내부 요소 스타일 */
+    .meal-detail-content,
+    .share-grid,
+    .usage-guide-content {
+      pointer-events: auto !important;
+      position: relative;
+      z-index: 10002;
+    }
+    
+    .share-item, 
+    .meal-action-btn,
+    .info-item {
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      position: relative;
+      z-index: 10003;
+    }
+    
+    /* 이미지 스타일 개선 */
+    .meal-detail-image {
+      width: 100%;
+      height: 180px;
+      background-position: center;
+      background-size: cover;
+      border-radius: var(--radius-sm);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    
+    .meal-detail-no-image {
+      width: 100%;
+      height: 240px;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .light-mode .meal-detail-no-image {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    }
+    
+    .meal-detail-image-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+    }
+    
+    .meal-detail-image-placeholder i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .meal-detail-image-placeholder p {
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    /* 영양 정보 테이블 스타일 */
+    .nutrition-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .nutrition-table th,
+    .nutrition-table td {
+      padding: 0.6rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark-mode .nutrition-table th,
+    .dark-mode .nutrition-table td {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .nutrition-table th {
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    
+    .dark-mode .nutrition-table th {
+      color: var(--primary-light);
+    }
+  </style>
+</head>
+<body class="light-mode">
+  <!-- 접근성을 위한 스킵 링크 -->
+  <a href="#main-content" class="skip-link">메인 콘텐츠로 건너뛰기</a>
+
+  <!-- 백그라운드 효과 -->
+  <div class="background-shapes" id="backgroundShapes"></div>
+
+  <!-- 헤더 -->
+  <header>
+    <div class="container">
+      <nav class="navbar">
+        
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <h1 class="brand-title">경공급식</h1>
+          <div class="d-flex align-items-center gap-2">
+            <button id="settingsButton" class="btn-icon" aria-label="설정">
+              <i class="fas fa-cog"></i>
+            </button>
+            <button id="themeToggle" class="btn-icon" aria-label="테마 전환">
+              <i class="fas fa-sun"></i>
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 메인 콘텐츠 -->
+  <main id="main-content">
+    <div class="container">
+      <!-- 메인 카드 -->
+      <div class="card main-card animate__animated animate__fadeIn">
+        <h2 class="card-title">오늘의 급식 메뉴</h2>
+        
+        <!-- 날씨 정보 -->
+        <div class="weather-info" id="weatherInfo">
+          <div class="weather-icon">
+            <i class="fas fa-cloud-sun"></i>
+          </div>
+          <div class="weather-details">
+            <div class="weather-temp">데이터 로딩중...</div>
+            <div class="weather-desc">날씨 정보를 가져오는 중입니다.</div>
+          </div>
+        </div>
+        
+        <!-- 날짜 네비게이션 -->
+        <div class="date-navigation">
+          <button id="prevDate" class="date-nav-btn" aria-label="이전 날짜">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div id="currentDate" class="current-date">2025년 3월 24일 (월)</div>
+          <button id="nextDate" class="date-nav-btn" aria-label="다음 날짜">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        
+        <!-- 날짜 선택 폼 -->
+        <form id="mealForm" class="date-form">
+          <div class="form-group">
+            <label for="dateSelector" class="date-label">
+              <i class="far fa-calendar-alt me-1"></i> 날짜 선택
+            </label>
+            <input type="date" id="dateSelector" class="date-input" name="dateSelector">
+          </div>
+          <button type="submit" id="searchButton" class="btn btn-primary">
+            <i class="fas fa-search me-1"></i> 급식 조회
+          </button>
+        </form>
+        
+        <!-- 로딩 상태 -->
+        <div id="loading" class="loading-container d-none">
+          <div class="loading-spinner">
+            <div class="loading-cube">
+              <div class="loading-face face-front"></div>
+              <div class="loading-face face-back"></div>
+              <div class="loading-face face-right"></div>
+              <div class="loading-face face-left"></div>
+              <div class="loading-face face-top"></div>
+              <div class="loading-face face-bottom"></div>
+            </div>
+          </div>
+          <div class="loading-text">급식 정보를 불러오는 중...</div>
+        </div>
+        
+        <!-- 급식 정보 -->
+        <div id="mealContent">
+          <!-- 급식 선택 탭 -->
+          <div class="meal-tabs" id="mealTabs">
+            <div class="tab-indicator" style="width: 33.33%;"></div>
+            <button class="meal-tab active" data-meal-type="breakfast">
+              <i class="fas fa-coffee me-1"></i> 조식
+            </button>
+            <button class="meal-tab" data-meal-type="lunch">
+              <i class="fas fa-utensils me-1"></i> 중식
+            </button>
+            <button class="meal-tab" data-meal-type="dinner">
+              <i class="fas fa-moon me-1"></i> 석식
+            </button>
+          </div>
+          
+          <!-- 급식 내용 -->
+          <div id="mealContainer" class="meal-container">
+            <!-- 급식 내용이 동적으로 채워집니다 -->
+            <div class="loading-container">
+              <div class="loading-text">급식 정보를 불러오는 중...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 주간 급식 캘린더 -->
+      <div class="card main-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="calendar-header">
+          <h3 class="calendar-title">
+            <i class="fas fa-calendar-alt"></i>
+            주간 급식 캘린더
+          </h3>
+          <div class="calendar-nav">
+            <button id="prevWeek" class="calendar-nav-btn">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button id="nextWeek" class="calendar-nav-btn">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="weekday-container" id="weeklyCalendar">
+          <!-- 주간 캘린더가 동적으로 채워집니다 -->
+          <div class="loading-container">
+            <div class="loading-text">주간 급식 정보를 불러오는 중...</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 앱 배너 -->
+      <div class="app-banner" data-aos="fade-up" data-aos-delay="150">
+        <div class="app-icon">
+          <i class="fas fa-utensils"></i>
+        </div>
+        <div class="app-content">
+          <h3 class="app-title">경공급식 앱 다운로드</h3>
+          <p class="app-desc">더 빠르고 편리한 급식 정보를 앱에서 확인하세요!</p>
+        </div>
+        <button class="app-btn" onclick="downloadApp()">
+          다운로드
+        </button>
+      </div>
+      
+      <!-- 명언 카드 -->
+      <div class="quote-card" data-aos="fade-up" data-aos-delay="200">
+        <span class="quote-label">오늘의 명언</span>
+        <p class="quote-text" id="quoteText">
+          명언을 불러오는 중입니다...
+        </p>
+        <p class="quote-author" id="quoteAuthor">- 불러오는 중...</p>
+      </div>
+    </div>
+  </main>
+  
+  <!-- 사용 가이드 모달 (개선된 구조) -->
+  <div class="modal-backdrop" id="usageGuideModal">
+    <div class="modal-dialog" onclick="event.stopPropagation();">
+      <div class="modal-header">
+        <h3 class="modal-title">경공급식 사용 가이드</h3>
+        <button class="modal-close" onclick="closeUsageGuideModal(event)">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body" onclick="event.stopPropagation();">
+        <div class="usage-guide-content" onclick="event.stopPropagation();">
+          <section class="guide-section">
+            <h4><i class="fas fa-calendar-alt"></i> 날짜 선택</h4>
+            <p>원하는 날짜의 급식 정보를 확인하는 방법:</p>
+            <ul>
+              <li>상단의 날짜 선택기에서 날짜를 직접 선택</li>
+              <li>이전/다음 화살표를 클릭하여 날짜 이동</li>
+              <li>하단의 주간 캘린더에서 날짜 클릭</li>
+            </ul>
+          </section>
+          
+          <section class="guide-section">
+            <h4><i class="fas fa-utensils"></i> 급식 메뉴 확인</h4>
+            <p>조식, 중식, 석식 메뉴를 확인하는 방법:</p>
+            <ul>
+              <li>상단 탭에서 원하는 급식 시간 선택 (조식, 중식, 석식)</li>
+              <li>각 메뉴 항목 우측의 아이콘으로 추가 기능 사용 가능</li>
+            </ul>
+          </section>
+          
+          <section class="guide-section">
+            <h4><i class="fas fa-info-circle"></i> 메뉴 상세 정보</h4>
+            <p>각 메뉴 항목 옆의 아이콘 기능:</p>
+            <ul>
+              <li><i class="fas fa-info-circle"></i> - 메뉴 상세 정보 및 사진 확인</li>
+              <li><i class="fas fa-share-alt"></i> - 메뉴 정보 공유하기</li>
+              <li><i class="fas fa-search"></i> - 구글에서 메뉴 검색하기</li>
+            </ul>
+          </section>
+          
+          <section class="guide-section">
+            <h4><i class="fas fa-moon"></i> 테마 변경</h4>
+            <p>우측 상단의 <i class="fas fa-moon"></i> 또는 <i class="fas fa-sun"></i> 아이콘을 클릭하여 다크 모드와 라이트 모드를 전환할 수 있습니다.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <p>&copy; 2025 경공급식 | 제작: 조현우 | 연락 : joh66122@gmail.com</p>
+        <div class="footer-links">
+          <a href="#" id="showUsageGuide" class="footer-link">사용 방법</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- 설정 모달 -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title">설정</h3>
+      <button class="modal-close" onclick="closeSettingsModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-content">
+        <section class="settings-section">
+          <h4><i class="fas fa-database"></i> 캐시 관리</h4>
+          <p>저장된 급식 데이터와 이미지 캐시를 관리합니다.</p>
+          <div class="settings-item">
+            <div class="settings-item-info">
+              <div class="settings-item-title">캐시 데이터</div>
+              <div class="settings-item-desc" id="cacheSize">계산 중...</div>
+            </div>
+            <button class="btn btn-outline" onclick="clearAllCache()">전체 삭제</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- 음식 상세정보 모달 (개선된 구조) -->
+  <div class="modal-backdrop" id="mealDetailModal">
+    <div class="modal-dialog" onclick="event.stopPropagation();">
+      <div class="modal-header">
+        <h3 class="modal-title" id="mealDetailTitle">메뉴 상세 정보</h3>
+        <button class="modal-close" onclick="closeMealDetail(event)">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body" onclick="event.stopPropagation();">
+        <div class="meal-detail-content" id="mealDetailContent" onclick="event.stopPropagation();">
+          <!-- 모달 컨텐츠는 JS로 동적 생성 -->
+          <div class="loading-container">
+            <div class="loading-spinner">
+              <div class="loading-cube">
+                <div class="loading-face face-front"></div>
+                <div class="loading-face face-back"></div>
+                <div class="loading-face face-right"></div>
+                <div class="loading-face face-left"></div>
+                <div class="loading-face face-top"></div>
+                <div class="loading-face face-bottom"></div>
+              </div>
+            </div>
+            <div class="loading-text">상세 정보를 불러오는 중...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 공유하기 모달 (개선된 구조) -->
+  <div class="modal-backdrop" id="shareModal">
+    <div class="modal-dialog" onclick="event.stopPropagation();">
+      <div class="modal-header">
+        <h3 class="modal-title">급식 정보 공유하기</h3>
+        <button class="modal-close" onclick="closeShareModal(event)">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body" onclick="event.stopPropagation();">
+        <p>급식 정보를 SNS와 메신저로 공유해보세요!</p>
+        <div class="share-grid">
+          <div class="share-item" onclick="shareToSNS('kakaotalk'); event.stopPropagation();">
+            <div class="share-icon"><i class="fas fa-comment"></i></div>
+            <div class="share-name">카카오톡</div>
+          </div>
+          <div class="share-item" onclick="copyShareLink(); event.stopPropagation();">
+            <div class="share-icon"><i class="fas fa-link"></i></div>
+            <div class="share-name">링크 복사</div>
+          </div>
+        </div>
+        <input type="text" id="shareLinkInput" class="share-link-input" readonly value="https://경공급식.kr/meals/2025-03-24" onclick="this.select(); event.stopPropagation();">
+      </div>
+    </div>
+  </div>
+  
+  <!-- 알림 메시지 컨테이너 -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- 스크립트 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  
+  <script>
+    // DOM 요소 참조
+    // DOM 요소 참조
+    const settingsModal = document.getElementById('settingsModal'); // 이 줄 추가
+    const body = document.body;
+    const themeToggle = document.getElementById('themeToggle');
+    const onapp = false;
+    const mealDataCache = {};
+    const themeIcon = themeToggle.querySelector('i');
+    const backgroundShapes = document.getElementById('backgroundShapes');
+    const mealTabs = document.querySelectorAll('.meal-tab');
+    const tabIndicator = document.querySelector('.tab-indicator');
+    const prevDateBtn = document.getElementById('prevDate');
+    const nextDateBtn = document.getElementById('nextDate');
+    const currentDateDisplay = document.getElementById('currentDate');
+    const dateSelector = document.getElementById('dateSelector');
+    const mealForm = document.getElementById('mealForm');
+    const searchButton = document.getElementById('searchButton');
+    const loadingElement = document.getElementById('loading');
+    const mealContainer = document.getElementById('mealContainer');
+    const mealContent = document.getElementById('mealContent');
+    const weeklyCalendar = document.getElementById('weeklyCalendar');
+    const prevWeekBtn = document.getElementById('prevWeek');
+    const nextWeekBtn = document.getElementById('nextWeek');
+    const weatherInfo = document.getElementById('weatherInfo');
+    const quoteText = document.getElementById('quoteText');
+    const quoteAuthor = document.getElementById('quoteAuthor');
+    const toastContainer = document.getElementById('toastContainer');
+    const mealDetailModal = document.getElementById('mealDetailModal');
+    const shareModal = document.getElementById('shareModal');
+    const mealDetailTitle = document.getElementById('mealDetailTitle');
+    const mealDetailContent = document.getElementById('mealDetailContent');
+    const shareLinkInput = document.getElementById('shareLinkInput');
+    const usageGuideModal = document.getElementById('usageGuideModal');
+    const imageSearchCache = {};
+
+    // 상수 정의
+    const QUOTES = [
+      { text: "삶이 있는 한 희망은 있다", author: "키케로" },
+      { text: "산다는것 그것은 치열한 전투이다", author: "로망로랑" },
+      { text: "하루에 3시간을 걸으면 7년 후에 지구를 한바퀴 돌 수 있다", author: "사무엘존슨" },
+      { text: "언제나 현재에 집중할수 있다면 행복할것이다", author: "파울로 코엘료" },
+      { text: "진정으로 웃으려면 고통을 참아야하며, 나아가 고통을 즐길 줄 알아야 해", author: "찰리 채플린" },
+      { text: "직업에서 행복을 찾아라. 아니면 행복이 무엇인지 절대 모를 것이다", author: "엘버트 허버드" },
+      { text: "신은 용기있는자를 결코 버리지 않는다", author: "켄러" },
+      { text: "행복의 문이 하나 닫히면 다른 문이 열린다", author: "헬렌켈러" },
+      { text: "피할수 없으면 즐겨라", author: "로버트 엘리엇" },
+      { text: "단순하게 살아라. 현대인은 쓸데없는 절차와 일 때문에 얼마나 복잡한 삶을 살아가는가?", author: "이드리스 샤흐" },
+    ];
+    
+    const SHAPE_COLORS = [
+      'rgba(76, 110, 245, 0.8)',   // 파란색
+      'rgba(253, 126, 20, 0.8)',   // 주황색
+      'rgba(16, 185, 129, 0.8)',   // 녹색
+      'rgba(139, 92, 246, 0.8)',   // 보라색
+      'rgba(236, 72, 153, 0.8)',   // 분홍색
+    ];
+    
+    const MEAL_TIMES = {
+      breakfast: { name: '조식', icon: 'fas fa-coffee', time: '06:30 ~ 08:30' },
+      lunch: { name: '중식', icon: 'fas fa-utensils', time: '11:30 ~ 13:30' },
+      dinner: { name: '석식', icon: 'fas fa-moon', time: '17:30 ~ 19:00' }
+    };
+    
+    // 로컬 스토리지 키
+    const THEME_STORAGE_KEY = 'KG_THEME';
+    const CACHE_STORAGE_KEY = 'KG_CACHE';
+    const IMAGE_CACHE_STORAGE_KEY = 'KG_IMAGE_CACHE';
+    const LAST_VISITED_DATE_KEY = 'KG_LAST_DATE';
+    
+    // Open Weather Map API 키 - 개발 중이므로 빈 문자열
+    const WEATHER_API_KEY = '';
+    
+    // 앱 상태 관리
+    const appState = {
+      currentDate: new Date(),
+      currentMealType: 'breakfast',
+      weeklyStartDate: null,
+      weeklyEndDate: null,
+      userLocation: {
+        lat: 35.8563, // 경주시 좌표
+        lon: 129.2247
+      }
+    };
+    
+    // 페이지 초기화 함수 (확장 및 수정)
+    async function initPage() {
+        console.log('페이지 초기화 시작');
+        
+        try {
+            // 캐시 데이터 로드
+            loadCache();
+            loadImageCache();
+                        // 설정 버튼 설정
+            setupSettingsButton();
+
+            // 앱 배너 표시/숨김 처리
+            handleAppBanner();
+            // 로컬 스토리지 캐시 정리
+            cleanupLocalStorage();
+            
+            // 저장된 테마 불러오기
+            loadTheme();
+            
+            // 배경 도형 생성
+            createBackgroundShapes();
+            
+            // 테마 토글 설정
+            setupThemeToggle();
+            
+            // 탭 네비게이션 설정
+            setupTabNavigation();
+            
+            // 날짜 네비게이션 설정
+            setupDateNavigation();
+            
+            // 주간 네비게이션 설정
+            setupWeeklyNavigation();
+            
+            // 현재 날짜 설정
+            setCurrentDate();
+            
+            // 날짜 선택기 설정
+            setupDateSelector();
+            
+            // URL 매개변수 확인
+            checkUrlParameters();
+            
+            // 사용자 위치 정보 설정
+            getUserLocation();
+            
+            // 랜덤 명언 로드
+            loadRandomQuote();
+            
+            // 전역 함수 설정
+            setupGlobalFunctions();
+            
+            // 모달 문제 수정 함수 호출 (위치 변경: 먼저 호출)
+            fixModalIssues();
+            
+            // 급식 데이터 가져오기
+            await fetchMealData(formatDate(appState.currentDate));
+            
+            // 주간 급식 캘린더 로드
+            await loadWeeklyData(appState.currentDate);
+            
+            // UI 업데이트
+            showMealContent(appState.currentMealType);
+            
+            // 날짜 선택 폼 설정
+            setupMealForm();
+            
+            // 사용 가이드 모달 이벤트 설정
+            setupUsageGuideModal();
+            
+            console.log('페이지 초기화 완료');
+            // 앱 배너 표시/숨김 함수
+            function handleAppBanner() {
+              const appBanner = document.querySelector('.app-banner');
+              if (appBanner) {
+                if (onapp) {
+                  appBanner.style.display = 'none';
+                } else {
+                  appBanner.style.display = 'flex';
+                }
+              }
+            }
+
+            // 캐시 크기 계산
+            // 캐시 크기 계산 (전역에 정의)
+            function calculateCacheSize() {
+              const cacheSizeElement = document.getElementById('cacheSize');
+              try {
+                let totalSize = 0;
+                
+                // 급식 데이터 캐시 크기 계산
+                const mealCacheStr = localStorage.getItem(CACHE_STORAGE_KEY) || '{}';
+                totalSize += mealCacheStr.length;
+                
+                // 이미지 캐시 크기 계산
+                const imageCacheStr = localStorage.getItem(IMAGE_CACHE_STORAGE_KEY) || '{}';
+                totalSize += imageCacheStr.length;
+                
+                // 기타 저장 데이터 크기 계산
+                for (const key in localStorage) {
+                  if (localStorage.hasOwnProperty(key) && 
+                      key !== CACHE_STORAGE_KEY && 
+                      key !== IMAGE_CACHE_STORAGE_KEY) {
+                    const value = localStorage.getItem(key);
+                    if (value) totalSize += value.length;
+                  }
+                }
+                
+                // 단위 변환 (바이트 → KB 또는 MB)
+                let sizeText = '';
+                if (totalSize < 1024) {
+                  sizeText = `${totalSize} 바이트`;
+                } else if (totalSize < 1024 * 1024) {
+                  sizeText = `${(totalSize / 1024).toFixed(2)} KB`;
+                } else {
+                  sizeText = `${(totalSize / (1024 * 1024)).toFixed(2)} MB`;
+                }
+                
+                cacheSizeElement.textContent = sizeText;
+              } catch (error) {
+                console.error('캐시 크기 계산 오류:', error);
+                cacheSizeElement.textContent = '계산 오류';
+              }
+            }
+
+            // 설정 관련 전역 함수들 - setupGlobalFunctions 함수 바깥에 정의
+            window.showSettingsModal = function() {
+              calculateCacheSize();
+              const settingsModal = document.getElementById('settingsModal');
+              settingsModal.classList.add('show');
+              document.body.style.overflow = 'hidden';
+            };
+
+            window.closeSettingsModal = function() {
+              const settingsModal = document.getElementById('settingsModal');
+              settingsModal.classList.remove('show');
+              document.body.style.overflow = '';
+            };
+
+            window.clearAllCache = function() {
+              try {
+                // 급식 데이터 캐시 삭제
+                localStorage.removeItem(CACHE_STORAGE_KEY);
+                Object.keys(mealDataCache).forEach(key => {
+                  delete mealDataCache[key];
+                });
+                
+                // 이미지 캐시 삭제
+                localStorage.removeItem(IMAGE_CACHE_STORAGE_KEY);
+                Object.keys(imageSearchCache).forEach(key => {
+                  delete imageSearchCache[key];
+                });
+                
+                // 캐시 크기 업데이트
+                calculateCacheSize();
+                
+                showToast('success', '모든 캐시 데이터가 삭제되었습니다.');
+              } catch (error) {
+                console.error('캐시 삭제 오류:', error);
+                showToast('error', '캐시 삭제 중 오류가 발생했습니다.');
+              }
+            };
+
+            // 설정 버튼 설정
+            function setupSettingsButton() {
+              const settingsButton = document.getElementById('settingsButton');
+              if (settingsButton) {
+                settingsButton.addEventListener('click', function() {
+                  window.showSettingsModal();
+                });
+              }
+            }
+            // 모달 표시 문제 해결을 위한 추가 코드
+            setTimeout(() => {
+                // 모달 초기화 재확인
+                const usageGuideModal = document.getElementById('usageGuideModal');
+                const mealDetailModal = document.getElementById('mealDetailModal');
+                const shareModal = document.getElementById('shareModal');
+                
+                // 각 모달 초기 스타일 재설정
+                [usageGuideModal, mealDetailModal, shareModal].forEach(modal => {
+                    if (modal) {
+                        modal.style.display = 'none';
+                        modal.style.opacity = '0';
+                        modal.style.visibility = 'hidden';
+                    }
+                });
+                
+                // 사용 가이드 버튼 이벤트 재설정
+                const usageGuideBtn = document.getElementById('showUsageGuide');
+                if (usageGuideBtn) {
+                    usageGuideBtn.onclick = function(e) {
+                        e.preventDefault();
+                        console.log('사용 가이드 버튼 클릭됨 (시간차 설정)');
+                        
+                        if (usageGuideModal) {
+                            usageGuideModal.style.display = 'flex';
+                            usageGuideModal.style.opacity = '1';
+                            usageGuideModal.style.visibility = 'visible';
+                            usageGuideModal.classList.add('show');
+                            document.body.style.overflow = 'hidden';
+                        }
+                        
+                        return false;
+                    };
+                }
+            }, 1000);
+            
+            return true;
+        } catch (error) {
+            console.error('페이지 초기화 중 오류 발생:', error);
+            
+            // 오류가 발생해도 UI가 작동하도록 기본 설정
+            if (loadingElement) loadingElement.classList.add('d-none');
+            if (mealContent) mealContent.classList.remove('d-none');
+            showNoMealMessage("페이지 로딩 중 오류가 발생했습니다. 새로고침을 시도해주세요.");
+            
+            throw error;
+        }
+    }
+    
+    // 사용 가이드 모달 이벤트 설정 (완전 재구현)
+    function setupUsageGuideModal() {
+        // 가이드 버튼 찾기
+        const usageGuideBtn = document.getElementById('showUsageGuide');
+        if (usageGuideBtn) {
+            // 기존 이벤트 리스너 제거 (중복 방지)
+            const newBtn = usageGuideBtn.cloneNode(true);
+            usageGuideBtn.parentNode.replaceChild(newBtn, usageGuideBtn);
+            
+            // 새 이벤트 리스너 추가
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                showUsageGuideModal();
+                console.log('사용 가이드 버튼 클릭됨');
+                
+                // 브라우저 내장 이벤트 처리 중지
+                return false;
+            });
+            
+            console.log('사용 가이드 모달 이벤트 설정 완료');
+        } else {
+            console.error('사용 가이드 버튼을 찾을 수 없음');
+        }
+        
+        // 모달 초기 스타일 설정
+        const modal = document.getElementById('usageGuideModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+    
+    // 모달 문제 해결을 위한 완전히 새로운 접근 방식
+    function fixModalIssues() {
+        console.log('모달 문제 해결 함수 실행');
+        
+        // 모달 요소 확인
+        const usageGuideModal = document.getElementById('usageGuideModal');
+        const mealDetailModal = document.getElementById('mealDetailModal');
+        const shareModal = document.getElementById('shareModal');
+        
+        // 모달 요소 초기화 (표시 설정)
+        [usageGuideModal, mealDetailModal, shareModal].forEach(modal => {
+            if (modal) {
+                // 요소가 존재하면 초기 스타일 설정
+                modal.style.display = 'none';
+                modal.style.opacity = '0';
+                modal.style.visibility = 'hidden';
+                
+                // 모달 배경 클릭 이벤트 처리 (이벤트 전파 방지)
+                modal.addEventListener('click', function(event) {
+                    // 배경만 클릭했을 때 모달 닫기
+                    if (event.target === this) {
+                        console.log('모달 배경 클릭됨');
+                        if (this.id === 'mealDetailModal') {
+                            closeMealDetail(event);
+                        } else if (this.id === 'usageGuideModal') {
+                            closeUsageGuideModal(event);
+                        } else if (this.id === 'shareModal') {
+                            closeShareModal(event);
+                        }
+                    }
+                });
+            }
+        });
+        
+        // 모달 다이얼로그 클릭 이벤트 처리 (이벤트 전파 방지)
+        document.querySelectorAll('.modal-dialog').forEach(dialog => {
+            dialog.addEventListener('click', function(event) {
+                event.stopPropagation();
+                console.log('모달 다이얼로그 클릭 (이벤트 전파 중지)');
+            });
+        });
+        
+        // 모달 내부 버튼 이벤트 처리
+        document.querySelectorAll('.modal-dialog button, .modal-dialog a, .modal-dialog .meal-action-btn, .modal-dialog .share-item').forEach(element => {
+            // 기존 이벤트 제거 후 새 이벤트 추가
+            element.addEventListener('click', function(event) {
+                event.stopPropagation();
+                console.log('모달 내부 요소 클릭됨 (이벤트 전파 중지)');
+            });
+        });
+        
+        // 사용 가이드 모달 이벤트 설정
+        const usageGuideBtn = document.getElementById('showUsageGuide');
+        if (usageGuideBtn) {
+            // 기존 이벤트 제거 후 새 이벤트 설정
+            usageGuideBtn.onclick = null;
+            usageGuideBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('사용 가이드 버튼 클릭됨');
+                showUsageGuideModal();
+                return false;
+            });
+        }
+        
+        // 전역 함수 추가 또는 재정의
+        window.showUsageGuideModal = function() {
+            console.log('사용 가이드 모달 표시 함수 호출됨');
+            if (usageGuideModal) {
+                usageGuideModal.style.display = 'flex';
+                usageGuideModal.style.opacity = '1';
+                usageGuideModal.style.visibility = 'visible';
+                usageGuideModal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                console.log('사용 가이드 모달 표시됨');
+            }
+        };
+        
+        window.closeUsageGuideModal = function(event) {
+            if (event) event.stopPropagation();
+            console.log('사용 가이드 모달 닫기 함수 호출됨');
+            if (usageGuideModal) {
+                usageGuideModal.classList.remove('show');
+                usageGuideModal.style.opacity = '0';
+                usageGuideModal.style.visibility = 'hidden';
+                setTimeout(() => {
+                    usageGuideModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }, 300);
+                console.log('사용 가이드 모달 닫힘');
+            }
+        };
+        
+        window.closeMealDetail = function(event) {
+            if (event) event.stopPropagation();
+            console.log('메뉴 상세 모달 닫기 함수 호출됨');
+            if (mealDetailModal) {
+                mealDetailModal.classList.remove('show');
+                mealDetailModal.style.opacity = '0';
+                mealDetailModal.style.visibility = 'hidden';
+                setTimeout(() => {
+                    mealDetailModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }, 300);
+                console.log('메뉴 상세 모달 닫힘');
+            }
+        };
+        
+        window.closeShareModal = function(event) {
+            if (event) event.stopPropagation();
+            console.log('공유 모달 닫기 함수 호출됨');
+            if (shareModal) {
+                shareModal.classList.remove('show');
+                shareModal.style.opacity = '0';
+                shareModal.style.visibility = 'hidden';
+                setTimeout(() => {
+                    shareModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }, 300);
+                console.log('공유 모달 닫힘');
+            }
+        };
+        
+        console.log('모달 문제 해결 함수 완료');
+    }
+    
+    // 캐시 데이터 저장
+    function saveCache() {
+        try {
+            localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify(mealDataCache));
+            console.log('캐시 데이터 저장 완료');
+        } catch (error) {
+            console.error('캐시 데이터 저장 오류:', error);
+        }
+    }
+
+    // 캐시 데이터 로드
+    function loadCache() {
+        try {
+            const cachedData = localStorage.getItem(CACHE_STORAGE_KEY);
+            if (cachedData) {
+                const parsedData = JSON.parse(cachedData);
+                
+                // 기존 객체를 비우고 새 데이터로 채웁니다
+                Object.keys(mealDataCache).forEach(key => {
+                    delete mealDataCache[key];
+                });
+                
+                // 새 데이터 복사
+                Object.keys(parsedData).forEach(key => {
+                    mealDataCache[key] = parsedData[key];
+                });
+                
+                console.log('캐시 데이터 로드 완료', Object.keys(mealDataCache).length, '개 월');
+            }
+        } catch (error) {
+            console.error('캐시 데이터 로드 오류:', error);
+            // 오류 시 기존 객체 비우기
+            Object.keys(mealDataCache).forEach(key => {
+                delete mealDataCache[key];
+            });
+        }
+    }
+    
+    // 이미지 캐시 저장
+    function saveImageCache() {
+        try {
+            localStorage.setItem(IMAGE_CACHE_STORAGE_KEY, JSON.stringify(imageSearchCache));
+            console.log('이미지 캐시 저장 완료');
+        } catch (error) {
+            console.error('이미지 캐시 저장 오류:', error);
+        }
+    }
+
+    // 이미지 캐시 로드
+    function loadImageCache() {
+        try {
+            const cachedData = localStorage.getItem(IMAGE_CACHE_STORAGE_KEY);
+            if (cachedData) {
+                const parsedData = JSON.parse(cachedData);
+                
+                // 캐시 병합
+                Object.keys(parsedData).forEach(key => {
+                    imageSearchCache[key] = parsedData[key];
+                });
+                
+                console.log('이미지 캐시 로드 완료', Object.keys(imageSearchCache).length, '개 항목');
+            }
+        } catch (error) {
+            console.error('이미지 캐시 로드 오류:', error);
+        }
+    }
+
+    // 로컬 스토리지 캐시 정리 
+    function cleanupLocalStorage() {
+        try {
+            // 모든 저장된 날짜의 캐시 데이터 확인
+            const cache = JSON.parse(localStorage.getItem(CACHE_STORAGE_KEY) || '{}');
+            let hasChanges = false;
+            
+            // 각 날짜별 데이터 검사
+            for (const [date, data] of Object.entries(cache)) {
+                // 데이터가 올바른 형식인지 확인
+                if (!data || typeof data !== 'object') {
+                    // 잘못된 형식의 데이터는 삭제
+                    delete cache[date];
+                    hasChanges = true;
+                    console.log(`캐시 정리: 잘못된 형식의 데이터 삭제 (${date})`);
+                }
+            }
+            
+            // 변경사항이 있으면 다시 저장
+            if (hasChanges) {
+                localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify(cache));
+                console.log('손상된 캐시 데이터 정리 완료');
+            }
+        } catch (e) {
+            console.error('캐시 정리 중 오류:', e);
+            // 오류 발생 시 캐시 전체 초기화
+            localStorage.removeItem(CACHE_STORAGE_KEY);
+            console.log('오류로 인해 캐시 전체 초기화');
+        }
+    }
+    
+    // 메뉴 이미지 검색 - 외부 API 없이 실시간 검색 (개선 버전)
+// 메뉴 이미지 검색 - 만개의레시피에서 첫 번째 검색 결과 이미지 가져오기
+// 메뉴 이미지 검색 - 만개의레시피에서 비디오 아이콘이 아닌 첫 번째 유효한 검색 결과 이미지 가져오기
+    async function searchMealImage(mealName) {
+        try {
+            // 검색어 전처리
+            let searchTerm = mealName;
+            
+            // 괄호와 괄호 안 내용 제거
+            searchTerm = searchTerm.replace(/\([^)]*\)/g, '');
+            
+            // 공백 및 기타 특수문자 처리
+            searchTerm = searchTerm.trim();
+            
+            // 캐시에 있는지 확인
+            if (imageSearchCache[searchTerm]) {
+                console.log(`캐시된 이미지 사용: ${searchTerm}`);
+                return imageSearchCache[searchTerm];
+            }
+            
+            console.log(`만개의레시피에서 이미지 검색 시작: ${searchTerm}`);
+            
+            // CORS 우회를 위한 프록시 URL (예: cors-anywhere)
+            const corsProxy = 'https://corsproxy.io/?';
+            
+            // 만개의레시피 검색 URL
+            const recipeSearchUrl = `https://www.10000recipe.com/recipe/list.html?q=${encodeURIComponent(searchTerm)}`;
+            
+            // 프록시를 통해 웹페이지 요청
+            const response = await fetch(corsProxy + encodeURIComponent(recipeSearchUrl));
+            
+            if (!response.ok) {
+                throw new Error(`검색 페이지 요청 실패: ${response.status}`);
+            }
+            
+            const html = await response.text();
+            
+            // HTML을 파싱하기 위한 임시 DOM 엘리먼트 생성
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // 검색 결과의 모든 레시피 이미지 찾기
+            const recipeImgs = doc.querySelectorAll('.common_sp_thumb img');
+            
+            let imageUrl = '';
+            
+            // 비디오 아이콘이 아닌 첫 번째 유효한 이미지 찾기
+            for (let i = 0; i < recipeImgs.length; i++) {
+                const imgSrc = recipeImgs[i].src;
+                
+                // 비디오 아이콘 이미지 제외
+                if (imgSrc && 
+                    !imgSrc.includes('icon_vod.png') && 
+                    !imgSrc.includes('/img/icon_') && // 다른 아이콘 이미지도 제외
+                    imgSrc !== "https://recipe1.ezmember.co.kr/img/icon_vod.png") {
+                    
+                    imageUrl = imgSrc;
+                    
+                    // 상대 경로인 경우 절대 경로로 변환
+                    if (imageUrl.startsWith('/')) {
+                        imageUrl = 'https://www.10000recipe.com' + imageUrl;
+                    }
+                    
+                    console.log(`유효한 이미지 URL 찾음 (${i+1}번째): ${imageUrl}`);
+                    break;
+                } else {
+                    console.log(`제외된 이미지 URL (${i+1}번째): ${imgSrc}`);
+                }
+            }
+            
+            // 유효한 이미지를 찾지 못한 경우
+            if (!imageUrl) {
+                console.log('검색 결과에서 유효한 이미지를 찾지 못했습니다');
+                // 요리 관련 기본 이미지 URL (placeholder)
+                imageUrl = '/api/placeholder/400/320';
+            }
+            
+            // 이미지 URL을 캐시에 저장
+            imageSearchCache[searchTerm] = imageUrl;
+            
+            // 1분마다 이미지 캐시 저장
+            if (!window.imageCacheSaveInterval) {
+                window.imageCacheSaveInterval = setInterval(saveImageCache, 60000);
+            }
+            
+            return imageUrl;
+        } catch (error) {
+            console.error('이미지 검색 중 오류 발생:', error);
+            
+            // 오류 발생 시 대체 이미지
+            const fallbackImageUrl = '/api/placeholder/400/320';
+            
+            // 오류 발생해도 다음에는 캐시된 값 사용하도록 저장 
+            imageSearchCache[mealName.trim()] = fallbackImageUrl;
+            
+            return fallbackImageUrl;
+        }
+    }
+
+    // 메뉴 설명 검색 (실제 검색 기능 없이 메뉴 이름만 표시)
+    async function searchMealDescription(mealName) {
+        return `${mealName}`;
+    }
+    
+    // 급식 데이터에서 메뉴 상세 정보 가져오기
+    async function fetchEnhancedMealDetails(mealName) {
+        try {
+            // 날짜와 선택된 급식 유형 확인
+            const dateStr = formatDate(appState.currentDate);
+            
+            // 년월일 분리
+            const year = appState.currentDate.getFullYear();
+            const month = String(appState.currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(appState.currentDate.getDate()).padStart(2, '0');
+            const yearMonth = `${year}${month}`;
+            const fullDate = `${yearMonth}${day}`;
+            
+            // 메뉴 아이템 정보 찾기
+            let menuItemInfo = null;
+            let mealTypeKorean = '';
+            
+            // 캐시에서 메뉴 정보 찾기
+            if (mealDataCache[yearMonth] && mealDataCache[yearMonth][fullDate]) {
+                const mealData = mealDataCache[yearMonth][fullDate];
+                
+                // 각 급식 유형에서 해당 메뉴 찾기
+                ['조식', '중식', '석식'].forEach(type => {
+                    if (!menuItemInfo && mealData[type]) {
+                        const found = mealData[type].find(item => item.name === mealName);
+                        if (found) {
+                            menuItemInfo = found;
+                            mealTypeKorean = type;
+                        }
+                    }
+                });
+            }
+            
+            // 원산지, 칼로리, 영양정보 찾기
+            let originInfo = '정보 없음';
+            let calorieInfo = '정보 없음';
+            let nutritionInfo = '정보 없음';
+            let mealCount = '정보 없음';
+            
+            // 캐시에서 추가 정보 찾기
+            if (mealTypeKorean && mealDataCache[yearMonth] && mealDataCache[yearMonth][fullDate]) {
+                if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_원산지`]) {
+                    originInfo = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_원산지`];
+                }
+                
+                if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_칼로리`]) {
+                    calorieInfo = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_칼로리`];
+                }
+                
+                if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_영양정보`]) {
+                    nutritionInfo = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_영양정보`];
+                }
+                
+                if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_인원수`]) {
+                    mealCount = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_인원수`];
+                }
+            }
+            
+            // 1. 이미지 검색 - 유동적으로 실제 검색 이미지 사용
+            const imageUrl = await searchMealImage(mealName);
+            
+            // 2. 메뉴 설명 - 실제 API가 제공하지 않으므로 메뉴 이름만 사용
+            const description = await searchMealDescription(mealName);
+            
+            // 결과 렌더링
+            renderEnhancedMealDetails(
+                mealName, 
+                imageUrl, 
+                description, 
+                menuItemInfo ? menuItemInfo.allergens : [],
+                originInfo,
+                calorieInfo,
+                nutritionInfo,
+                mealCount
+            );
+        } catch (error) {
+            console.error('메뉴 상세 정보를 가져오는 중 오류 발생:', error);
+            
+            // 오류 시 기본 정보 표시
+            renderMealDetailsError(mealName);
+        }
+    }
+
+    // 개선된 메뉴 상세 정보 렌더링
+// 개선된 메뉴 상세 정보 렌더링
+// 개선된 메뉴 상세 정보 렌더링 함수 수정
+    function renderEnhancedMealDetails(mealName, imageUrl, description, allergens, originInfo, calorieInfo, nutritionInfo, mealCount) {
+        let content = '';
+        
+        // 이미지 섹션 - 이미지가 없을 경우도 처리
+        if (imageUrl) {
+            content += `
+            <div>
+                <div class="meal-detail-image" style="background-image: url('${imageUrl}');">
+                </div>
+                <p class="meal-image-disclaimer">본 사진은 예시 사진입니다. 정확하지 않을 수 있습니다.</p>
+            </div>
+            `;
+        } else {
+            // 이미지 없는 경우 대체 디자인
+            content += `
+            <div>
+                <div class="meal-detail-no-image">
+                    <div class="meal-detail-image-placeholder">
+                    <i class="fas fa-utensils"></i>
+                    <p>이미지를 찾을 수 없습니다</p>
+                    </div>
+                </div>
+                <p class="meal-image-disclaimer">본 사진은 예시 사진입니다. 정확하지 않을 수 있습니다.</p>
+            </div>
+            `;
+        }
+        
+        // 제목 및 설명 섹션
+        content += `
+            <div class="meal-detail-header">
+            <h4 class="meal-detail-title">${mealName}</h4>
+            <p class="meal-detail-description">${description}</p>
+            </div>
+        `;
+        
+        // 급식 인원 정보 (있을 경우만)
+        if (mealCount && mealCount !== '정보 없음') {
+            content += `
+            <div class="info-item">
+                <div class="info-label"><i class="fas fa-users"></i> 급식 인원</div>
+                <div class="info-value">${mealCount}명</div>
+            </div>
+            `;
+        }
+        
+        
+        // 원산지 정보 (있을 경우만)
+        if (originInfo && originInfo !== '정보 없음') {
+            content += `
+            <div class="info-item">
+                <div class="info-label"><i class="fas fa-globe-asia"></i> 원산지 정보</div>
+                <div class="info-value">${originInfo}</div>
+            </div>
+            `;
+        }
+        
+        // 영양 정보 섹션 제거 (요청에 따라)
+        // 이 부분에 있던 영양 정보 표시 코드를 삭제했습니다
+        
+        // 알레르기 정보 (있을 경우만)
+        if (allergens && allergens.length > 0) {
+            content += `
+            <div class="info-item">
+                <div class="info-label"><i class="fas fa-exclamation-triangle"></i> 알레르기 정보</div>
+                <div class="info-value">
+                ${allergens.map(allergen => `<span class="allergen-tag">${allergen}</span>`).join(' ')}
+                </div>
+            </div>
+            `;
+        }
+        
+        // 액션 버튼 섹션
+        content += `
+            <div class="meal-actions-row">
+            <button class="meal-action-btn" onclick="searchOnGoogle('${mealName} 레시피')">
+                <i class="fas fa-utensils"></i> 레시피 검색
+            </button>
+            <button class="meal-action-btn" onclick="shareMeal('${mealName}')">
+                <i class="fas fa-share-alt"></i> 공유하기
+            </button>
+            </div>
+        `;
+        
+        mealDetailContent.innerHTML = content;
+    }
+
+        // 메뉴 상세 정보 로딩 오류 시 대체 화면
+        function renderMealDetailsError(mealName) {
+            mealDetailContent.innerHTML = `
+                <div class="meal-detail-no-image">
+                    <div class="meal-detail-image-placeholder">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>이미지를 불러올 수 없습니다</p>
+                    </div>
+                </div>
+                
+                <div class="meal-detail-header">
+                    <h4 class="meal-detail-title">${mealName}</h4>
+                    <p class="meal-detail-description">
+                    이 메뉴에 대한 상세 정보를 불러오지 못했습니다. 
+                    네트워크 연결을 확인하거나 잠시 후 다시 시도해주세요.
+                    </p>
+                </div>
+                
+                <div class="meal-actions-row">
+                    <button class="meal-action-btn" onclick="searchOnGoogle('${mealName}')">
+                    <i class="fas fa-search"></i> 구글에서 검색
+                    </button>
+                    <button class="meal-action-btn" onclick="closeMealDetail()">
+                    <i class="fas fa-times"></i> 닫기
+                    </button>
+                </div>
+            `;
+        }
+
+    // URL 매개변수 확인 및 처리
+    function checkUrlParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const dateParam = urlParams.get('date');
+        const mealParam = urlParams.get('meal');
+        
+        // 날짜 매개변수가 있으면 해당 날짜 데이터 로드
+        if (dateParam) {
+            try {
+                const paramDate = new Date(dateParam);
+                if (!isNaN(paramDate.getTime())) {
+                    appState.currentDate = paramDate;
+                    dateSelector.value = formatDate(paramDate);
+                    updateCurrentDateDisplay(paramDate);
+                    fetchMealData(formatDate(paramDate));
+                }
+            } catch (e) {
+                console.error('URL 날짜 매개변수 오류:', e);
+            }
+        }
+        
+        // 급식 유형 매개변수가 있으면 해당 탭으로 전환
+        if (mealParam && ['breakfast', 'lunch', 'dinner'].includes(mealParam)) {
+            appState.currentMealType = mealParam;
+            
+            // 탭 업데이트
+            mealTabs.forEach(tab => {
+                if (tab.dataset.mealType === mealParam) {
+                    // 활성 탭 업데이트
+                    mealTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // 탭 인디케이터 이동
+                    const tabWidth = 100 / mealTabs.length;
+                    const index = Array.from(mealTabs).findIndex(t => t.dataset.mealType === mealParam);
+                    tabIndicator.style.width = `${tabWidth}%`;
+                    tabIndicator.style.left = `${tabWidth * index}%`;
+                }
+            });
+        }
+    }
+    
+    // 경주시 위치 정보
+    function getUserLocation() {
+        // 경주시 좌표
+        appState.userLocation = {
+            lat: 35.8563,
+            lon: 129.2247
+        };
+        
+        // 날씨 정보 가져오기
+        fetchWeatherData();
+    }
+    
+    // 전역 함수 설정
+    function setupGlobalFunctions() {
+        // 구글 검색 함수
+
+            // 설정 모달 표시
+      window.showSettingsModal = function() {
+        calculateCacheSize();
+        settingsModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      };
+
+      // 설정 모달 닫기
+      window.closeSettingsModal = function() {
+        settingsModal.classList.remove('show');
+        document.body.style.overflow = '';
+      };
+
+      // 모든 캐시 데이터 삭제
+      window.clearAllCache = function() {
+        try {
+          // 급식 데이터 캐시 삭제
+          localStorage.removeItem(CACHE_STORAGE_KEY);
+          Object.keys(mealDataCache).forEach(key => {
+            delete mealDataCache[key];
+          });
+          
+          // 이미지 캐시 삭제
+          localStorage.removeItem(IMAGE_CACHE_STORAGE_KEY);
+          Object.keys(imageSearchCache).forEach(key => {
+            delete imageSearchCache[key];
+          });
+          
+          // 캐시 크기 업데이트
+          calculateCacheSize();
+          
+          showToast('success', '모든 캐시 데이터가 삭제되었습니다.');
+        } catch (error) {
+          console.error('캐시 삭제 오류:', error);
+          showToast('error', '캐시 삭제 중 오류가 발생했습니다.');
+        }
+      };
+
+
+        window.searchOnGoogle = function(keyword) {
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(keyword)}`, '_blank');
+            showToast('info', `"${keyword}" 검색 결과를 새 탭에서 열었습니다.`);
+        };
+        
+        // 메뉴 상세 정보 모달 표시 (완전 재구현)
+    window.showMealDetail = function(mealName) {
+        // 이벤트 전파 중지 (클릭 이벤트가 모달까지 전파되는 것 방지)
+        event && event.stopPropagation();
+        
+        const modal = document.getElementById('mealDetailModal');
+        if (!modal) {
+            console.error('메뉴 상세 모달 요소를 찾을 수 없음');
+            return;
+        }
+        
+        // 모달 제목 설정
+        const titleElement = document.getElementById('mealDetailTitle');
+        if (titleElement) titleElement.textContent = mealName;
+        
+        // 로딩 상태 표시
+        const contentElement = document.getElementById('mealDetailContent');
+        if (contentElement) {
+            contentElement.innerHTML = `
+                <div class="loading-container">
+                <div class="loading-spinner">
+                    <div class="loading-cube">
+                    <div class="loading-face face-front"></div>
+                    <div class="loading-face face-back"></div>
+                    <div class="loading-face face-right"></div>
+                    <div class="loading-face face-left"></div>
+                    <div class="loading-face face-top"></div>
+                    <div class="loading-face face-bottom"></div>
+                    </div>
+                </div>
+                <div class="loading-text">상세 정보를 불러오는 중...</div>
+                </div>
+            `;
+        }
+        
+        // 모달 표시
+        modal.style.display = 'flex';
+        modal.style.opacity = '1';
+        modal.style.visibility = 'visible';
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        
+        console.log('메뉴 상세 모달 표시됨:', mealName);
+        
+        // 상세 정보 가져오기
+        setTimeout(() => {
+            fetchEnhancedMealDetails(mealName)
+            .catch(error => {
+                console.error('메뉴 상세 정보 가져오기 실패:', error);
+                renderMealDetailsError(mealName);
+            })
+            .finally(() => {
+                // 모든 버튼에 이벤트 전파 중지 적용
+                const allButtons = modal.querySelectorAll('button, a, .meal-action-btn');
+                allButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                });
+            });
+        }, 50);
+    };
+    
+    // 메뉴 상세 모달 닫기 (완전 재구현)
+    window.closeMealDetail = function(event) {
+        if (event) event.stopPropagation();
+        
+        const modal = document.getElementById('mealDetailModal');
+        if (modal) {
+            modal.classList.remove('show');
+            modal.style.opacity = '0';
+            modal.style.visibility = 'hidden';
+            
+            // 약간의 딜레이 후 display 변경 (전환 효과를 위해)
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+            
+            console.log('메뉴 상세 모달 닫힘');
+        }
+    };
+        
+        // 메뉴 공유 함수
+        window.shareMeal = function(mealName) {
+            // 메뉴 상세 모달이 열려있다면 닫기
+            closeMealDetail();
+            
+            // 공유 링크 업데이트
+            const shareDate = formatDate(appState.currentDate);
+            const shareUrl = `${window.location.origin}?date=${shareDate}&meal=${appState.currentMealType}&item=${encodeURIComponent(mealName)}`;
+            shareLinkInput.value = shareUrl;
+            
+            // 모달 표시
+            shareModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        // SNS 공유 함수
+        window.shareToSNS = function(platform) {
+            const shareUrl = shareLinkInput.value;
+            const shareTitle = `경공급식 - ${formatDateToKorean(appState.currentDate)} ${MEAL_TIMES[appState.currentMealType].name} 메뉴`;
+            let shareLink = '';
+            
+            // 웹 공유 API 사용 시도
+            if (navigator.share && platform !== 'copyLink') {
+                navigator.share({
+                    title: shareTitle,
+                    text: `${appState.currentMealType}에 나온 급식 메뉴입니다!`,
+                    url: shareUrl,
+                })
+                .then(() => {
+                    showToast('success', '공유에 성공했습니다!');
+                    closeShareModal();
+                })
+                .catch((error) => {
+                    console.warn('공유 실패:', error);
+                    // 폴백 방식으로 계속 진행
+                    shareWithFallback();
+                });
+                return;
+            }
+            
+            // 폴백 방식으로 공유
+            shareWithFallback();
+            
+            function shareWithFallback() {
+                switch(platform) {
+                    case 'kakaotalk':
+                        // 카카오 SDK를 통한 공유 구현
+                        // 카카오 SDK가 없는 경우 링크 복사
+                        copyShareLink();
+                        showToast('info', '카카오톡으로 공유하려면 링크를 복사하여 붙여넣기 해주세요.');
+                        break;
+                    case 'facebook':
+                        shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                        window.open(shareLink, '_blank', 'width=600,height=400');
+                        showToast('success', '페이스북으로 공유합니다.');
+                        break;
+                    case 'twitter':
+                        shareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`;
+                        window.open(shareLink, '_blank', 'width=600,height=400');
+                        showToast('success', '트위터로 공유합니다.');
+                        break;
+                    case 'line':
+                        shareLink = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}`;
+                        window.open(shareLink, '_blank', 'width=600,height=600');
+                        showToast('success', '라인으로 공유합니다.');
+                        break;
+                    case 'telegram':
+                        shareLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`;
+                        window.open(shareLink, '_blank', 'width=600,height=400');
+                        showToast('success', '텔레그램으로 공유합니다.');
+                        break;
+                    default:
+                        copyShareLink();
+                }
+            }
+        };
+        
+        // 사용 가이드 모달 표시
+        window.showUsageGuideModal = function() {
+            usageGuideModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        // 사용 가이드 모달 닫기
+        window.closeUsageGuideModal = function() {
+            usageGuideModal.classList.remove('show');
+            document.body.style.overflow = '';
+        };
+        
+        // 상세정보 모달 닫기
+        window.closeMealDetail = function() {
+            mealDetailModal.classList.remove('show');
+            document.body.style.overflow = '';
+        };
+        
+        // 공유 모달 닫기
+        window.closeShareModal = function() {
+            shareModal.classList.remove('show');
+            document.body.style.overflow = '';
+        };
+        
+        // 링크 복사 함수
+        window.copyShareLink = function() {
+            try {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(shareLinkInput.value)
+                        .then(() => {
+                            showToast('success', '링크가 클립보드에 복사되었습니다!');
+                        })
+                        .catch((err) => {
+                            console.error('클립보드 복사 오류:', err);
+                            fallbackCopy();
+                        });
+                } else {
+                    fallbackCopy();
+                }
+            } catch (err) {
+                fallbackCopy();
+            }
+            
+            function fallbackCopy() {
+                shareLinkInput.select();
+                shareLinkInput.setSelectionRange(0, 99999);
+                document.execCommand('copy');
+                showToast('success', '링크가 복사되었습니다!');
+            }
+        };
+        
+        // 앱 다운로드 함수
+        window.downloadApp = function() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            let storeUrl = '';
+            
+            if (/android/i.test(userAgent)) {
+                storeUrl = 'https://play.google.com/store/apps/details?id=kr.gyeongong.mealapp';
+                showToast('info', '구글 플레이스토어로 이동합니다.');
+            } else if (/iphone|ipad|ipod/i.test(userAgent)) {
+                storeUrl = 'https://apps.apple.com/kr/app/경공급식/id123456789';
+                showToast('info', '앱스토어로 이동합니다.');
+            } else {
+                storeUrl = '/#download';
+                showToast('info', '다운로드 페이지로 이동합니다.');
+            }
+            
+            setTimeout(() => {
+                window.location.href = storeUrl;
+            }, 1000);
+        };
+    }
+    
+    // 날짜 선택기 설정 함수
+    function setupDateSelector() {
+        // 오늘 날짜로 날짜 선택기 초기화
+        const today = new Date();
+        dateSelector.valueAsDate = today;
+        
+        // 날짜 선택 이벤트 리스너
+        dateSelector.addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            appState.currentDate = selectedDate;
+            
+            updateCurrentDateDisplay(selectedDate);
+            
+            // 급식 데이터 표시 (캐시 활용)
+            showMealContent(appState.currentMealType);
+            
+            // 주간 캘린더 활성 날짜 업데이트
+            updateWeeklyCalendarActiveDate(selectedDate);
+            
+            // 현재 날짜를 localStorage에 저장
+            localStorage.setItem(LAST_VISITED_DATE_KEY, formatDate(selectedDate));
+        });
+    }
+    
+    // 급식 조회 폼 설정
+    function setupMealForm() {
+        mealForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const selectedDate = new Date(dateSelector.value);
+            if (isNaN(selectedDate.getTime())) {
+                showToast('error', '유효한 날짜를 선택해주세요.');
+                return;
+            }
+            
+            appState.currentDate = selectedDate;
+            updateCurrentDateDisplay(selectedDate);
+            
+            // 급식 데이터 표시 (캐시 활용)
+            showMealContent(appState.currentMealType);
+            
+            // 주간 캘린더 활성 날짜 업데이트
+            updateWeeklyCalendarActiveDate(selectedDate);
+            
+            // 현재 날짜를 localStorage에 저장
+            localStorage.setItem(LAST_VISITED_DATE_KEY, formatDate(selectedDate));
+        });
+    }
+    
+    // 급식 데이터에서 날짜 데이터 가져오기
+    function getMealDataForDate(fullDate, yearMonth) {
+        // 해당 날짜에 급식 데이터가 없는 경우
+        if (!mealDataCache[yearMonth] || !mealDataCache[yearMonth][fullDate]) {
+            console.log(`${fullDate} 날짜에 급식 데이터 없음`);
+            return {
+                breakfast: [],
+                lunch: [],
+                dinner: []
+            };
+        }
+        
+        const cachedData = mealDataCache[yearMonth][fullDate];
+        
+        // 앱에서 사용하는 형식으로 변환
+        return {
+            breakfast: cachedData['조식'] || [],
+            lunch: cachedData['중식'] || [],
+            dinner: cachedData['석식'] || []
+        };
+    }
+
+    // 급식 메뉴 파싱
+    function parseMealMenu(menuStr) {
+        if (!menuStr) return [];
+        
+        // <br/>를 구분자로 사용하여 메뉴 항목을 분리
+        const menuItems = menuStr.split('<br/>').map(item => {
+            // 알레르기 정보 추출 (1.우유 2.계란 등)
+            const allergyMatch = item.match(/\(\d+\..*?\)/g);
+            let allergens = [];
+            let cleanItem = item;
+            
+            if (allergyMatch) {
+                allergyMatch.forEach(match => {
+                    const allergenCodes = match.match(/\d+/g);
+                    if (allergenCodes) {
+                        allergens = allergenCodes.map(code => {
+                            // 알레르기 코드에 따른 이름 매핑
+                            const allergenMap = {
+                                '1': '난류', '2': '우유', '3': '메밀', '4': '땅콩',
+                                '5': '대두', '6': '밀', '7': '고등어', '8': '게',
+                                '9': '새우', '10': '돼지고기', '11': '복숭아', '12': '토마토',
+                                '13': '아황산류', '14': '호두', '15': '닭고기', '16': '쇠고기',
+                                '17': '오징어', '18': '조개류', '19': '잣'
+                            };
+                            return allergenMap[code] || `알레르기${code}`;
+                        });
+                    }
+                    
+                    // 알레르기 정보 제거하고 깨끗한 항목명만 남김
+                    cleanItem = cleanItem.replace(match, '');
+                });
+            }
+            
+            return {
+                name: cleanItem.trim(),
+                allergens
+            };
+        }).filter(item => item.name && item.name.length > 0); // 빈 항목 제거
+        
+        return menuItems;
+    }
+
+    // 급식 데이터 처리 및 캐싱
+    function processAndCacheMealData(meals, yearMonth) {
+        console.log('급식 데이터 처리 및 캐싱 시작');
+        
+        // 캐시 객체 초기화
+        if (!mealDataCache[yearMonth]) {
+            mealDataCache[yearMonth] = {};
+        }
+        
+        // 각 급식을 일자별로 분류
+        meals.forEach(meal => {
+            const date = meal.MLSV_YMD; // YYYYMMDD 형식의 날짜
+            const mealType = meal.MMEAL_SC_NM; // 조식, 중식, 석식
+            
+            // 해당 일자의 캐시가 없으면 초기화
+            if (!mealDataCache[yearMonth][date]) {
+                mealDataCache[yearMonth][date] = {
+                    '조식': [],
+                    '중식': [],
+                    '석식': [],
+                    '조식_원산지': '',
+                    '중식_원산지': '',
+                    '석식_원산지': '',
+                    '조식_칼로리': '',
+                    '중식_칼로리': '',
+                    '석식_칼로리': '',
+                    '조식_영양정보': '',
+                    '중식_영양정보': '',
+                    '석식_영양정보': '',
+                    '조식_인원수': '',
+                    '중식_인원수': '',
+                    '석식_인원수': ''
+                };
+            }
+            
+            // 메뉴 파싱 및 저장
+            const menuItems = parseMealMenu(meal.DDISH_NM || '');
+            mealDataCache[yearMonth][date][mealType] = menuItems;
+            
+            // 추가 정보 저장 (API에서 제공하는 경우)
+            if (meal.ORPLC_INFO) {
+                mealDataCache[yearMonth][date][`${mealType}_원산지`] = meal.ORPLC_INFO;
+            }
+            
+            if (meal.CAL_INFO) {
+                mealDataCache[yearMonth][date][`${mealType}_칼로리`] = meal.CAL_INFO;
+            }
+            
+            if (meal.NTR_INFO) {
+                mealDataCache[yearMonth][date][`${mealType}_영양정보`] = meal.NTR_INFO;
+            }
+            
+            if (meal.MLSV_FGR) {
+                mealDataCache[yearMonth][date][`${mealType}_인원수`] = meal.MLSV_FGR;
+            }
+            
+            console.log(`${date} ${mealType} 메뉴 항목 ${menuItems.length}개 처리 완료`);
+        });
+        
+        console.log(`${yearMonth} 월 급식 데이터 캐싱 완료:`, Object.keys(mealDataCache[yearMonth]).length, '일자');
+        
+        // localStorage에 저장
+        saveCache();
+    }
+
+    // 급식 데이터 표시
+    function displayMealData(mealData) {
+        console.log('급식 데이터 표시:', mealData);
+        
+        // 급식 데이터가 모두 비어있는지 확인
+        const isEmpty = (
+            (!mealData.breakfast || mealData.breakfast.length === 0) && 
+            (!mealData.lunch || mealData.lunch.length === 0) && 
+            (!mealData.dinner || mealData.dinner.length === 0)
+        );
+        
+        if (isEmpty) {
+            // 모든 급식 정보가 없는 경우
+            showNoMealMessage("선택하신 날짜에 제공되는 급식 정보가 없습니다.");
+            return;
+        }
+        
+        // 각 급식 유형별 메뉴 항목 렌더링
+        renderMealContent(appState.currentMealType, mealData);
+    }
+
+    // 급식 데이터 가져오기
+    async function fetchMealData(date, skipUI = false) {
+        // 로딩 표시
+        if (!skipUI) {
+            loadingElement.classList.remove('d-none');
+            mealContent.classList.add('d-none');
+        }
+        
+        try {
+            // 날짜 파싱
+            const dateObj = new Date(date);
+            if (isNaN(dateObj.getTime())) {
+                throw new Error('유효하지 않은 날짜 형식입니다.');
+            }
+            
+            // 날짜에서 년월 추출 (YYYYMM)
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const yearMonth = `${year}${month}`;
+            
+            // 선택한 날짜의 일(day)
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const fullDate = `${yearMonth}${day}`;
+            
+            // 이미 캐시에 해당 월 데이터가 있는지 확인
+            if (mealDataCache[yearMonth]) {
+                console.log(`캐시에서 ${yearMonth} 데이터 로드`);
+                
+                // 로딩 숨기기
+                if (!skipUI) {
+                    loadingElement.classList.add('d-none');
+                    mealContent.classList.remove('d-none');
+                }
+                
+                // 캐시된 데이터 반환 및 표시
+                const mealData = getMealDataForDate(fullDate, yearMonth);
+                
+                if (!skipUI) {
+                    // mealContainer를 초기화하고 표시
+                    displayMealData(mealData);
+                }
+                
+                return mealData;
+            }
+            
+            // API 호출 파라미터
+            const educationCode = "R10"; // 경기도 교육청 코드
+            const schoolCode = "8750225"; // 학교 코드
+            const apiKey = "dd0625245ee24939a5d7c24a3353ef67"; // API 키 (통합테스트 키)
+            
+            // NEIS API URL 구성 - 월 단위로 요청 (날짜 범위를 지정하지 않고 월만 지정)
+            const neisUrl = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${apiKey}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${educationCode}&SD_SCHUL_CODE=${schoolCode}&MLSV_YMD=${yearMonth}`;
+            
+            console.log(`API 요청: ${neisUrl}`);
+            
+            // API 요청
+            const response = await fetch(neisUrl);
+            
+            if (!response.ok) {
+                throw new Error(`API 응답 오류: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // API 응답에 오류 코드가 있는지 확인
+            if (data.RESULT) {
+                // 급식 정보가 없는 경우 (API에서 오류 코드 반환)
+                if (data.RESULT.CODE === 'INFO-200') {
+                    console.log('API 응답: 급식 정보 없음 (INFO-200)');
+                    
+                    // 캐시에 빈 데이터 저장 (불필요한 재요청 방지)
+                    mealDataCache[yearMonth] = {};
+                    saveCache(); // localStorage 저장
+                    
+                    if (!skipUI) {
+                        loadingElement.classList.add('d-none');
+                        mealContent.classList.remove('d-none');
+                        showNoMealMessage("해당 월에 등록된 급식 정보가 없습니다.");
+                        showToast('info', "해당 월에 등록된 급식 정보가 없습니다.");
+                    }
+                    
+                    return {
+                        breakfast: [],
+                        lunch: [],
+                        dinner: []
+                    };
+                }
+                
+                // 다른 API 오류인 경우
+                console.error('API 오류:', data.RESULT.MESSAGE);
+                
+                if (!skipUI) {
+                    loadingElement.classList.add('d-none');
+                    mealContent.classList.remove('d-none');
+                    showToast('error', `API 오류: ${data.RESULT.MESSAGE}`);
+                    showNoMealMessage(`API 오류: ${data.RESULT.MESSAGE}`);
+                }
+                
+                return {
+                    breakfast: [],
+                    lunch: [],
+                    dinner: []
+                };
+            }
+            
+            // 급식 데이터 처리
+            if (data.mealServiceDietInfo && 
+                data.mealServiceDietInfo.length > 1 && 
+                data.mealServiceDietInfo[1].row) {
+                
+                // 급식 데이터가 있는 경우
+                const meals = data.mealServiceDietInfo[1].row;
+                console.log(`API에서 받은 급식 데이터 개수: ${meals.length}`);
+                
+                if (meals.length > 0) {
+                    // 일자별로 급식 데이터 구성하여 캐시에 저장
+                    processAndCacheMealData(meals, yearMonth);
+                    
+                    // 현재 선택된 날짜의 급식 정보 표시
+                    const mealData = getMealDataForDate(fullDate, yearMonth);
+                    
+                    if (!skipUI) {
+                        loadingElement.classList.add('d-none');
+                        mealContent.classList.remove('d-none');
+                        displayMealData(mealData);
+                        showToast('success', '급식 정보를 성공적으로 불러왔습니다!');
+                    }
+                    
+                    return mealData;
+                } else {
+                    // 급식 데이터는 있지만 항목이 없는 경우
+                    mealDataCache[yearMonth] = {};
+                    saveCache(); // localStorage 저장
+                    
+                    if (!skipUI) {
+                        loadingElement.classList.add('d-none');
+                        mealContent.classList.remove('d-none');
+                        showNoMealMessage("해당 월에 등록된 급식 정보가 없습니다.");
+                    }
+                    
+                    return {
+                        breakfast: [],
+                        lunch: [],
+                        dinner: []
+                    };
+                }
+            } else {
+                // API 응답에 급식 데이터가 없는 경우
+                console.log('API 응답에 급식 데이터가 없음');
+                mealDataCache[yearMonth] = {};
+                saveCache(); // localStorage 저장
+                
+                if (!skipUI) {
+                    loadingElement.classList.add('d-none');
+                    mealContent.classList.remove('d-none');
+                    showNoMealMessage("해당 월에 등록된 급식 정보가 없습니다.");
+                }
+                
+                return {
+                    breakfast: [],
+                    lunch: [],
+                    dinner: []
+                };
+            }
+        } catch (error) {
+            console.error('급식 데이터 가져오기 오류:', error);
+            
+            if (!skipUI) {
+                loadingElement.classList.add('d-none');
+                mealContent.classList.remove('d-none');
+                showToast('error', `급식 정보를 불러오는 중 오류가 발생했습니다: ${error.message}`);
+                showNoMealMessage("급식 정보를 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+            }
+            
+            return {
+                breakfast: [],
+                lunch: [],
+                dinner: []
+            };
+        }
+    }
+    
+    // 선택한 메뉴 유형 표시
+    function showMealContent(mealType) {
+        const currentDateStr = formatDate(appState.currentDate);
+        console.log(`showMealContent: ${mealType}, date: ${currentDateStr}`);
+        
+        // 날짜 분해
+        const year = appState.currentDate.getFullYear();
+        const month = String(appState.currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(appState.currentDate.getDate()).padStart(2, '0');
+        const yearMonth = `${year}${month}`;
+        const fullDate = `${yearMonth}${day}`;
+        
+        // 캐시에서 데이터 확인
+        let mealData;
+        
+        if (mealDataCache[yearMonth] && mealDataCache[yearMonth][fullDate]) {
+            // 캐시에 데이터가 있는 경우
+            const cachedData = mealDataCache[yearMonth][fullDate];
+            console.log('캐시에서 데이터 로드:', cachedData);
+            
+            // 앱 형식으로 변환
+            mealData = {
+                breakfast: cachedData['조식'] || [],
+                lunch: cachedData['중식'] || [],
+                dinner: cachedData['석식'] || []
+            };
+            
+            // UI 업데이트
+            renderMealContent(mealType, mealData);
+        } else {
+            // 캐시에 데이터가 없는 경우
+            console.log('캐시에 데이터 없음, API 요청 시도');
+            
+            // API에서 데이터 로드 (표시와 별도의 프로세스로)
+            fetchMealData(currentDateStr).then(() => {
+                // 다시 캐시 확인
+                if (mealDataCache[yearMonth] && mealDataCache[yearMonth][fullDate]) {
+                    const refreshedData = mealDataCache[yearMonth][fullDate];
+                    
+                    const refreshedMealData = {
+                        breakfast: refreshedData['조식'] || [],
+                        lunch: refreshedData['중식'] || [],
+                        dinner: refreshedData['석식'] || []
+                    };
+                    
+                    renderMealContent(mealType, refreshedMealData);
+                } else {
+                    renderEmptyMealContent(mealType);
+                }
+            });
+            
+            // 일단 빈 데이터로 표시
+            renderEmptyMealContent(mealType);
+        }
+    }
+    
+    // 급식 없음 메시지 표시
+    function renderEmptyMealContent(mealType) {
+        const mealInfo = MEAL_TIMES[mealType];
+        const currentDate = formatDateToKorean(appState.currentDate);
+        
+        mealContainer.innerHTML = `
+            <div class="no-meal-message">
+            <div class="no-meal-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <h3 class="no-meal-title">${currentDate} ${mealInfo.name} 정보가 없습니다</h3>
+            <p class="no-meal-text">선택하신 날짜에 제공되는 ${mealInfo.name} 정보가 없습니다. 다른 날짜나 다른 급식 시간을 선택해보세요.</p>
+            </div>
+        `;
+    }
+    
+    // 급식 정보 없음 메시지 표시 (오류용)
+    function showNoMealMessage(message = "선택하신 날짜의 급식 정보가 없습니다") {
+        const currentDate = formatDateToKorean(appState.currentDate);
+        
+        mealContainer.innerHTML = `
+            <div class="no-meal-message">
+            <div class="no-meal-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3 class="no-meal-title">${currentDate} 급식 정보 없음</h3>
+            <p class="no-meal-text">${message}</p>
+            </div>
+        `;
+    }
+    
+    // 날짜 네비게이션 설정
+    function setupDateNavigation() {
+        prevDateBtn.addEventListener('click', function() {
+            const previousDate = new Date(appState.currentDate);
+            previousDate.setDate(previousDate.getDate() - 1);
+            appState.currentDate = previousDate;
+            
+            dateSelector.value = formatDate(previousDate);
+            updateCurrentDateDisplay(previousDate);
+            
+            // 급식 데이터 표시 (캐시 활용)
+            showMealContent(appState.currentMealType);
+            
+            // 주간 캘린더 활성 날짜 업데이트
+            updateWeeklyCalendarActiveDate(previousDate);
+            
+            // 현재 날짜를 localStorage에 저장
+            localStorage.setItem(LAST_VISITED_DATE_KEY, formatDate(previousDate));
+        });
+        
+        nextDateBtn.addEventListener('click', function() {
+            const nextDate = new Date(appState.currentDate);
+            nextDate.setDate(nextDate.getDate() + 1);
+            appState.currentDate = nextDate;
+            
+            dateSelector.value = formatDate(nextDate);
+            updateCurrentDateDisplay(nextDate);
+            
+            // 급식 데이터 표시 (캐시 활용)
+            showMealContent(appState.currentMealType);
+            
+            // 주간 캘린더 활성 날짜 업데이트
+            updateWeeklyCalendarActiveDate(nextDate);
+            
+            // 현재 날짜를 localStorage에 저장
+            localStorage.setItem(LAST_VISITED_DATE_KEY, formatDate(nextDate));
+        });
+    }
+    
+    // 주간 네비게이션 설정
+    function setupWeeklyNavigation() {
+        prevWeekBtn.addEventListener('click', function() {
+            if (appState.weeklyStartDate) {
+                const newStartDate = new Date(appState.weeklyStartDate);
+                newStartDate.setDate(newStartDate.getDate() - 7);
+                loadWeeklyData(newStartDate);
+            }
+        });
+        
+        nextWeekBtn.addEventListener('click', function() {
+            if (appState.weeklyEndDate) {
+                const newStartDate = new Date(appState.weeklyEndDate);
+                newStartDate.setDate(newStartDate.getDate() + 1);
+                loadWeeklyData(newStartDate);
+            }
+        });
+    }
+    
+    // 주간 캘린더 활성 날짜 업데이트
+    function updateWeeklyCalendarActiveDate(date) {
+        const dateStr = formatDate(date);
+        const weekdayCards = document.querySelectorAll('.weekday-card');
+        
+        weekdayCards.forEach(card => {
+            if (card.dataset.date === dateStr) {
+                weekdayCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                
+                // 화면에 보이게 스크롤
+                card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        });
+        
+        // 현재 날짜가 표시된 주간 범위를 벗어났다면 주간 데이터 다시 로드
+        if (!isDateInWeeklyRange(date)) {
+            loadWeeklyData(date);
+        }
+    }
+    
+    // 날짜가 현재 표시된 주간 범위 내에 있는지 확인
+    function isDateInWeeklyRange(date) {
+        if (!appState.weeklyStartDate || !appState.weeklyEndDate) {
+            return false;
+        }
+        
+        const timestamp = date.getTime();
+        return timestamp >= appState.weeklyStartDate.getTime() && 
+                timestamp <= appState.weeklyEndDate.getTime();
+    }
+    
+    // 주간 캘린더 로드
+    async function loadWeeklyData(baseDate) {
+        // 로딩 표시
+        weeklyCalendar.innerHTML = `
+            <div class="loading-container">
+            <div class="loading-text">주간 급식 정보를 불러오는 중...</div>
+            </div>
+        `;
+        
+        try {
+            // 주의 시작일 (일요일)과 종료일 (토요일) 계산
+            const currentDay = baseDate.getDay(); // 0: 일요일, 6: 토요일
+            const startDate = new Date(baseDate);
+            startDate.setDate(baseDate.getDate() - currentDay); // 일요일로 이동
+            
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 6); // 토요일로 이동
+            
+            // 앱 상태 업데이트
+            appState.weeklyStartDate = startDate;
+            appState.weeklyEndDate = endDate;
+            
+            // 날짜 범위 내의 모든 날짜의 급식 데이터 가져오기
+            const weekDays = [];
+            const currentDate = new Date(startDate);
+            
+            // 7일 분량의 날짜 데이터 생성
+            while (currentDate <= endDate) {
+                weekDays.push({
+                    date: new Date(currentDate),
+                    dateStr: formatDate(currentDate),
+                    formattedDate: formatDateShort(currentDate),
+                    weekday: getWeekdayName(currentDate),
+                    isActive: isSameDate(currentDate, appState.currentDate)
+                });
+                
+                // 다음 날짜로 이동
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            
+            // 월별로 필요한 데이터 미리 로드
+            const uniqueMonths = [...new Set(weekDays.map(day => {
+                const year = day.date.getFullYear();
+                const month = String(day.date.getMonth() + 1).padStart(2, '0');
+                return `${year}${month}`;
+            }))];
+            
+            // 각 월의 데이터 로드 (캐시에 없는 경우만)
+            const fetchPromises = [];
+            for (const yearMonth of uniqueMonths) {
+                if (!mealDataCache[yearMonth]) {
+                    // API 호출 필요
+                    const year = yearMonth.substring(0, 4);
+                    const month = yearMonth.substring(4, 6);
+                    const firstDayOfMonth = `${year}-${month}-01`;
+                    
+                    fetchPromises.push(fetchMealData(firstDayOfMonth, true));
+                }
+            }
+            
+            // 모든 데이터 로드 대기
+            if (fetchPromises.length > 0) {
+                await Promise.all(fetchPromises);
+            }
+            
+            // 주간 캘린더 렌더링
+            renderWeeklyCalendar(weekDays);
+        } catch (error) {
+            console.error('주간 급식 데이터를 불러오는 중 오류 발생:', error);
+            
+            // 오류 시 대체 메시지 표시
+            weeklyCalendar.innerHTML = `
+            <div class="no-meal-message">
+                <div class="no-meal-icon">
+                <i class="fas fa-calendar-times"></i>
+                </div>
+                <h3 class="no-meal-title">주간 급식 정보를 불러올 수 없습니다</h3>
+                <p class="no-meal-text">네트워크 연결을 확인하거나 잠시 후 다시 시도해주세요.</p>
+            </div>
+            `;
+        }
+    }
+    
+    // 주간 캘린더 렌더링
+    function renderWeeklyCalendar(weekDays) {
+        let html = '';
+        
+        weekDays.forEach(day => {
+            const dateObj = new Date(day.date);
+            const dayOfMonth = dateObj.getDate();
+            const isActive = day.isActive ? 'active' : '';
+            
+            // 날짜 분해
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const dayStr = String(dayOfMonth).padStart(2, '0');
+            const yearMonth = `${year}${month}`;
+            const fullDate = `${yearMonth}${dayStr}`;
+            
+            // 급식 데이터 확인
+            let menuSummary = '';
+            let hasMeals = false;
+            
+            // 캐시에서 해당 날짜 데이터 확인
+            if (mealDataCache[yearMonth] && mealDataCache[yearMonth][fullDate]) {
+                const mealData = mealDataCache[yearMonth][fullDate];
+                
+                // 우선순위: 점심 > 저녁 > 아침
+                if (mealData['중식'] && mealData['중식'].length > 0) {
+                    // 점심 메뉴에서 첫 2개 항목만 표시
+                    menuSummary = mealData['중식'].slice(0, 2).map(item => item.name).join('<br>');
+                    if (mealData['중식'].length > 2) menuSummary += '<br>...';
+                    hasMeals = true;
+                } else if (mealData['석식'] && mealData['석식'].length > 0) {
+                    menuSummary = mealData['석식'].slice(0, 2).map(item => item.name).join('<br>');
+                    if (mealData['석식'].length > 2) menuSummary += '<br>...';
+                    hasMeals = true;
+                } else if (mealData['조식'] && mealData['조식'].length > 0) {
+                    menuSummary = mealData['조식'].slice(0, 2).map(item => item.name).join('<br>');
+                    if (mealData['조식'].length > 2) menuSummary += '<br>...';
+                    hasMeals = true;
+                }
+            }
+            
+            // 주말이거나 급식이 없는 경우
+            if (!hasMeals) {
+                if (dateObj.getDay() === 0 || dateObj.getDay() === 6) {
+                    menuSummary = '주말';
+                } else {
+                    menuSummary = '급식 없음';
+                }
+            }
+            
+            html += `
+            <div class="weekday-card ${isActive}" data-date="${day.dateStr}">
+                <div class="weekday-header">
+                <div class="weekday-name">${day.weekday}</div>
+                <div class="weekday-date">${dayOfMonth}</div>
+                </div>
+                <div class="weekday-body">
+                <div class="weekday-meals">
+                    <div class="weekday-meal">${menuSummary}</div>
+                </div>
+                </div>
+            </div>
+            `;
+        });
+        
+        weeklyCalendar.innerHTML = html;
+        
+        // 이벤트 리스너 추가
+        const weekdayCards = document.querySelectorAll('.weekday-card');
+        weekdayCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const dateStr = this.dataset.date;
+                if (!dateStr) return;
+                
+                // 활성 카드 업데이트
+                weekdayCards.forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 날짜 업데이트 및 데이터 가져오기
+                const selectedDate = new Date(dateStr);
+                appState.currentDate = selectedDate;
+                
+                dateSelector.value = formatDate(selectedDate);
+                updateCurrentDateDisplay(selectedDate);
+                
+                // 급식 데이터 표시 (캐시 활용)
+                showMealContent(appState.currentMealType);
+                
+                // 현재 날짜를 localStorage에 저장
+                localStorage.setItem(LAST_VISITED_DATE_KEY, formatDate(selectedDate));
+            });
+        });
+        
+        // 현재 날짜가 있는 카드로 스크롤
+        const activeCard = weeklyCalendar.querySelector('.weekday-card.active');
+        if (activeCard) {
+            activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }
+    
+    // 현재 날짜 설정 (한국 시간 사용)
+    function setCurrentDate() {
+        // 마지막 방문 날짜 확인
+        const lastVisitedDate = localStorage.getItem(LAST_VISITED_DATE_KEY);
+        
+        if (lastVisitedDate) {
+            // 마지막 방문 날짜가 있으면 해당 날짜 사용
+            appState.currentDate = new Date(lastVisitedDate);
+        } else {
+            // 없으면 현재 날짜 사용 (한국 시간)
+            const now = new Date();
+            appState.currentDate = now;
+        }
+        
+        dateSelector.value = formatDate(appState.currentDate);
+        updateCurrentDateDisplay(appState.currentDate);
+        
+        // 현재 날짜를 localStorage에 저장
+        localStorage.setItem(LAST_VISITED_DATE_KEY, formatDate(appState.currentDate));
+    }
+    
+    // 날짜 표시 업데이트
+    function updateCurrentDateDisplay(date) {
+        currentDateDisplay.textContent = formatDateToKorean(date);
+        
+        // 애니메이션 효과
+        currentDateDisplay.classList.add('animate__animated', 'animate__fadeIn');
+        setTimeout(() => {
+            currentDateDisplay.classList.remove('animate__animated', 'animate__fadeIn');
+        }, 500);
+    }
+    
+    // 날짜 포맷 변환 (YYYY-MM-DD)
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+    // 날짜 포맷 변환 (간단한 형식)
+    function formatDateShort(date) {
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        return `${month}/${day}`;
+    }
+    
+    // 날짜를 한국어 형식으로 변환
+    function formatDateToKorean(date) {
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+        
+        return `${year}년 ${month}월 ${day}일 (${weekday})`;
+    }
+    
+    // 요일 이름 가져오기
+    function getWeekdayName(date) {
+        const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+        return weekdays[date.getDay()];
+    }
+    
+    // 같은 날짜인지 확인
+    function isSameDate(date1, date2) {
+        return date1.getFullYear() === date2.getFullYear() &&
+                date1.getMonth() === date2.getMonth() &&
+                date1.getDate() === date2.getDate();
+    }
+    
+    // 테마 토글 설정
+    function setupThemeToggle() {
+        themeToggle.addEventListener('click', function() {
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem(THEME_STORAGE_KEY, 'light');
+                showToast('success', '라이트 모드로 전환되었습니다.');
+            } else {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem(THEME_STORAGE_KEY, 'dark');
+                showToast('success', '다크 모드로 전환되었습니다.');
+            }
+        });
+    }
+    
+    // 테마 로드
+    function loadTheme() {
+        const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+        
+        if (savedTheme === 'light') {
+            body.classList.remove('dark-mode');
+            body.classList.add('light-mode');
+            themeIcon.className = 'fas fa-sun';
+        } else {
+            body.classList.remove('light-mode');
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-moon';
+        }
+    }
+    
+    // 배경 도형 생성
+    function createBackgroundShapes() {
+        backgroundShapes.innerHTML = ''; // 기존 요소 삭제
+        
+        for (let i = 0; i < 5; i++) {
+            const shape = document.createElement('div');
+            shape.className = 'shape';
+            
+            // 도형 크기
+            const size = Math.floor(Math.random() * 400) + 200;
+            shape.style.width = `${size}px`;
+            shape.style.height = `${size}px`;
+            
+            // 도형 위치
+            const posX = Math.floor(Math.random() * 100);
+            const posY = Math.floor(Math.random() * 100);
+            shape.style.left = `${posX}%`;
+            shape.style.top = `${posY}%`;
+            
+            // 도형 색상
+            const colorIndex = Math.floor(Math.random() * SHAPE_COLORS.length);
+            shape.style.backgroundColor = SHAPE_COLORS[colorIndex];
+            
+            // 도형 애니메이션
+            const animations = ['float-1', 'float-2', 'float-3'];
+            const animIndex = Math.floor(Math.random() * animations.length);
+            shape.style.animation = `${animations[animIndex]} ${Math.floor(Math.random() * 10) + 20}s ease-in-out infinite`;
+            
+            backgroundShapes.appendChild(shape);
+        }
+    }
+    
+    // 탭 네비게이션 설정
+    function setupTabNavigation() {
+        let activeIndex = 0;
+        
+        mealTabs.forEach((tab, index) => {
+            tab.addEventListener('click', function() {
+                // 활성 탭 업데이트
+                mealTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 탭 인디케이터 이동
+                const tabWidth = 100 / mealTabs.length;
+                tabIndicator.style.width = `${tabWidth}%`;
+                tabIndicator.style.left = `${tabWidth * index}%`;
+                
+                activeIndex = index;
+                
+                // 메뉴 전환
+                const mealType = this.dataset.mealType;
+                appState.currentMealType = mealType;
+                
+                // 날짜에 맞는 급식 데이터 표시
+                showMealContent(mealType);
+            });
+        });
+        
+        // 초기 탭 인디케이터 설정
+        const tabWidth = 100 / mealTabs.length;
+        tabIndicator.style.width = `${tabWidth}%`;
+        tabIndicator.style.left = `${tabWidth * activeIndex}%`;
+    }
+    
+    // 메뉴 렌더링
+    function renderMealContent(mealType, mealData) {
+        console.log('renderMealContent:', mealType, mealData);
+
+        // mealType에 해당하는 데이터가 없으면 빈 화면 표시
+        if (!mealData || 
+            (mealType === 'breakfast' && (!mealData.breakfast || mealData.breakfast.length === 0)) ||
+            (mealType === 'lunch' && (!mealData.lunch || mealData.lunch.length === 0)) ||
+            (mealType === 'dinner' && (!mealData.dinner || mealData.dinner.length === 0))) {
+            renderEmptyMealContent(mealType);
+            return;
+        }
+        
+        const mealInfo = MEAL_TIMES[mealType];
+        const currentDate = formatDateToKorean(appState.currentDate);
+        const menuItems = mealData[mealType] || [];
+        
+        // 추가 정보 가져오기 (월별 캐시에서)
+        const year = appState.currentDate.getFullYear();
+        const month = String(appState.currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(appState.currentDate.getDate()).padStart(2, '0');
+        const yearMonth = `${year}${month}`;
+        const fullDate = `${yearMonth}${day}`;
+        
+        let calorieInfo = '';
+        let mealCount = '';
+        
+        // 추가 정보 확인
+        if (mealDataCache[yearMonth] && mealDataCache[yearMonth][fullDate]) {
+            const typeMap = { 'breakfast': '조식', 'lunch': '중식', 'dinner': '석식' };
+            const koreanType = typeMap[mealType];
+            
+            if (mealDataCache[yearMonth][fullDate][`${koreanType}_칼로리`]) {
+                calorieInfo = mealDataCache[yearMonth][fullDate][`${koreanType}_칼로리`];
+            }
+            
+            if (mealDataCache[yearMonth][fullDate][`${koreanType}_인원수`]) {
+                mealCount = mealDataCache[yearMonth][fullDate][`${koreanType}_인원수`];
+            }
+        }
+        
+        let html = `
+            <div class="meal-header">
+            <h3 class="meal-title">
+                <i class="${mealInfo.icon}"></i>
+                ${mealInfo.name}
+            </h3>
+            </div>
+            
+            <div class="meal-stats">
+            <div class="meal-stat">
+                <i class="far fa-clock"></i>
+                ${mealInfo.time}
+            </div>
+            <div class="meal-stat">
+                <i class="fas fa-utensils"></i>
+                총 ${menuItems.length}개 메뉴
+            </div>
+        `;
+        
+        // 칼로리 정보가 있으면 추가
+        if (calorieInfo) {
+            html += `
+            <div class="meal-stat">
+                <i class="fas fa-fire"></i>
+                ${calorieInfo}
+            </div>
+            `;
+        }
+        
+        // 급식 인원 정보가 있으면 추가
+        if (mealCount) {
+            html += `
+            <div class="meal-stat">
+                <i class="fas fa-users"></i>
+                ${mealCount}명
+            </div>
+            `;
+        }
+        
+        html += `
+            <div class="meal-stat">
+                <i class="far fa-calendar-alt"></i>
+                ${currentDate}
+            </div>
+            </div>
+            
+            <ul class="meal-list">
+        `;
+        
+        menuItems.forEach(item => {
+            // 항목 이름에 특수문자 처리
+            const safeName = item.name.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            
+            html += `
+            <li class="meal-item">
+                <div class="meal-name">
+                ${safeName}
+                ${item.allergens && item.allergens.length > 0 ? 
+                    `<span class="meal-tag tag-allergen">${item.allergens.join(', ')}</span>` : ''}
+                </div>
+                <div class="meal-item-right">
+                <button class="meal-info" onclick="showMealDetail('${safeName}')" aria-label="상세정보">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+                <button class="meal-share" onclick="shareMeal('${safeName}')" aria-label="공유하기">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <button class="meal-search" onclick="searchOnGoogle('${safeName}')" aria-label="검색하기">
+                    <i class="fas fa-search"></i>
+                </button>
+                </div>
+            </li>
+            `;
+        });
+        
+        html += `
+            </ul>
+        `;
+        
+        mealContainer.innerHTML = html;
+    }
+    
+    // 랜덤 명언 로드
+    function loadRandomQuote() {
+        const randomIndex = Math.floor(Math.random() * QUOTES.length);
+        const quote = QUOTES[randomIndex];
+        
+        quoteText.textContent = quote.text;
+        quoteAuthor.textContent = `- ${quote.author}`;
+    }
+    
+    // 날씨 데이터 가져오기 (경주시 위치 기반)
+    async function fetchWeatherData() {
+        try {
+            // 로딩 상태 표시
+            weatherInfo.innerHTML = `
+            <div class="weather-icon">
+                <i class="fas fa-cloud-sun"></i>
+            </div>
+            <div class="weather-details">
+                <div class="weather-temp">경주시 날씨 로딩 중...</div>
+                <div class="weather-desc">잠시만 기다려주세요</div>
+            </div>
+            `;
+            
+            // OpenWeatherMap API를 통한 날씨 데이터 가져오기
+            const apiKey = WEATHER_API_KEY;
+            
+            // API 키가 없는 경우 (개발 환경)
+            if (!apiKey) {
+                // 경주시 날씨 데이터 시뮬레이션
+                const currentTime = new Date();
+                const hour = currentTime.getHours();
+                const season = getSeason(currentTime);
+                
+                let weatherData;
+                
+                // 계절과 시간대에 따른 날씨 시뮬레이션
+                if (hour >= 6 && hour < 18) {
+                    // 주간
+                    if (season === 'spring') {
+                        weatherData = { temp: Math.floor(Math.random() * 5) + 18, description: "경주시 - 맑음", icon: "01d" };
+                    } else if (season === 'summer') {
+                        weatherData = { temp: Math.floor(Math.random() * 5) + 28, description: "경주시 - 맑음", icon: "01d" };
+                    } else if (season === 'autumn') {
+                        weatherData = { temp: Math.floor(Math.random() * 5) + 20, description: "경주시 - 맑음", icon: "01d" };
+                    } else {
+                        weatherData = { temp: Math.floor(Math.random() * 5) + 5, description: "경주시 - 맑음", icon: "01d" };
+                    }
+                } else {
+                    // 야간
+                    if (season === 'spring') {
+                        weatherData = { temp: Math.floor(Math.random() * 5) + 10, description: "경주시 - 맑은 밤", icon: "01n" };
+                    } else if (season === 'summer') {
+                        weatherData = { temp: Math.floor(Math.random() * 5) + 22, description: "경주시 - 맑은 밤", icon: "01n" };
+                    } else if (season === 'autumn') {
+                        weatherData = { temp: Math.floor(Math.random() * 5) + 12, description: "경주시 - 맑은 밤", icon: "01n" };
+                    } else {
+                        weatherData = { temp: Math.floor(Math.random() * 5) + 0, description: "경주시 - 맑은 밤", icon: "01n" };
+                    }
+                }
+                
+                updateWeatherUI(weatherData);
+                return;
+            }
+            
+            // 계절 확인 함수
+            function getSeason(date) {
+                const month = date.getMonth() + 1;
+                if (month >= 3 && month <= 5) return 'spring';
+                if (month >= 6 && month <= 8) return 'summer';
+                if (month >= 9 && month <= 11) return 'autumn';
+                return 'winter';
+            }
+            
+            // 실제 날씨 API 호출 (키가 있는 경우)
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${appState.userLocation.lat}&lon=${appState.userLocation.lon}&units=metric&lang=kr&appid=${apiKey}`;
+            
+            const response = await fetch(apiUrl);
+            
+            if (!response.ok) {
+                throw new Error(`날씨 API 응답 오류: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // 날씨 데이터 처리
+            const weatherData = {
+                temp: Math.round(data.main.temp),
+                description: data.weather[0].description,
+                icon: data.weather[0].icon,
+                humidity: data.main.humidity,
+                windSpeed: data.wind.speed
+            };
+            
+            // UI 업데이트
+            updateWeatherUI(weatherData);
+        } catch (error) {
+            console.error('날씨 정보를 가져오는 중 오류 발생:', error);
+            
+            // 오류 시 대체 메시지
+            weatherInfo.innerHTML = `
+            <div class="weather-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="weather-details">
+                <div class="weather-temp">날씨 정보 없음</div>
+                <div class="weather-desc">날씨 정보를 불러올 수 없습니다</div>
+            </div>
+            `;
+        }
+    }
+    
+    // 날씨 UI 업데이트
+    function updateWeatherUI(weatherData) {
+        // 날씨 아이콘 매핑
+        const iconMapping = {
+            '01d': 'fas fa-sun', // 맑음 (낮)
+            '01n': 'fas fa-moon', // 맑음 (밤)
+            '02d': 'fas fa-cloud-sun', // 구름 조금 (낮)
+            '02n': 'fas fa-cloud-moon', // 구름 조금 (밤)
+            '03d': 'fas fa-cloud', // 구름 많음
+            '03n': 'fas fa-cloud',
+            '04d': 'fas fa-cloud', // 흐림
+            '04n': 'fas fa-cloud',
+            '09d': 'fas fa-cloud-showers-heavy', // 소나기
+            '09n': 'fas fa-cloud-showers-heavy',
+            '10d': 'fas fa-cloud-rain', // 비 (낮)
+            '10n': 'fas fa-cloud-rain', // 비 (밤)
+            '11d': 'fas fa-bolt', // 천둥번개
+            '11n': 'fas fa-bolt',
+            '13d': 'fas fa-snowflake', // 눈
+            '13n': 'fas fa-snowflake',
+            '50d': 'fas fa-smog', // 안개
+            '50n': 'fas fa-smog',
+            'default': 'fas fa-cloud-sun' // 기본값
+        };
+        
+        // 아이콘 선택
+        let iconClass = iconMapping.default;
+        
+        if (weatherData.icon && iconMapping[weatherData.icon]) {
+            iconClass = iconMapping[weatherData.icon];
+        } else if (weatherData.description) {
+            // 설명에 따른 아이콘 선택
+            if (weatherData.description.includes('맑음')) iconClass = 'fas fa-sun';
+            else if (weatherData.description.includes('구름') && weatherData.description.includes('약간')) iconClass = 'fas fa-cloud-sun';
+            else if (weatherData.description.includes('구름')) iconClass = 'fas fa-cloud';
+            else if (weatherData.description.includes('비') || weatherData.description.includes('소나기')) iconClass = 'fas fa-cloud-rain';
+            else if (weatherData.description.includes('천둥') || weatherData.description.includes('번개')) iconClass = 'fas fa-bolt';
+            else if (weatherData.description.includes('눈')) iconClass = 'fas fa-snowflake';
+            else if (weatherData.description.includes('안개') || weatherData.description.includes('박무')) iconClass = 'fas fa-smog';
+        }
+        
+        // 추가 날씨 정보 문자열
+        let additionalInfo = '';
+        if (weatherData.humidity) {
+            additionalInfo += ` · 습도 ${weatherData.humidity}%`;
+        }
+        if (weatherData.windSpeed) {
+            additionalInfo += ` · 풍속 ${weatherData.windSpeed}m/s`;
+        }
+        
+        weatherInfo.innerHTML = `
+            <div class="weather-icon">
+            <i class="${iconClass}"></i>
+            </div>
+            <div class="weather-details">
+            <div class="weather-temp">${weatherData.temp}°C</div>
+            <div class="weather-desc">${weatherData.description}${additionalInfo}</div>
+            </div>
+        `;
+    }
+    
+    // 토스트 메시지 표시
+    function showToast(type, message) {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        
+        let icon = '';
+        switch(type) {
+            case 'success': icon = 'fas fa-check-circle'; break;
+            case 'error': icon = 'fas fa-times-circle'; break;
+            case 'warning': icon = 'fas fa-exclamation-triangle'; break;
+            case 'info': icon = 'fas fa-info-circle'; break;
+            default: icon = 'fas fa-info-circle';
+        }
+        
+        toast.innerHTML = `
+            <div class="toast-content">
+            <div class="toast-icon">
+                <i class="${icon}"></i>
+            </div>
+            <div class="toast-message">${message}</div>
+            </div>
+            <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        // 일정 시간 후 자동으로 제거
+        setTimeout(() => {
+            toast.remove();
+        }, 4000);
+    }
+    
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', initPage);
+    
+    // AOS 애니메이션 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+    });
+
+    // 페이지 종료 전 캐시 저장
+    window.addEventListener('beforeunload', function() {
+        saveCache();
+        saveImageCache();
+    });
+  </script>
+</body>
+</html>
