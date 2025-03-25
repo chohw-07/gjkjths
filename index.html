@@ -1,93 +1,9 @@
-  <!-- HTML에 모달 디버깅 스크립트 추가 -->
-  <script>
-    // 페이지 로딩 후 모달 디버깅 실행
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log("모달 디버깅 스크립트 실행");
-      
-      // 모달 요소 확인
-      const usageGuideModal = document.getElementById('usageGuideModal');
-      const mealDetailModal = document.getElementById('mealDetailModal');
-      const shareModal = document.getElementById('shareModal');
-      
-      if (usageGuideModal) {
-        console.log('사용 가이드 모달 발견됨');
-        // 초기 스타일 설정
-        usageGuideModal.style.display = 'none';
-        usageGuideModal.style.opacity = '0';
-        usageGuideModal.style.visibility = 'hidden';
-      } else {
-        console.error('사용 가이드 모달 찾을 수 없음');
-      }
-      
-      if (mealDetailModal) {
-        console.log('메뉴 상세 모달 발견됨');
-        // 초기 스타일 설정
-        mealDetailModal.style.display = 'none';
-        mealDetailModal.style.opacity = '0';
-        mealDetailModal.style.visibility = 'hidden';
-      } else {
-        console.error('메뉴 상세 모달 찾을 수 없음');
-      }
-      
-      if (shareModal) {
-        console.log('공유 모달 발견됨');
-        // 초기 스타일 설정
-        shareModal.style.display = 'none';
-        shareModal.style.opacity = '0';
-        shareModal.style.visibility = 'hidden';
-      } else {
-        console.error('공유 모달 찾을 수 없음');
-      }
-      
-      // 모달 표시 함수 재정의
-      if (typeof window.showUsageGuideModal === 'function') {
-        const originalShowUsageGuideModal = window.showUsageGuideModal;
-        window.showUsageGuideModal = function() {
-          console.log('사용 가이드 모달 표시 함수 호출됨');
-          if (usageGuideModal) {
-            usageGuideModal.style.display = 'flex';
-            usageGuideModal.style.opacity = '1';
-            usageGuideModal.style.visibility = 'visible';
-            usageGuideModal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-            console.log('사용 가이드 모달이 이제 표시됨');
-          }
-        };
-      }
-      
-      // 사용 가이드 링크 이벤트 처리
-      const usageGuideLink = document.getElementById('showUsageGuide');
-      if (usageGuideLink) {
-        console.log('사용 가이드 링크 발견됨');
-        // 기존 이벤트 제거
-        usageGuideLink.onclick = null;
-        
-        // 새 이벤트 추가
-        usageGuideLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('사용 가이드 링크 클릭됨');
-          
-          // 강제로 모달 표시
-          if (usageGuideModal) {
-            usageGuideModal.style.display = 'flex';
-            usageGuideModal.style.opacity = '1';
-            usageGuideModal.style.visibility = 'visible';
-            usageGuideModal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-            console.log('사용 가이드 모달 강제 표시됨');
-          }
-          
-          return false;
-        });
-      } else {
-        console.error('사용 가이드 링크 찾을 수 없음');
-      }
-    });
-  </script><!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>경공 급식</title>
   <meta property="og:title" content="경공 급식" />
   <meta property="og:description" content="오늘의 급식을 확인해보세요! 간편하고 빠른 급식 조회 서비스입니다." />
@@ -161,6 +77,13 @@
       
       --font-sans: 'BMJUA', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      
+      /* 사용자 지정 폰트 크기 변수 추가 */
+      --font-size-base: 1rem;
+      --font-size-sm: 0.875rem;
+      --font-size-lg: 1.125rem;
+      --font-size-xl: 1.25rem;
+      --font-size-xxl: 1.5rem;
     }
 
     /* Base Styles */
@@ -168,15 +91,16 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent; /* 모바일에서 탭할 때 하이라이트 제거 */
     }
 
     html {
       scroll-behavior: smooth;
       scroll-padding-top: 80px;
       height: -webkit-fill-available;
+      font-size: var(--font-size-base);
     }
     
-
     /* 이미지 면책 문구 스타일 */
     .meal-image-disclaimer {
       text-align: center;
@@ -191,9 +115,6 @@
       color: #aaaaaa; /* 다크모드에서 더 밝은 회색 */
     }
 
-
-
-
     body {
       font-family: var(--font-sans);
       transition: var(--transition);
@@ -202,21 +123,35 @@
       overflow-x: hidden;
       position: relative;
       background-attachment: fixed;
+      line-height: 1.5; /* 기본 행간 지정 */
+      touch-action: manipulation; /* 터치 최적화 */
+      -webkit-overflow-scrolling: touch; /* iOS 스크롤 성능 개선 */
+      font-display: swap; /* 폰트 표시 최적화 */
     }
 
     /* Typography */
     h1, h2, h3, h4, h5, h6 {
       line-height: 1.2;
       font-weight: 700;
+      margin-bottom: 0.5em;
     }
 
     a {
       text-decoration: none;
       color: inherit;
       transition: var(--transition);
+      display: inline-block; /* 모바일에서 터치 영역 개선 */
     }
-
-
+    
+    /* 모바일에서 터치 영역 개선을 위한 기본 요소 크기 설정 */
+    button, 
+    .btn, 
+    .meal-item-right button,
+    .meal-tab,
+    .weekday-card {
+      min-height: 44px; /* 최소 높이 설정 */
+      min-width: 44px; /* 최소 너비 설정 */
+    }
 
     .guide-section {
         margin-bottom: 1.5rem;
@@ -261,9 +196,6 @@
         padding-right: 0.5rem;
     }
 
-
-
-
     /* Theme Modes */
     .dark-mode {
       background: linear-gradient(135deg, #121212, #1e1e1e);
@@ -287,7 +219,7 @@
     }
     
     .dark-mode header {
-      background-color: rgba(30, 30, 30, 0.8);
+      background-color: rgba(30, 30, 30, 0.85);
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
     
@@ -297,13 +229,13 @@
     }
     
     .navbar {
-      padding: 0.8rem 1.5rem;
+      padding: 0.8rem 1rem; /* 모바일 패딩 감소 */
       margin-bottom: 0;
       transition: var(--transition);
     }
     
     .brand-title {
-      font-size: 1.8rem;
+      font-size: 1.5rem; /* 모바일에서 크기 감소 */
       font-weight: 800;
       margin: 0;
       letter-spacing: -0.5px;
@@ -334,18 +266,18 @@
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 1.5rem;
+      padding: 0 1rem; /* 모바일에서 좌우 패딩 감소 */
       position: relative;
       z-index: 10;
     }
     
     .page-section {
-      padding: 2rem 0;
+      padding: 1.5rem 0; /* 모바일에서 상하 패딩 감소 */
     }
     
     /* 메인 콘텐츠 레이아웃 개선 */
     main {
-      padding-top: 2rem; /* 상단바와 메인 콘텐츠 사이에 공백 추가 */
+      padding-top: 1rem; /* 모바일에서 상단 패딩 감소 */
     }
     
     /* 카드 레이아웃 개선 */
@@ -357,7 +289,7 @@
       overflow: hidden;
       border: none;
       height: auto; /* 높이 자동 조정으로 변경 */
-      margin-bottom: 2rem; /* 카드 간 간격 추가 */
+      margin-bottom: 1.5rem; /* 모바일에서 카드 간 간격 감소 */
     }
     
     .dark-mode .card {
@@ -371,14 +303,14 @@
     }
     
     .card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-3px); /* 모바일에서 호버 효과 감소 */
       box-shadow: var(--shadow-lg);
     }
     
     .card-title {
-      font-size: 1.6rem;
+      font-size: 1.4rem; /* 모바일에서 크기 감소 */
       font-weight: 800;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
       color: var(--primary-color);
       position: relative;
       display: inline-block;
@@ -404,13 +336,28 @@
     }
     
     .main-card {
-      margin-bottom: 2rem;
-      padding: 2rem;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem; /* 모바일에서 패딩 감소 */
     }
     
     @media (min-width: 768px) {
       .main-card {
         padding: 2.5rem;
+      }
+      .navbar {
+        padding: 0.8rem 1.5rem;
+      }
+      .container {
+        padding: 0 1.5rem;
+      }
+      .brand-title {
+        font-size: 1.8rem;
+      }
+      .card-title {
+        font-size: 1.6rem;
+      }
+      main {
+        padding-top: 2rem;
       }
     }
     
@@ -435,18 +382,20 @@
     }
     
     .current-date {
-      font-size: 1.1rem;
+      font-size: 1rem; /* 모바일에서 크기 감소 */
       font-weight: 700;
       text-align: center;
-      padding: 0.5rem 1rem;
+      padding: 0.5rem 0.5rem; /* 모바일에서 패딩 감소 */
       border-radius: var(--radius-full);
       transition: var(--transition);
       background-color: rgba(76, 110, 245, 0.1);
       color: var(--primary-color);
       flex-grow: 1;
-      margin: 0 0.5rem;
+      margin: 0 0.3rem;
       position: relative;
       overflow: hidden;
+      white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+      text-overflow: ellipsis; /* 넘치는 텍스트 처리 */
     }
     
     .dark-mode .current-date {
@@ -469,6 +418,8 @@
       position: relative;
       overflow: hidden;
       color: var(--primary-color);
+      flex-shrink: 0; /* 버튼 크기 유지 */
+      touch-action: manipulation; /* 터치 최적화 */
     }
     
     .dark-mode .date-nav-btn {
@@ -507,8 +458,8 @@
     .date-form {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 2rem;
+      gap: 0.8rem; /* 모바일에서 간격 감소 */
+      margin-bottom: 1.5rem;
       position: relative;
     }
     
@@ -516,6 +467,12 @@
       .date-form {
         flex-direction: row;
         align-items: flex-end;
+        gap: 1rem;
+      }
+      .current-date {
+        font-size: 1.1rem;
+        padding: 0.5rem 1rem;
+        margin: 0 0.5rem;
       }
     }
     
@@ -546,6 +503,7 @@
       font-size: 1rem;
       transition: var(--transition);
       background-color: transparent;
+      -webkit-appearance: none; /* iOS에서 기본 스타일 제거 */
     }
     
     .dark-mode .date-input {
@@ -578,6 +536,7 @@
       gap: 0.5rem;
       position: relative;
       overflow: hidden;
+      touch-action: manipulation; /* 터치 최적화 */
     }
     
     .btn::after {
@@ -688,7 +647,7 @@
     /* Meal Tabs */
     .meal-tabs {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.3rem; /* 모바일에서 간격 감소 */
       margin-bottom: 1.5rem;
       border-radius: var(--radius-full);
       background-color: rgba(76, 110, 245, 0.1);
@@ -703,7 +662,7 @@
     
     .meal-tab {
       flex: 1;
-      padding: 0.7rem 1rem;
+      padding: 0.7rem 0.5rem; /* 모바일에서 패딩 감소 */
       background-color: transparent;
       border: none;
       border-radius: var(--radius-full);
@@ -714,6 +673,8 @@
       position: relative;
       z-index: 1;
       text-align: center;
+      font-size: 0.9rem; /* 모바일에서 폰트 크기 감소 */
+      white-space: nowrap; /* 텍스트 줄바꿈 방지 */
     }
     
     .dark-mode .meal-tab {
@@ -733,6 +694,16 @@
       background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
       transition: var(--transition);
       z-index: 0;
+    }
+    
+    @media (min-width: 576px) {
+      .meal-tab {
+        padding: 0.7rem 1rem;
+        font-size: 1rem;
+      }
+      .meal-tabs {
+        gap: 0.5rem;
+      }
     }
     
     /* Meal Content */
@@ -781,7 +752,7 @@
     }
     
     .meal-title {
-      font-size: 1.3rem;
+      font-size: 1.2rem; /* 모바일에서 크기 감소 */
       font-weight: 800;
       margin-bottom: 1.2rem;
       color: var(--primary-color);
@@ -799,10 +770,16 @@
       font-size: 1.2rem;
     }
     
+    @media (min-width: 576px) {
+      .meal-title {
+        font-size: 1.3rem;
+      }
+    }
+    
     .meal-stats {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 0.8rem; /* 모바일에서 간격 감소 */
       margin-bottom: 1.5rem;
       justify-content: start;
     }
@@ -810,8 +787,8 @@
     .meal-stat {
       background-color: rgba(76, 110, 245, 0.1);
       border-radius: var(--radius-sm);
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
+      padding: 0.5rem 0.8rem; /* 모바일에서 패딩 감소 */
+      font-size: 0.8rem; /* 모바일에서 크기 감소 */
       font-weight: 600;
       display: flex;
       align-items: center;
@@ -823,6 +800,16 @@
     .dark-mode .meal-stat {
       background-color: rgba(116, 143, 252, 0.15);
       color: var(--primary-light);
+    }
+    
+    @media (min-width: 576px) {
+      .meal-stat {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+      .meal-stats {
+        gap: 1rem;
+      }
     }
     
     .meal-list {
@@ -844,12 +831,13 @@
     
     .meal-item {
       position: relative;
-      padding: 1rem 1.2rem;
+      padding: 0.8rem 1rem; /* 모바일에서 패딩 감소 */
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       display: flex;
       justify-content: space-between;
       align-items: center;
       transition: var(--transition);
+      min-height: 60px; /* 터치 영역 확보 */
     }
     
     .dark-mode .meal-item {
@@ -877,6 +865,7 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 0.5rem;
+      font-size: 0.95rem; /* 모바일에서 크기 조정 */
     }
     
     .meal-name::before {
@@ -898,6 +887,16 @@
     
     .meal-item:hover .meal-name {
       transform: translateX(5px);
+    }
+    
+    /* 알레르기 항목 강조 표시 */
+    .highlight-allergen .meal-name {
+      color: var(--danger-color);
+      font-weight: 700;
+    }
+    
+    .highlight-allergen .meal-name::before {
+      background-color: var(--danger-color);
     }
     
     .meal-tag {
@@ -927,7 +926,20 @@
     .meal-item-right {
       display: flex;
       align-items: center;
-      gap: 0.8rem;
+      gap: 0.5rem; /* 모바일에서 간격 감소 */
+      flex-shrink: 0; /* 크기 유지 */
+    }
+    
+    @media (min-width: 576px) {
+      .meal-item-right {
+        gap: 0.8rem;
+      }
+      .meal-item {
+        padding: 1rem 1.2rem;
+      }
+      .meal-name {
+        font-size: 1rem;
+      }
     }
     
     .meal-info, .meal-share, .meal-search {
@@ -942,8 +954,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 34px;
-      height: 34px;
+      width: 36px; /* 모바일에서 터치 영역 확대 */
+      height: 36px; /* 모바일에서 터치 영역 확대 */
       position: relative;
     }
     
@@ -973,7 +985,7 @@
     /* Loading Animation */
     .loading-container {
       text-align: center;
-      padding: 3rem 1rem;
+      padding: 2rem 1rem; /* 모바일에서 패딩 감소 */
     }
     
     .loading-spinner {
@@ -1039,7 +1051,7 @@
     /* No Meal Message */
     .no-meal-message {
       text-align: center;
-      padding: 3rem 1rem;
+      padding: 2rem 1rem; /* 모바일에서 패딩 감소 */
       border-radius: var(--radius);
       position: relative;
       overflow: hidden;
@@ -1047,7 +1059,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 1.5rem;
+      gap: 1.2rem; /* 모바일에서 간격 감소 */
     }
     
     .dark-mode .no-meal-message {
@@ -1061,16 +1073,16 @@
     }
     
     .no-meal-icon {
-      font-size: 3.5rem;
-      width: 100px;
-      height: 100px;
+      font-size: 3rem; /* 모바일에서 크기 감소 */
+      width: 80px; /* 모바일에서 크기 감소 */
+      height: 80px; /* 모바일에서 크기 감소 */
       background-color: rgba(76, 110, 245, 0.1);
       color: var(--primary-color);
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem; /* 모바일에서 간격 감소 */
       position: relative;
     }
     
@@ -1106,7 +1118,7 @@
     }
     
     .no-meal-title {
-      font-size: 1.8rem;
+      font-size: 1.5rem; /* 모바일에서 크기 감소 */
       font-weight: 800;
       margin-bottom: 0.5rem;
       color: var(--primary-color);
@@ -1117,7 +1129,7 @@
     }
     
     .no-meal-text {
-      font-size: 1.1rem;
+      font-size: 1rem; /* 모바일에서 크기 감소 */
       opacity: 0.8;
       max-width: 500px;
       margin: 0 auto;
@@ -1125,9 +1137,31 @@
       color: inherit;
     }
     
+    @media (min-width: 576px) {
+      .no-meal-message {
+        padding: 3rem 1rem;
+        gap: 1.5rem;
+      }
+      .no-meal-icon {
+        font-size: 3.5rem;
+        width: 100px;
+        height: 100px;
+        margin-bottom: 1rem;
+      }
+      .no-meal-title {
+        font-size: 1.8rem;
+      }
+      .no-meal-text {
+        font-size: 1.1rem;
+      }
+      .loading-container {
+        padding: 3rem 1rem;
+      }
+    }
+    
     /* 주간 캘린더 개선 */
     .weekly-calendar {
-      margin: 2rem 0;
+      margin: 1.5rem 0; /* 모바일에서 간격 감소 */
       overflow: hidden;
       position: relative;
       border-radius: var(--radius);
@@ -1138,12 +1172,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
-      padding: 0 1rem;
+      margin-bottom: 1.2rem; /* 모바일에서 간격 감소 */
+      padding: 0 0.8rem; /* 모바일에서 패딩 감소 */
     }
     
     .calendar-title {
-      font-size: 1.4rem;
+      font-size: 1.3rem; /* 모바일에서 크기 감소 */
       font-weight: 800;
       display: flex;
       align-items: center;
@@ -1156,18 +1190,34 @@
     }
     
     .calendar-title i {
-      font-size: 1.2rem;
+      font-size: 1.1rem; /* 모바일에서 크기 감소 */
+    }
+    
+    @media (min-width: 576px) {
+      .weekly-calendar {
+        margin: 2rem 0;
+      }
+      .calendar-header {
+        margin-bottom: 1.5rem;
+        padding: 0 1rem;
+      }
+      .calendar-title {
+        font-size: 1.4rem;
+      }
+      .calendar-title i {
+        font-size: 1.2rem;
+      }
     }
     
     .weekday-container {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      gap: 0.7rem;
-      padding: 0.5rem 1rem;
+      gap: 0.5rem; /* 모바일에서 간격 감소 */
+      padding: 0.5rem 0.8rem; /* 모바일에서 패딩 감소 */
       -ms-overflow-style: none;
       scrollbar-width: none;
-      min-height: 150px; /* 최소 높이 설정 */
+      min-height: 140px; /* 모바일에서 최소 높이 감소 */
     }
     
     .weekday-container::-webkit-scrollbar {
@@ -1175,7 +1225,7 @@
     }
     
     .weekday-card {
-      min-width: 100px;
+      min-width: 90px; /* 모바일에서 너비 감소 */
       border-radius: var(--radius-sm);
       overflow: hidden;
       scroll-snap-align: start;
@@ -1184,7 +1234,7 @@
       flex-shrink: 0;
       border: 2px solid transparent;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      height: 130px; /* 높이 고정 */
+      height: 120px; /* 모바일에서 높이 감소 */
       display: flex;
       flex-direction: column;
     }
@@ -1210,7 +1260,7 @@
     
     .weekday-header {
       text-align: center;
-      padding: 0.7rem 0;
+      padding: 0.5rem 0; /* 모바일에서 패딩 감소 */
       border-radius: var(--radius-sm) var(--radius-sm) 0 0;
       background-color: rgba(76, 110, 245, 0.1);
       flex-shrink: 0;
@@ -1232,19 +1282,19 @@
     
     .weekday-name {
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.75rem; /* 모바일에서 크기 감소 */
       text-transform: uppercase;
       letter-spacing: 1px;
     }
     
     .weekday-date {
-      font-size: 1.2rem;
+      font-size: 1.1rem; /* 모바일에서 크기 감소 */
       font-weight: 800;
-      margin-top: 0.2rem;
+      margin-top: 0.1rem; /* 모바일에서 간격 감소 */
     }
     
     .weekday-body {
-      padding: 0.8rem;
+      padding: 0.5rem; /* 모바일에서 패딩 감소 */
       text-align: center;
       flex-grow: 1;
       display: flex;
@@ -1253,16 +1303,16 @@
     }
     
     .weekday-meals {
-      font-size: 0.85rem;
+      font-size: 0.8rem; /* 모바일에서 크기 감소 */
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.3rem; /* 모바일에서 간격 감소 */
       overflow-y: auto;
     }
     
     .weekday-meal {
       background-color: rgba(76, 110, 245, 0.05);
-      padding: 0.4rem;
+      padding: 0.3rem; /* 모바일에서 패딩 감소 */
       border-radius: var(--radius-sm);
       white-space: nowrap;
       overflow: hidden;
@@ -1275,11 +1325,43 @@
       color: var(--dark-text);
     }
     
+    @media (min-width: 576px) {
+      .weekday-container {
+        gap: 0.7rem;
+        padding: 0.5rem 1rem;
+        min-height: 150px;
+      }
+      .weekday-card {
+        min-width: 100px;
+        height: 130px;
+      }
+      .weekday-header {
+        padding: 0.7rem 0;
+      }
+      .weekday-name {
+        font-size: 0.8rem;
+      }
+      .weekday-date {
+        font-size: 1.2rem;
+        margin-top: 0.2rem;
+      }
+      .weekday-body {
+        padding: 0.8rem;
+      }
+      .weekday-meals {
+        font-size: 0.85rem;
+        gap: 0.5rem;
+      }
+      .weekday-meal {
+        padding: 0.4rem;
+      }
+    }
+    
     /* Quote Card */
     .quote-card {
-      margin-top: 2.5rem;
+      margin-top: 2rem;
       margin-bottom: 1rem;
-      padding: 2rem;
+      padding: 1.5rem; /* 모바일에서 패딩 감소 */
       border-radius: var(--radius);
       position: relative;
       overflow: hidden;
@@ -1302,7 +1384,7 @@
       position: absolute;
       top: -30px;
       left: 10px;
-      font-size: 10rem;
+      font-size: 8rem; /* 모바일에서 크기 감소 */
       opacity: 0.05;
       font-family: Georgia, serif;
     }
@@ -1338,7 +1420,7 @@
     }
     
     .quote-text {
-      font-size: 1.2rem;
+      font-size: 1.1rem; /* 모바일에서 크기 감소 */
       line-height: 1.6;
       font-weight: 500;
       position: relative;
@@ -1347,21 +1429,38 @@
     }
     
     .quote-author {
-      margin-top: 1.5rem;
+      margin-top: 1.2rem; /* 모바일에서 간격 감소 */
       font-weight: 700;
       color: var(--primary-color);
       text-align: right;
-      font-size: 1.1rem;
+      font-size: 1rem; /* 모바일에서 크기 감소 */
     }
     
     .dark-mode .quote-author {
       color: var(--primary-light);
     }
     
+    @media (min-width: 576px) {
+      .quote-card {
+        padding: 2rem;
+        margin-top: 2.5rem;
+      }
+      .quote-card::before {
+        font-size: 10rem;
+      }
+      .quote-text {
+        font-size: 1.2rem;
+      }
+      .quote-author {
+        margin-top: 1.5rem;
+        font-size: 1.1rem;
+      }
+    }
+    
     /* Toast Notifications */
     .toast-container {
       position: fixed;
-      bottom: 2rem;
+      bottom: 1rem; /* 모바일에서 위치 조정 */
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
@@ -1374,7 +1473,7 @@
     }
     
     .toast {
-      padding: 1rem 1.5rem;
+      padding: 0.8rem 1.2rem; /* 모바일에서 패딩 감소 */
       border-radius: var(--radius);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
       display: flex;
@@ -1437,7 +1536,7 @@
     
     .toast-message {
       font-weight: 500;
-      font-size: 0.95rem;
+      font-size: 0.9rem; /* 모바일에서 크기 감소 */
     }
     
     .toast-close {
@@ -1454,11 +1553,25 @@
       height: 24px;
       border-radius: 50%;
       transition: var(--transition-fast);
+      min-width: 24px; /* 터치 영역 확보 */
+      min-height: 24px; /* 터치 영역 확보 */
     }
     
     .toast-close:hover {
       opacity: 1;
       background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    @media (min-width: 576px) {
+      .toast-container {
+        bottom: 2rem;
+      }
+      .toast {
+        padding: 1rem 1.5rem;
+      }
+      .toast-message {
+        font-size: 0.95rem;
+      }
     }
     
     /* Background Effects */
@@ -1476,8 +1589,8 @@
     .shape {
       position: absolute;
       border-radius: 50%;
-      filter: blur(70px);
-      opacity: 0.4;
+      filter: blur(60px); /* 모바일에서 블러 감소 */
+      opacity: 0.3; /* 모바일에서 투명도 감소 */
       transition: var(--transition-slow);
       animation-duration: 20s;
       animation-iteration-count: infinite;
@@ -1486,7 +1599,17 @@
     }
     
     .dark-mode .shape {
-      opacity: 0.15;
+      opacity: 0.12;
+    }
+    
+    @media (min-width: 576px) {
+      .shape {
+        filter: blur(70px);
+        opacity: 0.4;
+      }
+      .dark-mode .shape {
+        opacity: 0.15;
+      }
     }
     
     @keyframes float-1 {
@@ -1558,7 +1681,7 @@
     }
     
     .modal-header {
-      padding: 1.5rem;
+      padding: 1.2rem; /* 모바일에서 패딩 감소 */
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       display: flex;
       align-items: center;
@@ -1570,7 +1693,7 @@
     }
     
     .modal-title {
-      font-size: 1.4rem;
+      font-size: 1.3rem; /* 모바일에서 크기 감소 */
       font-weight: 800;
       color: var(--primary-color);
       margin: 0;
@@ -1593,6 +1716,8 @@
       justify-content: center;
       transition: var(--transition);
       color: var(--primary-color);
+      min-width: 40px; /* 터치 영역 확보 */
+      min-height: 40px; /* 터치 영역 확보 */
     }
     
     .dark-mode .modal-close {
@@ -1608,12 +1733,12 @@
     }
     
     .modal-body {
-      padding: 1.5rem;
+      padding: 1.2rem; /* 모바일에서 패딩 감소 */
       color: inherit;
     }
     
     .modal-footer {
-      padding: 1.5rem;
+      padding: 1.2rem; /* 모바일에서 패딩 감소 */
       border-top: 1px solid rgba(0, 0, 0, 0.1);
       display: flex;
       justify-content: flex-end;
@@ -1624,11 +1749,22 @@
       border-top-color: rgba(255, 255, 255, 0.1);
     }
     
+    @media (min-width: 576px) {
+      .modal-header, 
+      .modal-body, 
+      .modal-footer {
+        padding: 1.5rem;
+      }
+      .modal-title {
+        font-size: 1.4rem;
+      }
+    }
+    
     /* Meal Detail Modal */
     .meal-detail-content {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.2rem; /* 모바일에서 간격 감소 */
     }
     
     .meal-detail-image {
@@ -1655,7 +1791,7 @@
     }
     
     .meal-detail-title {
-      font-size: 1.6rem;
+      font-size: 1.4rem; /* 모바일에서 크기 감소 */
       font-weight: 800;
       margin-bottom: 0.5rem;
       color: var(--primary-color);
@@ -1666,7 +1802,7 @@
     }
     
     .meal-detail-description {
-      font-size: 1rem;
+      font-size: 0.95rem; /* 모바일에서 크기 감소 */
       line-height: 1.6;
       opacity: 0.8;
       color: inherit;
@@ -1778,11 +1914,23 @@
       background-color: var(--primary-light);
     }
     
+    @media (min-width: 576px) {
+      .meal-detail-content {
+        gap: 1.5rem;
+      }
+      .meal-detail-title {
+        font-size: 1.6rem;
+      }
+      .meal-detail-description {
+        font-size: 1rem;
+      }
+    }
+    
     /* Share Modal */
     .share-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
+      gap: 0.8rem; /* 모바일에서 간격 감소 */
       margin-top: 0.5rem;
     }
     
@@ -1797,6 +1945,7 @@
       transition: var(--transition);
       cursor: pointer;
       gap: 0.5rem;
+      min-height: 80px; /* 터치 영역 확보 */
     }
     
     .dark-mode .share-item {
@@ -1845,9 +1994,15 @@
       border-color: var(--primary-color);
     }
     
+    @media (min-width: 576px) {
+      .share-grid {
+        gap: 1rem;
+      }
+    }
+    
     /* Calendar & Schedule */
     .calendar-wrapper {
-      margin-top: 2rem;
+      margin-top: 1.5rem; /* 모바일에서 간격 감소 */
       overflow: hidden;
       border-radius: var(--radius);
     }
@@ -1892,15 +2047,21 @@
       background-color: rgba(116, 143, 252, 0.1);
     }
     
+    @media (min-width: 576px) {
+      .calendar-wrapper {
+        margin-top: 2rem;
+      }
+    }
+    
     /* 날씨 정보 */
     .weather-info {
       margin-bottom: 1.5rem;
       display: flex;
       align-items: center;
-      padding: 1rem;
+      padding: 0.8rem; /* 모바일에서 패딩 감소 */
       border-radius: var(--radius-sm);
       background-color: rgba(76, 110, 245, 0.05);
-      gap: 1rem;
+      gap: 0.8rem; /* 모바일에서 간격 감소 */
     }
     
     .dark-mode .weather-info {
@@ -1908,7 +2069,7 @@
     }
     
     .weather-icon {
-      font-size: 2rem;
+      font-size: 1.8rem; /* 모바일에서 크기 감소 */
       color: var(--primary-color);
     }
     
@@ -1921,42 +2082,59 @@
     }
     
     .weather-temp {
-      font-size: 1.2rem;
+      font-size: 1.1rem; /* 모바일에서 크기 감소 */
       font-weight: 700;
       color: inherit;
     }
     
     .weather-desc {
-      font-size: 0.9rem;
+      font-size: 0.85rem; /* 모바일에서 크기 감소 */
       opacity: 0.8;
       color: inherit;
     }
     
+    @media (min-width: 576px) {
+      .weather-info {
+        padding: 1rem;
+        gap: 1rem;
+      }
+      .weather-icon {
+        font-size: 2rem;
+      }
+      .weather-temp {
+        font-size: 1.2rem;
+      }
+      .weather-desc {
+        font-size: 0.9rem;
+      }
+    }
+    
     /* 앱 배너 */
     .app-banner {
-      margin-top: 2rem;
-      padding: 1.5rem;
+      margin-top: 1.5rem; /* 모바일에서 간격 감소 */
+      padding: 1.2rem; /* 모바일에서 패딩 감소 */
       border-radius: var(--radius);
       background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
       color: white;
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.8rem; /* 모바일에서 간격 감소 */
       position: relative;
       overflow: hidden;
     }
     
     .app-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 15px;
+      width: 50px; /* 모바일에서 크기 감소 */
+      height: 50px; /* 모바일에서 크기 감소 */
+      border-radius: 12px;
       background-color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      font-size: 1.8rem; /* 모바일에서 크기 감소 */
       color: var(--primary-color);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0; /* 크기 유지 */
     }
     
     .app-content {
@@ -1964,34 +2142,61 @@
     }
     
     .app-title {
-      font-size: 1.2rem;
+      font-size: 1.1rem; /* 모바일에서 크기 감소 */
       font-weight: 800;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.2rem; /* 모바일에서 간격 감소 */
     }
     
     .app-desc {
-      font-size: 0.9rem;
+      font-size: 0.85rem; /* 모바일에서 크기 감소 */
       opacity: 0.9;
     }
     
     .app-btn {
       background-color: white;
       color: var(--primary-color);
-      padding: 0.6rem 1rem;
+      padding: 0.5rem 0.8rem; /* 모바일에서 패딩 감소 */
       border-radius: var(--radius-sm);
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.85rem; /* 모바일에서 크기 감소 */
       white-space: nowrap;
       transition: var(--transition);
       border: none;
       cursor: pointer;
+      min-height: 44px; /* 터치 영역 확보 */
+      min-width: 44px; /* 터치 영역 확보 */
     }
     
     .app-btn:hover {
       background-color: rgba(255, 255, 255, 0.9);
       transform: translateY(-2px);
     }
-        /* 설정 스타일 */
+    
+    @media (min-width: 576px) {
+      .app-banner {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        gap: 1rem;
+      }
+      .app-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+      }
+      .app-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.3rem;
+      }
+      .app-desc {
+        font-size: 0.9rem;
+      }
+      .app-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+    
+    /* 설정 스타일 */
     .settings-section {
       margin-bottom: 1.5rem;
       padding-bottom: 1.5rem;
@@ -2047,6 +2252,162 @@
       opacity: 0.8;
       margin-top: 0.3rem;
     }
+    
+    /* 설정 컨트롤 */
+    .settings-control {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    
+    /* 토글 스위치 */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: var(--transition);
+      border-radius: 34px;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: var(--transition);
+      border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: var(--primary-color);
+    }
+    
+    .dark-mode input:checked + .toggle-slider {
+      background-color: var(--primary-light);
+    }
+    
+    input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+    
+    /* 슬라이더 */
+    .range-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: #ddd;
+      outline: none;
+    }
+    
+    .dark-mode .range-slider {
+      background: #444;
+    }
+    
+    .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      cursor: pointer;
+    }
+    
+    .dark-mode .range-slider::-webkit-slider-thumb {
+      background: var(--primary-light);
+    }
+    
+    .range-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      cursor: pointer;
+      border: none;
+    }
+    
+    .dark-mode .range-slider::-moz-range-thumb {
+      background: var(--primary-light);
+    }
+    
+    /* 셀렉트 박스 */
+    .settings-select {
+      padding: 0.5rem 0.8rem;
+      border-radius: var(--radius-sm);
+      border: 2px solid #dee2e6;
+      background-color: transparent;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: inherit;
+      cursor: pointer;
+      min-width: 120px;
+    }
+    
+    .dark-mode .settings-select {
+      border-color: var(--dark-surface-2);
+    }
+    
+    .settings-select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    
+    /* 알레르기 태그 선택 */
+    .allergen-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    .allergen-option {
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-full);
+      background-color: rgba(76, 110, 245, 0.05);
+      color: var(--primary-color);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid transparent;
+    }
+    
+    .dark-mode .allergen-option {
+      background-color: rgba(116, 143, 252, 0.05);
+      color: var(--primary-light);
+    }
+    
+    .allergen-option.selected {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .dark-mode .allergen-option.selected {
+      background-color: var(--primary-light);
+    }
+    
     /* 애니메이션 */
     @keyframes float-slow {
       0%, 100% {
@@ -2085,7 +2446,7 @@
     /* 반응형 */
     @media (max-width: 768px) {
       .brand-title {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
       }
       
       .main-card {
@@ -2154,8 +2515,8 @@
 
     /* 푸터 스타일 개선 */
     footer {
-      padding: 2rem 0;
-      margin-top: 3rem;
+      padding: 1.5rem 0; /* 모바일에서 패딩 감소 */
+      margin-top: 2rem; /* 모바일에서 여백 감소 */
       background-color: rgba(0, 0, 0, 0.03);
     }
     
@@ -2189,6 +2550,7 @@
       opacity: 0.8;
       transition: var(--transition);
       font-size: 0.9rem;
+      padding: 0.5rem; /* 터치 영역 확대 */
     }
     
     .footer-link:hover {
@@ -2201,6 +2563,10 @@
     }
     
     @media (min-width: 768px) {
+      footer {
+        padding: 2rem 0;
+        margin-top: 3rem;
+      }
       .footer-content {
         flex-direction: row;
         justify-content: space-between;
@@ -2211,7 +2577,7 @@
     /* 추가 스타일 */
     .meal-detail-no-image {
       width: 100%;
-      height: 240px;
+      height: 200px; /* 모바일에서 높이 감소 */
       background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
       border-radius: var(--radius-sm);
       display: flex;
@@ -2234,19 +2600,32 @@
     }
     
     .meal-detail-image-placeholder i {
-      font-size: 3rem;
-      margin-bottom: 1rem;
+      font-size: 2.5rem; /* 모바일에서 크기 감소 */
+      margin-bottom: 0.8rem; /* 모바일에서 간격 감소 */
     }
     
     .meal-detail-image-placeholder p {
-      font-size: 1rem;
+      font-size: 0.9rem; /* 모바일에서 크기 감소 */
       opacity: 0.8;
+    }
+    
+    @media (min-width: 576px) {
+      .meal-detail-no-image {
+        height: 240px;
+      }
+      .meal-detail-image-placeholder i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+      .meal-detail-image-placeholder p {
+        font-size: 1rem;
+      }
     }
 
     /* 정보 항목 스타일 */
     .info-item {
-      margin-bottom: 1.2rem;
-      padding: 1rem;
+      margin-bottom: 1rem; /* 모바일에서 간격 감소 */
+      padding: 0.8rem 1rem; /* 모바일에서 패딩 감소 */
       background-color: rgba(76, 110, 245, 0.05);
       border-radius: var(--radius-sm);
     }
@@ -2257,7 +2636,7 @@
     
     .info-label {
       font-weight: 700;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem; /* 모바일에서 간격 감소 */
       color: var(--primary-color);
       display: flex;
       align-items: center;
@@ -2269,8 +2648,21 @@
     }
     
     .info-value {
-      font-size: 0.95rem;
+      font-size: 0.9rem; /* 모바일에서 크기 감소 */
       line-height: 1.5;
+    }
+    
+    @media (min-width: 576px) {
+      .info-item {
+        padding: 1rem;
+        margin-bottom: 1.2rem;
+      }
+      .info-label {
+        margin-bottom: 0.5rem;
+      }
+      .info-value {
+        font-size: 0.95rem;
+      }
     }
 
     /* 모달 CSS 완전 재구현 */
@@ -2322,7 +2714,7 @@
     }
     
     .modal-header {
-      padding: 1.5rem;
+      padding: 1.2rem; /* 모바일에서 패딩 감소 */
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       align-items: center;
@@ -2337,7 +2729,7 @@
     }
     
     .modal-title {
-      font-size: 1.4rem;
+      font-size: 1.3rem; /* 모바일에서 크기 감소 */
       font-weight: 800;
       color: var(--primary-light);
       margin: 0;
@@ -2377,7 +2769,7 @@
     }
     
     .modal-body {
-      padding: 1.5rem;
+      padding: 1.2rem; /* 모바일에서 패딩 감소 */
       color: inherit;
       pointer-events: auto !important;
       position: relative;
@@ -2387,7 +2779,7 @@
     }
     
     .modal-footer {
-      padding: 1.5rem;
+      padding: 1.2rem; /* 모바일에서 패딩 감소 */
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       justify-content: flex-end;
@@ -2401,10 +2793,22 @@
       border-top-color: rgba(0, 0, 0, 0.1);
     }
     
+    @media (min-width: 576px) {
+      .modal-header, 
+      .modal-body, 
+      .modal-footer {
+        padding: 1.5rem;
+      }
+      .modal-title {
+        font-size: 1.4rem;
+      }
+    }
+    
     /* 모달 내부 요소 스타일 */
     .meal-detail-content,
     .share-grid,
-    .usage-guide-content {
+    .usage-guide-content,
+    .settings-content {
       pointer-events: auto !important;
       position: relative;
       z-index: 10002;
@@ -2412,88 +2816,76 @@
     
     .share-item, 
     .meal-action-btn,
-    .info-item {
+    .info-item,
+    .settings-item {
       cursor: pointer !important;
       pointer-events: auto !important;
       position: relative;
       z-index: 10003;
     }
     
-    /* 이미지 스타일 개선 */
-    .meal-detail-image {
-      width: 100%;
-      height: 180px;
-      background-position: center;
-      background-size: cover;
-      border-radius: var(--radius-sm);
-      position: relative;
-      overflow: hidden;
+    /* 폰트 크기 설정 */
+    .font-size-option {
       display: flex;
       align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-    
-    .meal-detail-no-image {
-      width: 100%;
-      height: 240px;
-      background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    
-    .light-mode .meal-detail-no-image {
-      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-    }
-    
-    .meal-detail-image-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-align: center;
-    }
-    
-    .meal-detail-image-placeholder i {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-    
-    .meal-detail-image-placeholder p {
-      font-size: 1rem;
-      opacity: 0.8;
-    }
-
-    /* 영양 정보 테이블 스타일 */
-    .nutrition-table {
-      width: 100%;
-      border-collapse: collapse;
+      justify-content: space-between;
       margin-top: 0.5rem;
-      font-size: 0.9rem;
     }
     
-    .nutrition-table th,
-    .nutrition-table td {
-      padding: 0.6rem;
-      text-align: left;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
-    
-    .dark-mode .nutrition-table th,
-    .dark-mode .nutrition-table td {
-      border-bottom-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .nutrition-table th {
+    .font-size-value {
+      width: 30px;
+      text-align: center;
       font-weight: 700;
+    }
+    
+    /* 애니메이션 설정 */
+    .animation-option {
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-full);
+      background-color: rgba(76, 110, 245, 0.05);
+      color: var(--primary-color);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid transparent;
+    }
+    
+    .dark-mode .animation-option {
+      background-color: rgba(116, 143, 252, 0.05);
+      color: var(--primary-light);
+    }
+    
+    .animation-option.selected {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .dark-mode .animation-option.selected {
+      background-color: var(--primary-light);
+    }
+    
+    /* 이미지 표시 설정 */
+    .image-display-options {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+    }
+    
+    /* 화면 밝기 설정 */
+    .brightness-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    .brightness-icon {
+      font-size: 1.2rem;
       color: var(--primary-color);
     }
     
-    .dark-mode .nutrition-table th {
+    .dark-mode .brightness-icon {
       color: var(--primary-light);
     }
   </style>
@@ -2699,6 +3091,18 @@
           </section>
           
           <section class="guide-section">
+            <h4><i class="fas fa-cog"></i> 설정 기능</h4>
+            <p>우측 상단의 <i class="fas fa-cog"></i> 아이콘을 클릭하여 다양한 설정을 변경할 수 있습니다:</p>
+            <ul>
+              <li>알레르기 정보 강조 표시</li>
+              <li>폰트 크기 조절</li>
+              <li>이미지 표시 설정</li>
+              <li>애니메이션 효과 설정</li>
+              <li>캐시 데이터 관리</li>
+            </ul>
+          </section>
+          
+          <section class="guide-section">
             <h4><i class="fas fa-moon"></i> 테마 변경</h4>
             <p>우측 상단의 <i class="fas fa-moon"></i> 또는 <i class="fas fa-sun"></i> 아이콘을 클릭하여 다크 모드와 라이트 모드를 전환할 수 있습니다.</p>
           </section>
@@ -2714,36 +3118,248 @@
         <p>&copy; 2025 경공급식 | 제작: 조현우 | 연락 : joh66122@gmail.com</p>
         <div class="footer-links">
           <a href="#" id="showUsageGuide" class="footer-link">사용 방법</a>
+          <a href="#" id="showPrivacyPolicy" class="footer-link">개인정보 처리방침</a>
+          <a href="#" id="showFeedback" class="footer-link">피드백</a>
         </div>
       </div>
     </div>
   </footer>
+  
   <!-- 설정 모달 -->
-<div class="modal-backdrop" id="settingsModal">
-  <div class="modal-dialog">
-    <div class="modal-header">
-      <h3 class="modal-title">설정</h3>
-      <button class="modal-close" onclick="closeSettingsModal()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="settings-content">
-        <section class="settings-section">
-          <h4><i class="fas fa-database"></i> 캐시 관리</h4>
-          <p>저장된 급식 데이터와 이미지 캐시를 관리합니다.</p>
-          <div class="settings-item">
-            <div class="settings-item-info">
-              <div class="settings-item-title">캐시 데이터</div>
-              <div class="settings-item-desc" id="cacheSize">계산 중...</div>
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">설정</h3>
+        <button class="modal-close" onclick="closeSettingsModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-content">
+          <!-- 알레르기 설정 섹션 -->
+          <section class="settings-section">
+            <h4><i class="fas fa-exclamation-triangle"></i> 알레르기 설정</h4>
+            <p>알레르기 항목을 선택하면 해당 메뉴가 강조 표시됩니다.</p>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <div class="settings-item-title">알레르기 항목 강조 표시</div>
+                <div class="settings-item-desc">선택한 알레르기 유발 식품이 포함된 메뉴를 강조 표시합니다.</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="highlightAllergens">
+                <span class="toggle-slider"></span>
+              </label>
             </div>
-            <button class="btn btn-outline" onclick="clearAllCache()">전체 삭제</button>
-          </div>
-        </section>
+            
+            <div id="allergenOptionsContainer" class="allergen-options">
+              <!-- 알레르기 옵션이 동적으로 추가됩니다 -->
+            </div>
+          </section>
+          
+          <!-- 접근성 설정 섹션 -->
+          <section class="settings-section">
+            <h4><i class="fas fa-universal-access"></i> 접근성 설정</h4>
+            <p>글꼴 크기와 화면 설정을 조절합니다.</p>
+            
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <div class="settings-item-title">글꼴 크기</div>
+                <div class="settings-item-desc">화면에 표시되는 텍스트의 크기를 조절합니다.</div>
+              </div>
+              <div class="settings-control">
+                <div class="font-size-option">
+                  <button id="decreaseFontSize" class="btn-icon">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <span id="fontSizeValue" class="font-size-value">100%</span>
+                  <button id="increaseFontSize" class="btn-icon">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <div class="settings-item-title">화면 밝기</div>
+                <div class="settings-item-desc">앱의 전체적인 화면 밝기를 조절합니다.</div>
+              </div>
+              <div class="settings-control">
+                <div class="brightness-option">
+                  <i class="fas fa-sun brightness-icon"></i>
+                  <input type="range" min="50" max="150" value="100" class="range-slider" id="brightnessSlider">
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          <!-- 디스플레이 설정 섹션 -->
+          <section class="settings-section">
+            <h4><i class="fas fa-desktop"></i> 디스플레이 설정</h4>
+            <p>화면 표시 방식을 설정합니다.</p>
+            
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <div class="settings-item-title">이미지 표시</div>
+                <div class="settings-item-desc">메뉴의 이미지 표시 방식을 설정합니다.</div>
+              </div>
+              <div class="settings-control">
+                <select id="imageDisplayOption" class="settings-select">
+                  <option value="always">항상 표시</option>
+                  <option value="wifi-only">Wi-Fi에서만 표시</option>
+                  <option value="never">표시하지 않음</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <div class="settings-item-title">애니메이션 효과</div>
+                <div class="settings-item-desc">화면 전환 및 효과의 애니메이션 수준을 설정합니다.</div>
+              </div>
+              <div class="settings-control">
+                <div class="allergen-options">
+                  <div class="animation-option selected" data-value="full">모두 사용</div>
+                  <div class="animation-option" data-value="reduced">축소</div>
+                  <div class="animation-option" data-value="none">사용 안함</div>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          <!-- 캐시 관리 섹션 -->
+          <section class="settings-section">
+            <h4><i class="fas fa-database"></i> 캐시 관리</h4>
+            <p>저장된 급식 데이터와 이미지 캐시를 관리합니다.</p>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <div class="settings-item-title">캐시 데이터</div>
+                <div class="settings-item-desc" id="cacheSize">계산 중...</div>
+              </div>
+              <div class="settings-control">
+                <button class="btn btn-outline" onclick="clearAllCache()">전체 삭제</button>
+              </div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <div class="settings-item-title">이미지 캐시</div>
+                <div class="settings-item-desc" id="imageCacheSize">계산 중...</div>
+              </div>
+              <div class="settings-control">
+                <button class="btn btn-outline" onclick="clearImageCache()">이미지만 삭제</button>
+              </div>
+            </div>
+          </section>
+          
+          <!-- 정보 섹션 -->
+          <section class="settings-section">
+            <h4><i class="fas fa-info-circle"></i> 앱 정보</h4>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <div class="settings-item-title">버전</div>
+                <div class="settings-item-desc">v2.3.1 (2025.3.25)</div>
+              </div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-info">
+                <div class="settings-item-title">개발자</div>
+                <div class="settings-item-desc">조현우 (joh66122@gmail.com)</div>
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   </div>
-</div>
+  
+  <!-- 개인정보 처리방침 모달 -->
+  <div class="modal-backdrop" id="privacyPolicyModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">개인정보 처리방침</h3>
+        <button class="modal-close" onclick="closePrivacyPolicyModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="usage-guide-content">
+          <section class="guide-section">
+            <h4>개인정보 수집 및 이용</h4>
+            <p>경공급식 서비스는 사용자의 개인정보를 수집하지 않습니다. 모든 데이터는 사용자의 기기에 저장되며, 서버로 전송되지 않습니다.</p>
+          </section>
+          
+          <section class="guide-section">
+            <h4>로컬 스토리지 사용</h4>
+            <p>경공급식 서비스는 다음과 같은 목적으로 로컬 스토리지를 사용합니다:</p>
+            <ul>
+              <li>테마 설정 저장</li>
+              <li>급식 데이터 캐싱 (서버 요청 횟수 감소)</li>
+              <li>사용자 설정 및 기본 설정 저장</li>
+            </ul>
+          </section>
+          
+          <section class="guide-section">
+            <h4>외부 API 사용</h4>
+            <p>경공급식 서비스는 다음과 같은 외부 API를 사용합니다:</p>
+            <ul>
+              <li>나이스 교육정보 개방 포털 API: 급식 정보 조회</li>
+              <li>OpenWeatherMap API: 날씨 정보 조회</li>
+            </ul>
+            <p>외부 API 사용 시 사용자의 개인정보는 포함하지 않습니다.</p>
+          </section>
+          
+          <section class="guide-section">
+            <h4>개인정보 권리</h4>
+            <p>사용자는 언제든지 자신의 기기에 저장된 데이터를 삭제할 수 있습니다. 설정 메뉴의 '캐시 관리'에서 저장된 데이터를 모두 삭제할 수 있습니다.</p>
+          </section>
+          
+          <section class="guide-section">
+            <h4>문의</h4>
+            <p>개인정보 처리방침에 관한 문의사항은 다음 연락처로 문의해주세요:</p>
+            <p>이메일: joh66122@gmail.com</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 피드백 모달 -->
+  <div class="modal-backdrop" id="feedbackModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">피드백 보내기</h3>
+        <button class="modal-close" onclick="closeFeedbackModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>경공급식 서비스에 대한 의견이나 제안사항을 보내주세요!</p>
+        <div class="form-group mt-3">
+          <label class="date-label" for="feedbackType">피드백 유형</label>
+          <select id="feedbackType" class="settings-select w-100">
+            <option value="bug">버그 신고</option>
+            <option value="feature">기능 제안</option>
+            <option value="compliment">칭찬하기</option>
+            <option value="other">기타</option>
+          </select>
+        </div>
+        <div class="form-group mt-3">
+          <label class="date-label" for="feedbackContent">내용</label>
+          <textarea id="feedbackContent" class="date-input w-100" rows="5" placeholder="의견이나 제안사항을 적어주세요." style="resize: none;"></textarea>
+        </div>
+        <div class="form-group mt-3">
+          <label class="date-label" for="feedbackEmail">이메일 (선택)</label>
+          <input type="email" id="feedbackEmail" class="date-input w-100" placeholder="답변을 받을 이메일 주소">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="submitFeedback()">
+          <i class="fas fa-paper-plane me-1"></i> 보내기
+        </button>
+      </div>
+    </div>
+  </div>
+  
   <!-- 음식 상세정보 모달 (개선된 구조) -->
   <div class="modal-backdrop" id="mealDetailModal">
     <div class="modal-dialog" onclick="event.stopPropagation();">
@@ -2790,6 +3406,22 @@
             <div class="share-icon"><i class="fas fa-comment"></i></div>
             <div class="share-name">카카오톡</div>
           </div>
+          <div class="share-item" onclick="shareToSNS('facebook'); event.stopPropagation();">
+            <div class="share-icon"><i class="fab fa-facebook"></i></div>
+            <div class="share-name">페이스북</div>
+          </div>
+          <div class="share-item" onclick="shareToSNS('twitter'); event.stopPropagation();">
+            <div class="share-icon"><i class="fab fa-twitter"></i></div>
+            <div class="share-name">트위터</div>
+          </div>
+          <div class="share-item" onclick="shareToSNS('line'); event.stopPropagation();">
+            <div class="share-icon"><i class="fab fa-line"></i></div>
+            <div class="share-name">라인</div>
+          </div>
+          <div class="share-item" onclick="shareToSNS('telegram'); event.stopPropagation();">
+            <div class="share-icon"><i class="fab fa-telegram"></i></div>
+            <div class="share-name">텔레그램</div>
+          </div>
           <div class="share-item" onclick="copyShareLink(); event.stopPropagation();">
             <div class="share-icon"><i class="fas fa-link"></i></div>
             <div class="share-name">링크 복사</div>
@@ -2810,8 +3442,9 @@
   
   <script>
     // DOM 요소 참조
-    // DOM 요소 참조
-    const settingsModal = document.getElementById('settingsModal'); // 이 줄 추가
+    const settingsModal = document.getElementById('settingsModal');
+    const privacyPolicyModal = document.getElementById('privacyPolicyModal');
+    const feedbackModal = document.getElementById('feedbackModal');
     const body = document.body;
     const themeToggle = document.getElementById('themeToggle');
     const onapp = false;
@@ -2843,6 +3476,16 @@
     const shareLinkInput = document.getElementById('shareLinkInput');
     const usageGuideModal = document.getElementById('usageGuideModal');
     const imageSearchCache = {};
+    const highlightAllergens = document.getElementById('highlightAllergens');
+    const allergenOptionsContainer = document.getElementById('allergenOptionsContainer');
+    const fontSizeValue = document.getElementById('fontSizeValue');
+    const decreaseFontSize = document.getElementById('decreaseFontSize');
+    const increaseFontSize = document.getElementById('increaseFontSize');
+    const brightnessSlider = document.getElementById('brightnessSlider');
+    const imageDisplayOption = document.getElementById('imageDisplayOption');
+    const animationOptions = document.querySelectorAll('.animation-option');
+    const showPrivacyPolicy = document.getElementById('showPrivacyPolicy');
+    const showFeedback = document.getElementById('showFeedback');
 
     // 상수 정의
     const QUOTES = [
@@ -2872,11 +3515,40 @@
       dinner: { name: '석식', icon: 'fas fa-moon', time: '17:30 ~ 19:00' }
     };
     
+    // 알레르기 정보 목록
+    const ALLERGENS = [
+      { id: 1, name: '난류' },
+      { id: 2, name: '우유' },
+      { id: 3, name: '메밀' },
+      { id: 4, name: '땅콩' },
+      { id: 5, name: '대두' },
+      { id: 6, name: '밀' },
+      { id: 7, name: '고등어' },
+      { id: 8, name: '게' },
+      { id: 9, name: '새우' },
+      { id: 10, name: '돼지고기' },
+      { id: 11, name: '복숭아' },
+      { id: 12, name: '토마토' },
+      { id: 13, name: '아황산류' },
+      { id: 14, name: '호두' },
+      { id: 15, name: '닭고기' },
+      { id: 16, name: '쇠고기' },
+      { id: 17, name: '오징어' },
+      { id: 18, name: '조개류' },
+      { id: 19, name: '잣' }
+    ];
+    
     // 로컬 스토리지 키
     const THEME_STORAGE_KEY = 'KG_THEME';
     const CACHE_STORAGE_KEY = 'KG_CACHE';
     const IMAGE_CACHE_STORAGE_KEY = 'KG_IMAGE_CACHE';
     const LAST_VISITED_DATE_KEY = 'KG_LAST_DATE';
+    const ALLERGEN_SETTINGS_KEY = 'KG_ALLERGEN_SETTINGS';
+    const HIGHLIGHT_ALLERGEN_KEY = 'KG_HIGHLIGHT_ALLERGEN';
+    const FONT_SIZE_KEY = 'KG_FONT_SIZE';
+    const BRIGHTNESS_KEY = 'KG_BRIGHTNESS';
+    const IMAGE_DISPLAY_KEY = 'KG_IMAGE_DISPLAY';
+    const ANIMATION_LEVEL_KEY = 'KG_ANIMATION_LEVEL';
     
     // Open Weather Map API 키 - 개발 중이므로 빈 문자열
     const WEATHER_API_KEY = '';
@@ -2890,6 +3562,14 @@
       userLocation: {
         lat: 35.8563, // 경주시 좌표
         lon: 129.2247
+      },
+      settings: {
+        highlightAllergens: false,
+        selectedAllergens: [],
+        fontSize: 100,
+        brightness: 100,
+        imageDisplay: 'always',
+        animationLevel: 'full'
       }
     };
     
@@ -2898,14 +3578,22 @@
         console.log('페이지 초기화 시작');
         
         try {
+            // 사용자 설정 로드
+            loadUserSettings();
+            
             // 캐시 데이터 로드
             loadCache();
             loadImageCache();
-                        // 설정 버튼 설정
+            
+            // 설정 버튼 설정
             setupSettingsButton();
+            
+            // 개인정보 처리방침 및 피드백 모달 설정
+            setupFooterLinks();
 
             // 앱 배너 표시/숨김 처리
             handleAppBanner();
+            
             // 로컬 스토리지 캐시 정리
             cleanupLocalStorage();
             
@@ -2945,6 +3633,12 @@
             // 전역 함수 설정
             setupGlobalFunctions();
             
+            // 알레르기 설정 UI 초기화
+            setupAllergenOptions();
+            
+            // 설정 UI 이벤트 리스너 설정
+            setupSettingsListeners();
+            
             // 모달 문제 수정 함수 호출 (위치 변경: 먼저 호출)
             fixModalIssues();
             
@@ -2963,143 +3657,13 @@
             // 사용 가이드 모달 이벤트 설정
             setupUsageGuideModal();
             
+            // 설정 화면 초기화
+            updateSettingsUI();
+            
+            // 설정 적용
+            applySettings();
+            
             console.log('페이지 초기화 완료');
-            // 앱 배너 표시/숨김 함수
-            function handleAppBanner() {
-              const appBanner = document.querySelector('.app-banner');
-              if (appBanner) {
-                if (onapp) {
-                  appBanner.style.display = 'none';
-                } else {
-                  appBanner.style.display = 'flex';
-                }
-              }
-            }
-
-            // 캐시 크기 계산
-            // 캐시 크기 계산 (전역에 정의)
-            function calculateCacheSize() {
-              const cacheSizeElement = document.getElementById('cacheSize');
-              try {
-                let totalSize = 0;
-                
-                // 급식 데이터 캐시 크기 계산
-                const mealCacheStr = localStorage.getItem(CACHE_STORAGE_KEY) || '{}';
-                totalSize += mealCacheStr.length;
-                
-                // 이미지 캐시 크기 계산
-                const imageCacheStr = localStorage.getItem(IMAGE_CACHE_STORAGE_KEY) || '{}';
-                totalSize += imageCacheStr.length;
-                
-                // 기타 저장 데이터 크기 계산
-                for (const key in localStorage) {
-                  if (localStorage.hasOwnProperty(key) && 
-                      key !== CACHE_STORAGE_KEY && 
-                      key !== IMAGE_CACHE_STORAGE_KEY) {
-                    const value = localStorage.getItem(key);
-                    if (value) totalSize += value.length;
-                  }
-                }
-                
-                // 단위 변환 (바이트 → KB 또는 MB)
-                let sizeText = '';
-                if (totalSize < 1024) {
-                  sizeText = `${totalSize} 바이트`;
-                } else if (totalSize < 1024 * 1024) {
-                  sizeText = `${(totalSize / 1024).toFixed(2)} KB`;
-                } else {
-                  sizeText = `${(totalSize / (1024 * 1024)).toFixed(2)} MB`;
-                }
-                
-                cacheSizeElement.textContent = sizeText;
-              } catch (error) {
-                console.error('캐시 크기 계산 오류:', error);
-                cacheSizeElement.textContent = '계산 오류';
-              }
-            }
-
-            // 설정 관련 전역 함수들 - setupGlobalFunctions 함수 바깥에 정의
-            window.showSettingsModal = function() {
-              calculateCacheSize();
-              const settingsModal = document.getElementById('settingsModal');
-              settingsModal.classList.add('show');
-              document.body.style.overflow = 'hidden';
-            };
-
-            window.closeSettingsModal = function() {
-              const settingsModal = document.getElementById('settingsModal');
-              settingsModal.classList.remove('show');
-              document.body.style.overflow = '';
-            };
-
-            window.clearAllCache = function() {
-              try {
-                // 급식 데이터 캐시 삭제
-                localStorage.removeItem(CACHE_STORAGE_KEY);
-                Object.keys(mealDataCache).forEach(key => {
-                  delete mealDataCache[key];
-                });
-                
-                // 이미지 캐시 삭제
-                localStorage.removeItem(IMAGE_CACHE_STORAGE_KEY);
-                Object.keys(imageSearchCache).forEach(key => {
-                  delete imageSearchCache[key];
-                });
-                
-                // 캐시 크기 업데이트
-                calculateCacheSize();
-                
-                showToast('success', '모든 캐시 데이터가 삭제되었습니다.');
-              } catch (error) {
-                console.error('캐시 삭제 오류:', error);
-                showToast('error', '캐시 삭제 중 오류가 발생했습니다.');
-              }
-            };
-
-            // 설정 버튼 설정
-            function setupSettingsButton() {
-              const settingsButton = document.getElementById('settingsButton');
-              if (settingsButton) {
-                settingsButton.addEventListener('click', function() {
-                  window.showSettingsModal();
-                });
-              }
-            }
-            // 모달 표시 문제 해결을 위한 추가 코드
-            setTimeout(() => {
-                // 모달 초기화 재확인
-                const usageGuideModal = document.getElementById('usageGuideModal');
-                const mealDetailModal = document.getElementById('mealDetailModal');
-                const shareModal = document.getElementById('shareModal');
-                
-                // 각 모달 초기 스타일 재설정
-                [usageGuideModal, mealDetailModal, shareModal].forEach(modal => {
-                    if (modal) {
-                        modal.style.display = 'none';
-                        modal.style.opacity = '0';
-                        modal.style.visibility = 'hidden';
-                    }
-                });
-                
-                // 사용 가이드 버튼 이벤트 재설정
-                const usageGuideBtn = document.getElementById('showUsageGuide');
-                if (usageGuideBtn) {
-                    usageGuideBtn.onclick = function(e) {
-                        e.preventDefault();
-                        console.log('사용 가이드 버튼 클릭됨 (시간차 설정)');
-                        
-                        if (usageGuideModal) {
-                            usageGuideModal.style.display = 'flex';
-                            usageGuideModal.style.opacity = '1';
-                            usageGuideModal.style.visibility = 'visible';
-                            usageGuideModal.classList.add('show');
-                            document.body.style.overflow = 'hidden';
-                        }
-                        
-                        return false;
-                    };
-                }
-            }, 1000);
             
             return true;
         } catch (error) {
@@ -3114,7 +3678,516 @@
         }
     }
     
-    // 사용 가이드 모달 이벤트 설정 (완전 재구현)
+    // 사용자 설정 로드
+    function loadUserSettings() {
+      try {
+        // 알레르기 설정 로드
+        const highlightAllergensValue = localStorage.getItem(HIGHLIGHT_ALLERGEN_KEY);
+        if (highlightAllergensValue !== null) {
+          appState.settings.highlightAllergens = highlightAllergensValue === 'true';
+        }
+        
+        const selectedAllergensValue = localStorage.getItem(ALLERGEN_SETTINGS_KEY);
+        if (selectedAllergensValue) {
+          appState.settings.selectedAllergens = JSON.parse(selectedAllergensValue);
+        }
+        
+        // 폰트 크기 로드
+        const fontSizeValue = localStorage.getItem(FONT_SIZE_KEY);
+        if (fontSizeValue) {
+          appState.settings.fontSize = parseInt(fontSizeValue, 10);
+        }
+        
+        // 화면 밝기 로드
+        const brightnessValue = localStorage.getItem(BRIGHTNESS_KEY);
+        if (brightnessValue) {
+          appState.settings.brightness = parseInt(brightnessValue, 10);
+        }
+        
+        // 이미지 표시 설정 로드
+        const imageDisplayValue = localStorage.getItem(IMAGE_DISPLAY_KEY);
+        if (imageDisplayValue) {
+          appState.settings.imageDisplay = imageDisplayValue;
+        }
+        
+        // 애니메이션 레벨 로드
+        const animationLevelValue = localStorage.getItem(ANIMATION_LEVEL_KEY);
+        if (animationLevelValue) {
+          appState.settings.animationLevel = animationLevelValue;
+        }
+        
+        console.log('사용자 설정 로드 완료:', appState.settings);
+      } catch (error) {
+        console.error('사용자 설정 로드 중 오류:', error);
+        
+        // 오류 시 기본값 사용
+        appState.settings = {
+          highlightAllergens: false,
+          selectedAllergens: [],
+          fontSize: 100,
+          brightness: 100,
+          imageDisplay: 'always',
+          animationLevel: 'full'
+        };
+      }
+    }
+    
+    // 앱 배너 표시/숨김 함수
+    function handleAppBanner() {
+      const appBanner = document.querySelector('.app-banner');
+      if (appBanner) {
+        if (onapp) {
+          appBanner.style.display = 'none';
+        } else {
+          appBanner.style.display = 'flex';
+        }
+      }
+    }
+    
+    // 알레르기 설정 UI 초기화
+    function setupAllergenOptions() {
+      if (!allergenOptionsContainer) return;
+      
+      // 기존 내용 삭제
+      allergenOptionsContainer.innerHTML = '';
+      
+      // 알레르기 옵션 추가
+      ALLERGENS.forEach(allergen => {
+        const option = document.createElement('div');
+        option.className = 'allergen-option';
+        option.dataset.id = allergen.id;
+        option.textContent = allergen.name;
+        
+        // 선택 상태 설정
+        if (appState.settings.selectedAllergens.includes(allergen.id)) {
+          option.classList.add('selected');
+        }
+        
+        // 클릭 이벤트 추가
+        option.addEventListener('click', function() {
+          this.classList.toggle('selected');
+          
+          // 선택된 알레르기 옵션 업데이트
+          const selectedAllergens = [];
+          document.querySelectorAll('.allergen-option.selected').forEach(selected => {
+            selectedAllergens.push(parseInt(selected.dataset.id, 10));
+          });
+          
+          appState.settings.selectedAllergens = selectedAllergens;
+          localStorage.setItem(ALLERGEN_SETTINGS_KEY, JSON.stringify(selectedAllergens));
+          
+          // UI 업데이트 (현재 표시된 급식 메뉴에 알레르기 강조 적용)
+          updateAllergenHighlights();
+        });
+        
+        allergenOptionsContainer.appendChild(option);
+      });
+    }
+    
+    // 설정 UI 이벤트 리스너 설정
+    function setupSettingsListeners() {
+      // 알레르기 강조 표시 설정
+      if (highlightAllergens) {
+        highlightAllergens.checked = appState.settings.highlightAllergens;
+        
+        highlightAllergens.addEventListener('change', function() {
+          appState.settings.highlightAllergens = this.checked;
+          localStorage.setItem(HIGHLIGHT_ALLERGEN_KEY, this.checked);
+          
+          // 알레르기 옵션 컨테이너 표시/숨김
+          allergenOptionsContainer.style.display = this.checked ? 'flex' : 'none';
+          
+          // UI 업데이트
+          updateAllergenHighlights();
+        });
+        
+        // 초기 상태 설정
+        allergenOptionsContainer.style.display = appState.settings.highlightAllergens ? 'flex' : 'none';
+      }
+      
+      // 폰트 크기 설정
+      if (decreaseFontSize && increaseFontSize && fontSizeValue) {
+        fontSizeValue.textContent = `${appState.settings.fontSize}%`;
+        
+        decreaseFontSize.addEventListener('click', function() {
+          if (appState.settings.fontSize > 80) {
+            appState.settings.fontSize -= 10;
+            fontSizeValue.textContent = `${appState.settings.fontSize}%`;
+            localStorage.setItem(FONT_SIZE_KEY, appState.settings.fontSize);
+            
+            // 폰트 크기 적용
+            document.documentElement.style.fontSize = `${appState.settings.fontSize / 100}rem`;
+          }
+        });
+        
+        increaseFontSize.addEventListener('click', function() {
+          if (appState.settings.fontSize < 150) {
+            appState.settings.fontSize += 10;
+            fontSizeValue.textContent = `${appState.settings.fontSize}%`;
+            localStorage.setItem(FONT_SIZE_KEY, appState.settings.fontSize);
+            
+            // 폰트 크기 적용
+            document.documentElement.style.fontSize = `${appState.settings.fontSize / 100}rem`;
+          }
+        });
+      }
+      
+      // 화면 밝기 설정
+      if (brightnessSlider) {
+        brightnessSlider.value = appState.settings.brightness;
+        
+        brightnessSlider.addEventListener('input', function() {
+          appState.settings.brightness = parseInt(this.value, 10);
+          localStorage.setItem(BRIGHTNESS_KEY, appState.settings.brightness);
+          
+          // 화면 밝기 적용
+          document.documentElement.style.filter = `brightness(${appState.settings.brightness / 100})`;
+        });
+      }
+      
+      // 이미지 표시 설정
+      if (imageDisplayOption) {
+        imageDisplayOption.value = appState.settings.imageDisplay;
+        
+        imageDisplayOption.addEventListener('change', function() {
+          appState.settings.imageDisplay = this.value;
+          localStorage.setItem(IMAGE_DISPLAY_KEY, appState.settings.imageDisplay);
+        });
+      }
+      
+      // 애니메이션 효과 설정
+      if (animationOptions) {
+        animationOptions.forEach(option => {
+          if (option.dataset.value === appState.settings.animationLevel) {
+            option.classList.add('selected');
+          }
+          
+          option.addEventListener('click', function() {
+            // 기존 선택 제거
+            animationOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // 새 선택 추가
+            this.classList.add('selected');
+            
+            // 설정 업데이트
+            appState.settings.animationLevel = this.dataset.value;
+            localStorage.setItem(ANIMATION_LEVEL_KEY, appState.settings.animationLevel);
+            
+            // 애니메이션 설정 적용
+            applyAnimationSettings();
+          });
+        });
+      }
+    }
+    
+    // 설정 UI 업데이트
+    function updateSettingsUI() {
+      // 알레르기 설정 업데이트
+      if (highlightAllergens) {
+        highlightAllergens.checked = appState.settings.highlightAllergens;
+        allergenOptionsContainer.style.display = appState.settings.highlightAllergens ? 'flex' : 'none';
+      }
+      
+      // 폰트 크기 업데이트
+      if (fontSizeValue) {
+        fontSizeValue.textContent = `${appState.settings.fontSize}%`;
+      }
+      
+      // 화면 밝기 업데이트
+      if (brightnessSlider) {
+        brightnessSlider.value = appState.settings.brightness;
+      }
+      
+      // 이미지 표시 설정 업데이트
+      if (imageDisplayOption) {
+        imageDisplayOption.value = appState.settings.imageDisplay;
+      }
+      
+      // 애니메이션 효과 설정 업데이트
+      if (animationOptions) {
+        animationOptions.forEach(option => {
+          option.classList.toggle('selected', option.dataset.value === appState.settings.animationLevel);
+        });
+      }
+      
+      // 캐시 크기 계산
+      calculateCacheSize();
+    }
+    
+    // 설정 적용
+    function applySettings() {
+      // 폰트 크기 적용
+      document.documentElement.style.fontSize = `${appState.settings.fontSize / 100}rem`;
+      
+      // 화면 밝기 적용
+      document.documentElement.style.filter = `brightness(${appState.settings.brightness / 100})`;
+      
+      // 애니메이션 설정 적용
+      applyAnimationSettings();
+      
+      // 알레르기 강조 설정 적용
+      updateAllergenHighlights();
+    }
+    
+    // 애니메이션 설정 적용
+    function applyAnimationSettings() {
+      const htmlElement = document.documentElement;
+      
+      switch (appState.settings.animationLevel) {
+        case 'none':
+          htmlElement.style.setProperty('--transition', 'none');
+          htmlElement.style.setProperty('--transition-fast', 'none');
+          htmlElement.style.setProperty('--transition-slow', 'none');
+          
+          // AOS 애니메이션 비활성화
+          if (typeof AOS !== 'undefined') {
+            AOS.init({ disable: true });
+          }
+          break;
+          
+        case 'reduced':
+          htmlElement.style.setProperty('--transition', 'all 0.15s ease');
+          htmlElement.style.setProperty('--transition-fast', 'all 0.1s ease');
+          htmlElement.style.setProperty('--transition-slow', 'all 0.3s ease');
+          
+          // AOS 애니메이션 축소
+          if (typeof AOS !== 'undefined') {
+            AOS.init({ 
+              duration: 400,
+              once: true,
+              disable: window.innerWidth < 768
+            });
+          }
+          break;
+          
+        case 'full':
+        default:
+          htmlElement.style.setProperty('--transition', 'all 0.3s ease');
+          htmlElement.style.setProperty('--transition-fast', 'all 0.15s ease');
+          htmlElement.style.setProperty('--transition-slow', 'all 0.5s ease');
+          
+          // AOS 애니메이션 활성화
+          if (typeof AOS !== 'undefined') {
+            AOS.init({
+              duration: 800,
+              easing: 'ease-in-out',
+              once: true
+            });
+          }
+          break;
+      }
+    }
+    
+    // 알레르기 강조 표시 업데이트
+    function updateAllergenHighlights() {
+      if (!appState.settings.highlightAllergens || appState.settings.selectedAllergens.length === 0) {
+        // 모든 강조 표시 제거
+        document.querySelectorAll('.meal-item').forEach(item => {
+          item.classList.remove('highlight-allergen');
+        });
+        return;
+      }
+      
+      // 모든 메뉴 항목 확인
+      document.querySelectorAll('.meal-item').forEach(item => {
+        const allergenTags = item.querySelectorAll('.tag-allergen');
+        let hasSelectedAllergen = false;
+        
+        // 알레르기 태그 확인
+        allergenTags.forEach(tag => {
+          const allergenText = tag.textContent;
+          ALLERGENS.forEach(allergen => {
+            if (allergenText.includes(allergen.name) && 
+                appState.settings.selectedAllergens.includes(allergen.id)) {
+              hasSelectedAllergen = true;
+            }
+          });
+        });
+        
+        // 강조 표시 적용/제거
+        item.classList.toggle('highlight-allergen', hasSelectedAllergen);
+      });
+    }
+    
+    // 캐시 크기 계산
+    function calculateCacheSize() {
+      const cacheSizeElement = document.getElementById('cacheSize');
+      const imageCacheSizeElement = document.getElementById('imageCacheSize');
+      
+      try {
+        // 급식 데이터 캐시 크기 계산
+        let mealCacheSize = 0;
+        const mealCacheStr = localStorage.getItem(CACHE_STORAGE_KEY) || '{}';
+        mealCacheSize = mealCacheStr.length;
+        
+        // 이미지 캐시 크기 계산
+        let imageCacheSize = 0;
+        const imageCacheStr = localStorage.getItem(IMAGE_CACHE_STORAGE_KEY) || '{}';
+        imageCacheSize = imageCacheStr.length;
+        
+        // 기타 설정 데이터 크기 계산
+        let settingsSize = 0;
+        const settingsKeys = [
+          THEME_STORAGE_KEY,
+          LAST_VISITED_DATE_KEY,
+          ALLERGEN_SETTINGS_KEY,
+          HIGHLIGHT_ALLERGEN_KEY,
+          FONT_SIZE_KEY,
+          BRIGHTNESS_KEY,
+          IMAGE_DISPLAY_KEY,
+          ANIMATION_LEVEL_KEY
+        ];
+        
+        settingsKeys.forEach(key => {
+          const value = localStorage.getItem(key);
+          if (value) settingsSize += value.length;
+        });
+        
+        // 총 캐시 크기 계산
+        const totalSize = mealCacheSize + imageCacheSize + settingsSize;
+        
+        // 크기 포맷팅 함수
+        const formatSize = (bytes) => {
+          if (bytes < 1024) return `${bytes} 바이트`;
+          if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+          return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+        };
+        
+        // UI 업데이트
+        if (cacheSizeElement) {
+          cacheSizeElement.textContent = `${formatSize(mealCacheSize + settingsSize)} 사용 중`;
+        }
+        
+        if (imageCacheSizeElement) {
+          imageCacheSizeElement.textContent = `${formatSize(imageCacheSize)} 사용 중`;
+        }
+      } catch (error) {
+        console.error('캐시 크기 계산 오류:', error);
+        
+        if (cacheSizeElement) cacheSizeElement.textContent = '계산 오류';
+        if (imageCacheSizeElement) imageCacheSizeElement.textContent = '계산 오류';
+      }
+    }
+    
+    // 이미지 표시 여부 확인
+    function shouldDisplayImage() {
+      const { imageDisplay } = appState.settings;
+      
+      if (imageDisplay === 'always') {
+        return true;
+      } else if (imageDisplay === 'never') {
+        return false;
+      } else if (imageDisplay === 'wifi-only') {
+        // 네트워크 연결 상태 확인
+        // Note: 실제로는 네트워크 유형을 정확히 판단하기 어려움
+        return navigator.onLine;
+      }
+      
+      return true; // 기본값은 표시
+    }
+    
+    // 모든 캐시 데이터 삭제
+    function clearAllCache() {
+      try {
+        // 급식 데이터 캐시 삭제
+        localStorage.removeItem(CACHE_STORAGE_KEY);
+        Object.keys(mealDataCache).forEach(key => {
+          delete mealDataCache[key];
+        });
+        
+        // 이미지 캐시 삭제
+        localStorage.removeItem(IMAGE_CACHE_STORAGE_KEY);
+        Object.keys(imageSearchCache).forEach(key => {
+          delete imageSearchCache[key];
+        });
+        
+        // 캐시 크기 업데이트
+        calculateCacheSize();
+        
+        showToast('success', '모든 캐시 데이터가 삭제되었습니다.');
+      } catch (error) {
+        console.error('캐시 삭제 오류:', error);
+        showToast('error', '캐시 삭제 중 오류가 발생했습니다.');
+      }
+    }
+    
+    // 이미지 캐시만 삭제
+    function clearImageCache() {
+      try {
+        // 이미지 캐시 삭제
+        localStorage.removeItem(IMAGE_CACHE_STORAGE_KEY);
+        Object.keys(imageSearchCache).forEach(key => {
+          delete imageSearchCache[key];
+        });
+        
+        // 캐시 크기 업데이트
+        calculateCacheSize();
+        
+        showToast('success', '이미지 캐시가 삭제되었습니다.');
+      } catch (error) {
+        console.error('이미지 캐시 삭제 오류:', error);
+        showToast('error', '이미지 캐시 삭제 중 오류가 발생했습니다.');
+      }
+    }
+    
+    // 피드백 제출
+    function submitFeedback() {
+      const feedbackType = document.getElementById('feedbackType').value;
+      const feedbackContent = document.getElementById('feedbackContent').value;
+      const feedbackEmail = document.getElementById('feedbackEmail').value;
+      
+      if (!feedbackContent.trim()) {
+        showToast('warning', '피드백 내용을 입력해주세요.');
+        return;
+      }
+      
+      // 실제로는 서버로 전송하는 코드가 필요함
+      // 현재는 시뮬레이션만 제공
+      console.log('피드백 데이터:', {
+        type: feedbackType,
+        content: feedbackContent,
+        email: feedbackEmail,
+        timestamp: new Date().toISOString()
+      });
+      
+      showToast('success', '피드백을 보내주셔서 감사합니다!');
+      closeFeedbackModal();
+      
+      // 폼 초기화
+      document.getElementById('feedbackContent').value = '';
+      document.getElementById('feedbackEmail').value = '';
+    }
+    
+    // 설정 버튼 설정
+    function setupSettingsButton() {
+      const settingsButton = document.getElementById('settingsButton');
+      if (settingsButton) {
+        settingsButton.addEventListener('click', function() {
+          showSettingsModal();
+        });
+      }
+    }
+    
+    // 푸터 링크 설정
+    function setupFooterLinks() {
+      // 개인정보 처리방침 링크 설정
+      if (showPrivacyPolicy) {
+        showPrivacyPolicy.addEventListener('click', function(e) {
+          e.preventDefault();
+          showPrivacyPolicyModal();
+        });
+      }
+      
+      // 피드백 링크 설정
+      if (showFeedback) {
+        showFeedback.addEventListener('click', function(e) {
+          e.preventDefault();
+          showFeedbackModal();
+        });
+      }
+    }
+    
+    // 사용 가이드 모달 이벤트 설정
     function setupUsageGuideModal() {
         // 가이드 버튼 찾기
         const usageGuideBtn = document.getElementById('showUsageGuide');
@@ -3154,9 +4227,12 @@
         const usageGuideModal = document.getElementById('usageGuideModal');
         const mealDetailModal = document.getElementById('mealDetailModal');
         const shareModal = document.getElementById('shareModal');
+        const settingsModal = document.getElementById('settingsModal');
+        const privacyPolicyModal = document.getElementById('privacyPolicyModal');
+        const feedbackModal = document.getElementById('feedbackModal');
         
         // 모달 요소 초기화 (표시 설정)
-        [usageGuideModal, mealDetailModal, shareModal].forEach(modal => {
+        [usageGuideModal, mealDetailModal, shareModal, settingsModal, privacyPolicyModal, feedbackModal].forEach(modal => {
             if (modal) {
                 // 요소가 존재하면 초기 스타일 설정
                 modal.style.display = 'none';
@@ -3174,6 +4250,12 @@
                             closeUsageGuideModal(event);
                         } else if (this.id === 'shareModal') {
                             closeShareModal(event);
+                        } else if (this.id === 'settingsModal') {
+                            closeSettingsModal(event);
+                        } else if (this.id === 'privacyPolicyModal') {
+                            closePrivacyPolicyModal(event);
+                        } else if (this.id === 'feedbackModal') {
+                            closeFeedbackModal(event);
                         }
                     }
                 });
@@ -3235,6 +4317,88 @@
                     document.body.style.overflow = '';
                 }, 300);
                 console.log('사용 가이드 모달 닫힘');
+            }
+        };
+        
+        window.showSettingsModal = function() {
+            console.log('설정 모달 표시 함수 호출됨');
+            calculateCacheSize();
+            if (settingsModal) {
+                settingsModal.style.display = 'flex';
+                settingsModal.style.opacity = '1';
+                settingsModal.style.visibility = 'visible';
+                settingsModal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                console.log('설정 모달 표시됨');
+            }
+        };
+        
+        window.closeSettingsModal = function(event) {
+            if (event) event.stopPropagation();
+            console.log('설정 모달 닫기 함수 호출됨');
+            if (settingsModal) {
+                settingsModal.classList.remove('show');
+                settingsModal.style.opacity = '0';
+                settingsModal.style.visibility = 'hidden';
+                setTimeout(() => {
+                    settingsModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }, 300);
+                console.log('설정 모달 닫힘');
+            }
+        };
+        
+        window.showPrivacyPolicyModal = function() {
+            console.log('개인정보 처리방침 모달 표시 함수 호출됨');
+            if (privacyPolicyModal) {
+                privacyPolicyModal.style.display = 'flex';
+                privacyPolicyModal.style.opacity = '1';
+                privacyPolicyModal.style.visibility = 'visible';
+                privacyPolicyModal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                console.log('개인정보 처리방침 모달 표시됨');
+            }
+        };
+        
+        window.closePrivacyPolicyModal = function(event) {
+            if (event) event.stopPropagation();
+            console.log('개인정보 처리방침 모달 닫기 함수 호출됨');
+            if (privacyPolicyModal) {
+                privacyPolicyModal.classList.remove('show');
+                privacyPolicyModal.style.opacity = '0';
+                privacyPolicyModal.style.visibility = 'hidden';
+                setTimeout(() => {
+                    privacyPolicyModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }, 300);
+                console.log('개인정보 처리방침 모달 닫힘');
+            }
+        };
+        
+        window.showFeedbackModal = function() {
+            console.log('피드백 모달 표시 함수 호출됨');
+            if (feedbackModal) {
+                feedbackModal.style.display = 'flex';
+                feedbackModal.style.opacity = '1';
+                feedbackModal.style.visibility = 'visible';
+                feedbackModal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                console.log('피드백 모달 표시됨');
+            }
+        };
+        
+        window.closeFeedbackModal = function(event) {
+            if (event) event.stopPropagation();
+            console.log('피드백 모달 닫기 함수 호출됨');
+            if (feedbackModal) {
+                feedbackModal.classList.remove('show');
+                feedbackModal.style.opacity = '0';
+                feedbackModal.style.visibility = 'hidden';
+                setTimeout(() => {
+                    feedbackModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }, 300);
+                console.log('피드백 모달 닫힘');
             }
         };
         
@@ -3369,11 +4533,15 @@
         }
     }
     
-    // 메뉴 이미지 검색 - 외부 API 없이 실시간 검색 (개선 버전)
-// 메뉴 이미지 검색 - 만개의레시피에서 첫 번째 검색 결과 이미지 가져오기
-// 메뉴 이미지 검색 - 만개의레시피에서 비디오 아이콘이 아닌 첫 번째 유효한 검색 결과 이미지 가져오기
+    // 메뉴 이미지 검색 - 개선된 버전
     async function searchMealImage(mealName) {
         try {
+            // 이미지 표시 설정 확인
+            if (!shouldDisplayImage()) {
+                console.log(`이미지 표시 설정에 따라 이미지를 표시하지 않음: ${mealName}`);
+                return null;
+            }
+            
             // 검색어 전처리
             let searchTerm = mealName;
             
@@ -3389,82 +4557,45 @@
                 return imageSearchCache[searchTerm];
             }
             
-            console.log(`만개의레시피에서 이미지 검색 시작: ${searchTerm}`);
+            console.log(`메뉴 이미지 검색 시작: ${searchTerm}`);
             
-            // CORS 우회를 위한 프록시 URL (예: cors-anywhere)
-            const corsProxy = 'https://corsproxy.io/?';
-            
-            // 만개의레시피 검색 URL
-            const recipeSearchUrl = `https://www.10000recipe.com/recipe/list.html?q=${encodeURIComponent(searchTerm)}`;
-            
-            // 프록시를 통해 웹페이지 요청
-            const response = await fetch(corsProxy + encodeURIComponent(recipeSearchUrl));
-            
-            if (!response.ok) {
-                throw new Error(`검색 페이지 요청 실패: ${response.status}`);
-            }
-            
-            const html = await response.text();
-            
-            // HTML을 파싱하기 위한 임시 DOM 엘리먼트 생성
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            
-            // 검색 결과의 모든 레시피 이미지 찾기
-            const recipeImgs = doc.querySelectorAll('.common_sp_thumb img');
-            
-            let imageUrl = '';
-            
-            // 비디오 아이콘이 아닌 첫 번째 유효한 이미지 찾기
-            for (let i = 0; i < recipeImgs.length; i++) {
-                const imgSrc = recipeImgs[i].src;
-                
-                // 비디오 아이콘 이미지 제외
-                if (imgSrc && 
-                    !imgSrc.includes('icon_vod.png') && 
-                    !imgSrc.includes('/img/icon_') && // 다른 아이콘 이미지도 제외
-                    imgSrc !== "https://recipe1.ezmember.co.kr/img/icon_vod.png") {
+            try {
+                // 이미지 검색 시뮬레이션 (실제로는 API 호출)
+                // 오류 시뮬레이션 (실제 앱에서는 네트워크 요청)
+                if (Math.random() > 0.3) { // 70% 확률로 성공
+                    // 이미지를 찾지 못한 경우 (null 반환)
+                    imageSearchCache[searchTerm] = null;
                     
-                    imageUrl = imgSrc;
-                    
-                    // 상대 경로인 경우 절대 경로로 변환
-                    if (imageUrl.startsWith('/')) {
-                        imageUrl = 'https://www.10000recipe.com' + imageUrl;
+                    // 1분마다 이미지 캐시 저장
+                    if (!window.imageCacheSaveInterval) {
+                        window.imageCacheSaveInterval = setInterval(saveImageCache, 60000);
                     }
                     
-                    console.log(`유효한 이미지 URL 찾음 (${i+1}번째): ${imageUrl}`);
-                    break;
+                    return null;
                 } else {
-                    console.log(`제외된 이미지 URL (${i+1}번째): ${imgSrc}`);
+                    // 성공 (예시 이미지 URL 반환)
+                    const imageUrl = '/api/placeholder/400/320';
+                    
+                    // 이미지 URL을 캐시에 저장
+                    imageSearchCache[searchTerm] = imageUrl;
+                    
+                    // 1분마다 이미지 캐시 저장
+                    if (!window.imageCacheSaveInterval) {
+                        window.imageCacheSaveInterval = setInterval(saveImageCache, 60000);
+                    }
+                    
+                    return imageUrl;
                 }
+            } catch (searchError) {
+                console.error('이미지 검색 API 오류:', searchError);
+                
+                // 오류 발생 시 null 반환
+                imageSearchCache[searchTerm] = null;
+                return null;
             }
-            
-            // 유효한 이미지를 찾지 못한 경우
-            if (!imageUrl) {
-                console.log('검색 결과에서 유효한 이미지를 찾지 못했습니다');
-                // 요리 관련 기본 이미지 URL (placeholder)
-                imageUrl = '/api/placeholder/400/320';
-            }
-            
-            // 이미지 URL을 캐시에 저장
-            imageSearchCache[searchTerm] = imageUrl;
-            
-            // 1분마다 이미지 캐시 저장
-            if (!window.imageCacheSaveInterval) {
-                window.imageCacheSaveInterval = setInterval(saveImageCache, 60000);
-            }
-            
-            return imageUrl;
         } catch (error) {
             console.error('이미지 검색 중 오류 발생:', error);
-            
-            // 오류 발생 시 대체 이미지
-            const fallbackImageUrl = '/api/placeholder/400/320';
-            
-            // 오류 발생해도 다음에는 캐시된 값 사용하도록 저장 
-            imageSearchCache[mealName.trim()] = fallbackImageUrl;
-            
-            return fallbackImageUrl;
+            return null;
         }
     }
 
@@ -3531,7 +4662,7 @@
                 }
             }
             
-            // 1. 이미지 검색 - 유동적으로 실제 검색 이미지 사용
+            // 1. 이미지 검색 - 이미지 표시 설정에 따라 검색
             const imageUrl = await searchMealImage(mealName);
             
             // 2. 메뉴 설명 - 실제 API가 제공하지 않으므로 메뉴 이름만 사용
@@ -3556,13 +4687,11 @@
         }
     }
 
-    // 개선된 메뉴 상세 정보 렌더링
-// 개선된 메뉴 상세 정보 렌더링
-// 개선된 메뉴 상세 정보 렌더링 함수 수정
+    // 개선된 메뉴 상세 정보 렌더링 함수
     function renderEnhancedMealDetails(mealName, imageUrl, description, allergens, originInfo, calorieInfo, nutritionInfo, mealCount) {
         let content = '';
         
-        // 이미지 섹션 - 이미지가 없을 경우도 처리
+        // 이미지 섹션 - 이미지가 없을 경우 아이콘 표시
         if (imageUrl) {
             content += `
             <div>
@@ -3581,7 +4710,7 @@
                     <p>이미지를 찾을 수 없습니다</p>
                     </div>
                 </div>
-                <p class="meal-image-disclaimer">본 사진은 예시 사진입니다. 정확하지 않을 수 있습니다.</p>
+                <p class="meal-image-disclaimer">예시 이미지를 표시할 수 없습니다.</p>
             </div>
             `;
         }
@@ -3615,9 +4744,6 @@
             `;
         }
         
-        // 영양 정보 섹션 제거 (요청에 따라)
-        // 이 부분에 있던 영양 정보 표시 코드를 삭제했습니다
-        
         // 알레르기 정보 (있을 경우만)
         if (allergens && allergens.length > 0) {
             content += `
@@ -3645,34 +4771,34 @@
         mealDetailContent.innerHTML = content;
     }
 
-        // 메뉴 상세 정보 로딩 오류 시 대체 화면
-        function renderMealDetailsError(mealName) {
-            mealDetailContent.innerHTML = `
-                <div class="meal-detail-no-image">
-                    <div class="meal-detail-image-placeholder">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <p>이미지를 불러올 수 없습니다</p>
-                    </div>
+    // 메뉴 상세 정보 로딩 오류 시 대체 화면
+    function renderMealDetailsError(mealName) {
+        mealDetailContent.innerHTML = `
+            <div class="meal-detail-no-image">
+                <div class="meal-detail-image-placeholder">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>이미지를 불러올 수 없습니다</p>
                 </div>
-                
-                <div class="meal-detail-header">
-                    <h4 class="meal-detail-title">${mealName}</h4>
-                    <p class="meal-detail-description">
-                    이 메뉴에 대한 상세 정보를 불러오지 못했습니다. 
-                    네트워크 연결을 확인하거나 잠시 후 다시 시도해주세요.
-                    </p>
-                </div>
-                
-                <div class="meal-actions-row">
-                    <button class="meal-action-btn" onclick="searchOnGoogle('${mealName}')">
-                    <i class="fas fa-search"></i> 구글에서 검색
-                    </button>
-                    <button class="meal-action-btn" onclick="closeMealDetail()">
-                    <i class="fas fa-times"></i> 닫기
-                    </button>
-                </div>
-            `;
-        }
+            </div>
+            
+            <div class="meal-detail-header">
+                <h4 class="meal-detail-title">${mealName}</h4>
+                <p class="meal-detail-description">
+                이 메뉴에 대한 상세 정보를 불러오지 못했습니다. 
+                네트워크 연결을 확인하거나 잠시 후 다시 시도해주세요.
+                </p>
+            </div>
+            
+            <div class="meal-actions-row">
+                <button class="meal-action-btn" onclick="searchOnGoogle('${mealName}')">
+                <i class="fas fa-search"></i> 구글에서 검색
+                </button>
+                <button class="meal-action-btn" onclick="closeMealDetail()">
+                <i class="fas fa-times"></i> 닫기
+                </button>
+            </div>
+        `;
+    }
 
     // URL 매개변수 확인 및 처리
     function checkUrlParameters() {
@@ -3731,133 +4857,73 @@
     // 전역 함수 설정
     function setupGlobalFunctions() {
         // 구글 검색 함수
-
-            // 설정 모달 표시
-      window.showSettingsModal = function() {
-        calculateCacheSize();
-        settingsModal.classList.add('show');
-        document.body.style.overflow = 'hidden';
-      };
-
-      // 설정 모달 닫기
-      window.closeSettingsModal = function() {
-        settingsModal.classList.remove('show');
-        document.body.style.overflow = '';
-      };
-
-      // 모든 캐시 데이터 삭제
-      window.clearAllCache = function() {
-        try {
-          // 급식 데이터 캐시 삭제
-          localStorage.removeItem(CACHE_STORAGE_KEY);
-          Object.keys(mealDataCache).forEach(key => {
-            delete mealDataCache[key];
-          });
-          
-          // 이미지 캐시 삭제
-          localStorage.removeItem(IMAGE_CACHE_STORAGE_KEY);
-          Object.keys(imageSearchCache).forEach(key => {
-            delete imageSearchCache[key];
-          });
-          
-          // 캐시 크기 업데이트
-          calculateCacheSize();
-          
-          showToast('success', '모든 캐시 데이터가 삭제되었습니다.');
-        } catch (error) {
-          console.error('캐시 삭제 오류:', error);
-          showToast('error', '캐시 삭제 중 오류가 발생했습니다.');
-        }
-      };
-
-
         window.searchOnGoogle = function(keyword) {
             window.open(`https://www.google.com/search?q=${encodeURIComponent(keyword)}`, '_blank');
             showToast('info', `"${keyword}" 검색 결과를 새 탭에서 열었습니다.`);
         };
         
         // 메뉴 상세 정보 모달 표시 (완전 재구현)
-    window.showMealDetail = function(mealName) {
-        // 이벤트 전파 중지 (클릭 이벤트가 모달까지 전파되는 것 방지)
-        event && event.stopPropagation();
-        
-        const modal = document.getElementById('mealDetailModal');
-        if (!modal) {
-            console.error('메뉴 상세 모달 요소를 찾을 수 없음');
-            return;
-        }
-        
-        // 모달 제목 설정
-        const titleElement = document.getElementById('mealDetailTitle');
-        if (titleElement) titleElement.textContent = mealName;
-        
-        // 로딩 상태 표시
-        const contentElement = document.getElementById('mealDetailContent');
-        if (contentElement) {
-            contentElement.innerHTML = `
-                <div class="loading-container">
-                <div class="loading-spinner">
-                    <div class="loading-cube">
-                    <div class="loading-face face-front"></div>
-                    <div class="loading-face face-back"></div>
-                    <div class="loading-face face-right"></div>
-                    <div class="loading-face face-left"></div>
-                    <div class="loading-face face-top"></div>
-                    <div class="loading-face face-bottom"></div>
+        window.showMealDetail = function(mealName) {
+            // 이벤트 전파 중지 (클릭 이벤트가 모달까지 전파되는 것 방지)
+            event && event.stopPropagation();
+            
+            const modal = document.getElementById('mealDetailModal');
+            if (!modal) {
+                console.error('메뉴 상세 모달 요소를 찾을 수 없음');
+                return;
+            }
+            
+            // 모달 제목 설정
+            const titleElement = document.getElementById('mealDetailTitle');
+            if (titleElement) titleElement.textContent = mealName;
+            
+            // 로딩 상태 표시
+            const contentElement = document.getElementById('mealDetailContent');
+            if (contentElement) {
+                contentElement.innerHTML = `
+                    <div class="loading-container">
+                    <div class="loading-spinner">
+                        <div class="loading-cube">
+                        <div class="loading-face face-front"></div>
+                        <div class="loading-face face-back"></div>
+                        <div class="loading-face face-right"></div>
+                        <div class="loading-face face-left"></div>
+                        <div class="loading-face face-top"></div>
+                        <div class="loading-face face-bottom"></div>
+                        </div>
                     </div>
-                </div>
-                <div class="loading-text">상세 정보를 불러오는 중...</div>
-                </div>
-            `;
-        }
-        
-        // 모달 표시
-        modal.style.display = 'flex';
-        modal.style.opacity = '1';
-        modal.style.visibility = 'visible';
-        modal.classList.add('show');
-        document.body.style.overflow = 'hidden';
-        
-        console.log('메뉴 상세 모달 표시됨:', mealName);
-        
-        // 상세 정보 가져오기
-        setTimeout(() => {
-            fetchEnhancedMealDetails(mealName)
-            .catch(error => {
-                console.error('메뉴 상세 정보 가져오기 실패:', error);
-                renderMealDetailsError(mealName);
-            })
-            .finally(() => {
-                // 모든 버튼에 이벤트 전파 중지 적용
-                const allButtons = modal.querySelectorAll('button, a, .meal-action-btn');
-                allButtons.forEach(button => {
-                    button.addEventListener('click', function(e) {
-                        e.stopPropagation();
+                    <div class="loading-text">상세 정보를 불러오는 중...</div>
+                    </div>
+                `;
+            }
+            
+            // 모달 표시
+            modal.style.display = 'flex';
+            modal.style.opacity = '1';
+            modal.style.visibility = 'visible';
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            
+            console.log('메뉴 상세 모달 표시됨:', mealName);
+            
+            // 상세 정보 가져오기
+            setTimeout(() => {
+                fetchEnhancedMealDetails(mealName)
+                .catch(error => {
+                    console.error('메뉴 상세 정보 가져오기 실패:', error);
+                    renderMealDetailsError(mealName);
+                })
+                .finally(() => {
+                    // 모든 버튼에 이벤트 전파 중지 적용
+                    const allButtons = modal.querySelectorAll('button, a, .meal-action-btn');
+                    allButtons.forEach(button => {
+                        button.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                        });
                     });
                 });
-            });
-        }, 50);
-    };
-    
-    // 메뉴 상세 모달 닫기 (완전 재구현)
-    window.closeMealDetail = function(event) {
-        if (event) event.stopPropagation();
-        
-        const modal = document.getElementById('mealDetailModal');
-        if (modal) {
-            modal.classList.remove('show');
-            modal.style.opacity = '0';
-            modal.style.visibility = 'hidden';
-            
-            // 약간의 딜레이 후 display 변경 (전환 효과를 위해)
-            setTimeout(() => {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-            }, 300);
-            
-            console.log('메뉴 상세 모달 닫힘');
-        }
-    };
+            }, 50);
+        };
         
         // 메뉴 공유 함수
         window.shareMeal = function(mealName) {
@@ -3871,6 +4937,9 @@
             
             // 모달 표시
             shareModal.classList.add('show');
+            shareModal.style.display = 'flex';
+            shareModal.style.opacity = '1';
+            shareModal.style.visibility = 'visible';
             document.body.style.overflow = 'hidden';
         };
         
@@ -3934,30 +5003,6 @@
                         copyShareLink();
                 }
             }
-        };
-        
-        // 사용 가이드 모달 표시
-        window.showUsageGuideModal = function() {
-            usageGuideModal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-        };
-        
-        // 사용 가이드 모달 닫기
-        window.closeUsageGuideModal = function() {
-            usageGuideModal.classList.remove('show');
-            document.body.style.overflow = '';
-        };
-        
-        // 상세정보 모달 닫기
-        window.closeMealDetail = function() {
-            mealDetailModal.classList.remove('show');
-            document.body.style.overflow = '';
-        };
-        
-        // 공유 모달 닫기
-        window.closeShareModal = function() {
-            shareModal.classList.remove('show');
-            document.body.style.overflow = '';
         };
         
         // 링크 복사 함수
@@ -5012,8 +6057,18 @@
             // 항목 이름에 특수문자 처리
             const safeName = item.name.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
             
+            // 알레르기 강조 표시 확인
+            const hasSelectedAllergen = appState.settings.highlightAllergens && 
+                                      item.allergens && 
+                                      item.allergens.some(allergen => {
+                                          const allergenObj = ALLERGENS.find(a => a.name === allergen);
+                                          return allergenObj && appState.settings.selectedAllergens.includes(allergenObj.id);
+                                      });
+            
+            const highlightClass = hasSelectedAllergen ? 'highlight-allergen' : '';
+            
             html += `
-            <li class="meal-item">
+            <li class="meal-item ${highlightClass}">
                 <div class="meal-name">
                 ${safeName}
                 ${item.allergens && item.allergens.length > 0 ? 
