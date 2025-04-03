@@ -2922,7 +2922,7 @@
     <div class="container">
       <!-- 메인 카드 -->
       <div class="card main-card animate__animated animate__fadeIn">
-        <h2 class="card-title">오늘의 급식 메뉴</h2>
+        <h2 class="card-title">오늘 날씨</h2>
         
         <!-- 날씨 정보 -->
         <div class="weather-info" id="weatherInfo">
@@ -3574,80 +3574,87 @@
     };
     
     // 페이지 초기화 함수 (확장 및 수정)
-    async function initPage() {
-        console.log('페이지 초기화 시작');
-        
-        try {
-            // 사용자 설정 로드
-            loadUserSettings();
-            
-            // 캐시 데이터 로드
-            loadCache();
-            loadImageCache();
-            
-            // 설정 버튼 설정
-            setupSettingsButton();
-            
-            // 개인정보 처리방침 및 피드백 모달 설정
-            setupFooterLinks();
 
-            // 앱 배너 표시/숨김 처리
-            handleAppBanner();
-            
-            // 로컬 스토리지 캐시 정리
-            cleanupLocalStorage();
-            
-            // 저장된 테마 불러오기
-            loadTheme();
-            
-            // 배경 도형 생성
-            createBackgroundShapes();
-            
-            // 테마 토글 설정
-            setupThemeToggle();
-            
-            // 탭 네비게이션 설정
-            setupTabNavigation();
-            
-            // 날짜 네비게이션 설정
-            setupDateNavigation();
-            
-            // 주간 네비게이션 설정
-            setupWeeklyNavigation();
-            
-            // 현재 날짜 설정
-            setCurrentDate();
-            
-            // 날짜 선택기 설정
-            setupDateSelector();
-            
-            // URL 매개변수 확인
-            checkUrlParameters();
-            
-            // 사용자 위치 정보 설정
-            getUserLocation();
-            
-            // 랜덤 명언 로드
-            loadRandomQuote();
-            
-            // 전역 함수 설정
-            setupGlobalFunctions();
-            
-            // 알레르기 설정 UI 초기화
-            setupAllergenOptions();
-            
-            // 설정 UI 이벤트 리스너 설정
-            setupSettingsListeners();
-            
-            // 모달 문제 수정 함수 호출 (위치 변경: 먼저 호출)
-            fixModalIssues();
-            
-            // 급식 데이터 가져오기
-            await fetchMealData(formatDate(appState.currentDate));
-            
+
+
+    function initPage() {
+      console.log('페이지 초기화 시작');
+      
+      try {
+          // 사용자 설정 로드
+          loadUserSettings();
+          
+          // 캐시 데이터 로드
+          loadCache();
+          loadImageCache();
+          
+          // 이미지 캐시 최적화
+          optimizeImageCache();
+          
+          // 설정 버튼 설정
+          setupSettingsButton();
+          
+          // 개인정보 처리방침 및 피드백 모달 설정
+          setupFooterLinks();
+
+          // 앱 배너 표시/숨김 처리
+          handleAppBanner();
+          
+          // 로컬 스토리지 캐시 정리
+          cleanupLocalStorage();
+          
+          // 저장된 테마 불러오기
+          loadTheme();
+          
+          // 배경 도형 생성
+          createBackgroundShapes();
+          
+          // 테마 토글 설정
+          setupThemeToggle();
+          
+          // 탭 네비게이션 설정
+          setupTabNavigation();
+          
+          // 날짜 네비게이션 설정
+          setupDateNavigation();
+          
+          // 주간 네비게이션 설정
+          setupWeeklyNavigation();
+          
+          // 현재 날짜 설정
+          setCurrentDate();
+          
+          // 날짜 선택기 설정
+          setupDateSelector();
+          
+          // URL 매개변수 확인
+          checkUrlParameters();
+          
+          // 사용자 위치 정보 설정
+          getUserLocation();
+          
+          // 랜덤 명언 로드
+          loadRandomQuote();
+          
+          // 전역 함수 설정
+          setupGlobalFunctions();
+          
+          // 알레르기 설정 UI 초기화
+          setupAllergenOptions();
+          
+          // 설정 UI 이벤트 리스너 설정
+          setupSettingsListeners();
+          
+          // 모달 문제 수정 함수 호출 (위치 변경: 먼저 호출)
+          fixModalIssues();
+          
+          // 급식 데이터 가져오기
+          fetchMealData(formatDate(appState.currentDate))
+          .then(() => {
             // 주간 급식 캘린더 로드
-            await loadWeeklyData(appState.currentDate);
-            
+            return loadWeeklyData(appState.currentDate);
+          })
+          .then(() => {
             // UI 업데이트
             showMealContent(appState.currentMealType);
             
@@ -3664,19 +3671,30 @@
             applySettings();
             
             console.log('페이지 초기화 완료');
-            
-            return true;
-        } catch (error) {
-            console.error('페이지 초기화 중 오류 발생:', error);
+          })
+          .catch(error => {
+            console.error('데이터 로드 중 오류:', error);
             
             // 오류가 발생해도 UI가 작동하도록 기본 설정
             if (loadingElement) loadingElement.classList.add('d-none');
             if (mealContent) mealContent.classList.remove('d-none');
-            showNoMealMessage("페이지 로딩 중 오류가 발생했습니다. 새로고침을 시도해주세요.");
-            
-            throw error;
-        }
+            showNoMealMessage("데이터 로딩 중 오류가 발생했습니다. 새로고침을 시도해주세요.");
+          });
+          
+          return true;
+      } catch (error) {
+          console.error('페이지 초기화 중 오류 발생:', error);
+          
+          // 오류가 발생해도 UI가 작동하도록 기본 설정
+          if (loadingElement) loadingElement.classList.add('d-none');
+          if (mealContent) mealContent.classList.remove('d-none');
+          showNoMealMessage("페이지 로딩 중 오류가 발생했습니다. 새로고침을 시도해주세요.");
+          
+          throw error;
+      }
     }
+
+
     
     // 사용자 설정 로드
     function loadUserSettings() {
@@ -4535,240 +4553,423 @@
     
     // 메뉴 이미지 검색 - 개선된 버전
     async function searchMealImage(mealName) {
-        try {
-            // 이미지 표시 설정 확인
-            if (!shouldDisplayImage()) {
-                console.log(`이미지 표시 설정에 따라 이미지를 표시하지 않음: ${mealName}`);
-                return null;
-            }
-            
-            // 검색어 전처리
-            let searchTerm = mealName;
-            
-            // 괄호와 괄호 안 내용 제거
-            searchTerm = searchTerm.replace(/\([^)]*\)/g, '');
-            
-            // 공백 및 기타 특수문자 처리
-            searchTerm = searchTerm.trim();
-            
-            // 캐시에 있는지 확인
-            if (imageSearchCache[searchTerm]) {
-                console.log(`캐시된 이미지 사용: ${searchTerm}`);
-                return imageSearchCache[searchTerm];
-            }
-            
-            console.log(`메뉴 이미지 검색 시작: ${searchTerm}`);
-            
-            try {
-                // 이미지 검색 시뮬레이션 (실제로는 API 호출)
-                // 오류 시뮬레이션 (실제 앱에서는 네트워크 요청)
-                if (Math.random() > 0.3) { // 70% 확률로 성공
-                    // 이미지를 찾지 못한 경우 (null 반환)
-                    imageSearchCache[searchTerm] = null;
-                    
-                    // 1분마다 이미지 캐시 저장
-                    if (!window.imageCacheSaveInterval) {
-                        window.imageCacheSaveInterval = setInterval(saveImageCache, 60000);
-                    }
-                    
-                    return null;
-                } else {
-                    // 성공 (예시 이미지 URL 반환)
-                    const imageUrl = '/api/placeholder/400/320';
-                    
-                    // 이미지 URL을 캐시에 저장
-                    imageSearchCache[searchTerm] = imageUrl;
-                    
-                    // 1분마다 이미지 캐시 저장
-                    if (!window.imageCacheSaveInterval) {
-                        window.imageCacheSaveInterval = setInterval(saveImageCache, 60000);
-                    }
-                    
-                    return imageUrl;
-                }
-            } catch (searchError) {
-                console.error('이미지 검색 API 오류:', searchError);
-                
-                // 오류 발생 시 null 반환
-                imageSearchCache[searchTerm] = null;
-                return null;
-            }
-        } catch (error) {
-            console.error('이미지 검색 중 오류 발생:', error);
-            return null;
+      try {
+        // 이미지 표시 설정 확인
+        if (!shouldDisplayImage()) {
+          console.log(`이미지 표시 설정에 따라 이미지를 표시하지 않음: ${mealName}`);
+          return null;
         }
-    }
-
-    // 메뉴 설명 검색 (실제 검색 기능 없이 메뉴 이름만 표시)
-    async function searchMealDescription(mealName) {
-        return `${mealName}`;
+        
+        // 검색어 전처리 - 괄호와 내용 제거 및 특수문자 처리
+        let searchTerm = mealName
+          .replace(/\([^)]*\)/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+        
+        // 검색어에 "요리"나 "음식" 추가하여 정확도 향상
+        searchTerm = `${searchTerm} 요리 음식`;
+        
+        // 캐시에 있는지 확인
+        if (imageSearchCache[searchTerm]) {
+          console.log(`캐시된 이미지 사용: ${searchTerm}`);
+          return imageSearchCache[searchTerm];
+        }
+        
+        console.log(`메뉴 이미지 검색 시작: ${searchTerm}`);
+        
+        // 무료 CORS 프록시 서비스 목록 (여러 개를 두어 하나가 실패하면 다음 것 사용)
+        const corsProxies = [
+          'https://corsproxy.io/?',
+          'https://api.allorigins.win/raw?url=',
+          'https://cors-anywhere.herokuapp.com/'
+        ];
+        
+        // 구글 이미지 검색 URL
+        const encodedSearchTerm = encodeURIComponent(searchTerm);
+        const googleImgSearchUrl = `https://www.google.com/search?q=${encodedSearchTerm}&tbm=isch`;
+        
+        // 각 CORS 프록시 시도
+        for (const corsProxy of corsProxies) {
+          try {
+            const response = await fetch(corsProxy + encodeURIComponent(googleImgSearchUrl));
+            
+            if (!response.ok) {
+              console.warn(`${corsProxy} 프록시 응답 실패:`, response.status);
+              continue; // 다음 프록시 시도
+            }
+            
+            const html = await response.text();
+            
+            // 이미지 URL 추출
+            const imgRegex = /"(https:\/\/encrypted-tbn0\.gstatic\.com\/images\?[^"]+)"/g;
+            const matches = [...html.matchAll(imgRegex)];
+            
+            if (matches.length > 0) {
+              // 처음 5개 결과 중에서 랜덤하게 선택 (다양성 확보)
+              const randomIndex = Math.floor(Math.random() * Math.min(5, matches.length));
+              const imageUrl = matches[randomIndex][1]; // 정규식 캡처 그룹의 첫 번째 항목
+              
+              // 캐시에 저장
+              imageSearchCache[searchTerm] = imageUrl;
+              
+              // 캐시 저장 스케줄링 (1분 간격, 중복 방지)
+              if (!window.imageCacheSaveInterval) {
+                window.imageCacheSaveInterval = setInterval(saveImageCache, 60000);
+              }
+              
+              console.log(`이미지 검색 성공: ${searchTerm}`, imageUrl);
+              return imageUrl;
+            }
+          } catch (proxyError) {
+            console.warn(`${corsProxy} 프록시 사용 중 오류:`, proxyError);
+            // 다음 프록시 시도
+          }
+        }
+        
+        // 대체 방법: Unsplash API (API 키 없이 무작위 음식 이미지)
+        try {
+          const unsplashUrl = `https://source.unsplash.com/300x200/?food,${encodeURIComponent(searchTerm.split(' ')[0])}`;
+          // unsplash는 리다이렉트를 반환하므로 actual URL을 얻기 위한 작업
+          const unsplashRes = await fetch(unsplashUrl);
+          if (unsplashRes.ok) {
+            const imageUrl = unsplashRes.url;
+            // 캐시에 저장
+            imageSearchCache[searchTerm] = imageUrl;
+            
+            console.log(`Unsplash 이미지 사용: ${searchTerm}`, imageUrl);
+            return imageUrl;
+          }
+        } catch (unsplashError) {
+          console.warn('Unsplash 대체 이미지 가져오기 실패:', unsplashError);
+        }
+        
+        // 모든 방법 실패시 null 반환
+        imageSearchCache[searchTerm] = null;
+        return null;
+        
+      } catch (error) {
+        console.error('이미지 검색 중 오류 발생:', error);
+        return null;
+      }
     }
     
     // 급식 데이터에서 메뉴 상세 정보 가져오기
+
+
+
     async function fetchEnhancedMealDetails(mealName) {
-        try {
-            // 날짜와 선택된 급식 유형 확인
-            const dateStr = formatDate(appState.currentDate);
-            
-            // 년월일 분리
-            const year = appState.currentDate.getFullYear();
-            const month = String(appState.currentDate.getMonth() + 1).padStart(2, '0');
-            const day = String(appState.currentDate.getDate()).padStart(2, '0');
-            const yearMonth = `${year}${month}`;
-            const fullDate = `${yearMonth}${day}`;
-            
-            // 메뉴 아이템 정보 찾기
-            let menuItemInfo = null;
-            let mealTypeKorean = '';
-            
-            // 캐시에서 메뉴 정보 찾기
-            if (mealDataCache[yearMonth] && mealDataCache[yearMonth][fullDate]) {
-                const mealData = mealDataCache[yearMonth][fullDate];
-                
-                // 각 급식 유형에서 해당 메뉴 찾기
-                ['조식', '중식', '석식'].forEach(type => {
-                    if (!menuItemInfo && mealData[type]) {
-                        const found = mealData[type].find(item => item.name === mealName);
-                        if (found) {
-                            menuItemInfo = found;
-                            mealTypeKorean = type;
-                        }
-                    }
-                });
+      try {
+        // 날짜와 선택된 급식 유형 확인
+        const dateStr = formatDate(appState.currentDate);
+        
+        // 년월일 분리
+        const year = appState.currentDate.getFullYear();
+        const month = String(appState.currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(appState.currentDate.getDate()).padStart(2, '0');
+        const yearMonth = `${year}${month}`;
+        const fullDate = `${yearMonth}${day}`;
+        
+        // 메뉴 아이템 정보 찾기
+        let menuItemInfo = null;
+        let mealTypeKorean = '';
+        
+        // 캐시에서 메뉴 정보 찾기
+        if (mealDataCache[yearMonth] && mealDataCache[yearMonth][fullDate]) {
+          const mealData = mealDataCache[yearMonth][fullDate];
+          
+          // 각 급식 유형에서 해당 메뉴 찾기
+          ['조식', '중식', '석식'].forEach(type => {
+            if (!menuItemInfo && mealData[type]) {
+              const found = mealData[type].find(item => item.name === mealName);
+              if (found) {
+                menuItemInfo = found;
+                mealTypeKorean = type;
+              }
             }
-            
-            // 원산지, 칼로리, 영양정보 찾기
-            let originInfo = '정보 없음';
-            let calorieInfo = '정보 없음';
-            let nutritionInfo = '정보 없음';
-            let mealCount = '정보 없음';
-            
-            // 캐시에서 추가 정보 찾기
-            if (mealTypeKorean && mealDataCache[yearMonth] && mealDataCache[yearMonth][fullDate]) {
-                if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_원산지`]) {
-                    originInfo = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_원산지`];
-                }
-                
-                if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_칼로리`]) {
-                    calorieInfo = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_칼로리`];
-                }
-                
-                if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_영양정보`]) {
-                    nutritionInfo = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_영양정보`];
-                }
-                
-                if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_인원수`]) {
-                    mealCount = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_인원수`];
-                }
-            }
-            
-            // 1. 이미지 검색 - 이미지 표시 설정에 따라 검색
-            const imageUrl = await searchMealImage(mealName);
-            
-            // 2. 메뉴 설명 - 실제 API가 제공하지 않으므로 메뉴 이름만 사용
-            const description = await searchMealDescription(mealName);
-            
-            // 결과 렌더링
-            renderEnhancedMealDetails(
-                mealName, 
-                imageUrl, 
-                description, 
-                menuItemInfo ? menuItemInfo.allergens : [],
-                originInfo,
-                calorieInfo,
-                nutritionInfo,
-                mealCount
-            );
-        } catch (error) {
-            console.error('메뉴 상세 정보를 가져오는 중 오류 발생:', error);
-            
-            // 오류 시 기본 정보 표시
-            renderMealDetailsError(mealName);
+          });
         }
+        
+        // 원산지, 칼로리, 영양정보 찾기
+        let originInfo = '정보 없음';
+        let calorieInfo = '정보 없음';
+        let nutritionInfo = '정보 없음';
+        let mealCount = '정보 없음';
+        
+        // 캐시에서 추가 정보 찾기
+        if (mealTypeKorean && mealDataCache[yearMonth] && mealDataCache[yearMonth][fullDate]) {
+          if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_원산지`]) {
+            originInfo = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_원산지`];
+          }
+          
+          if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_칼로리`]) {
+            calorieInfo = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_칼로리`];
+          }
+          
+          if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_영양정보`]) {
+            nutritionInfo = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_영양정보`];
+          }
+          
+          if (mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_인원수`]) {
+            mealCount = mealDataCache[yearMonth][fullDate][`${mealTypeKorean}_인원수`];
+          }
+        }
+        
+        // 메뉴 상세 정보 로딩 표시
+        mealDetailContent.innerHTML = `
+          <div class="loading-container">
+            <div class="loading-spinner">
+              <div class="loading-cube">
+                <div class="loading-face face-front"></div>
+                <div class="loading-face face-back"></div>
+                <div class="loading-face face-right"></div>
+                <div class="loading-face face-left"></div>
+                <div class="loading-face face-top"></div>
+                <div class="loading-face face-bottom"></div>
+              </div>
+            </div>
+            <div class="loading-text">상세 정보를 불러오는 중...</div>
+          </div>
+        `;
+        
+        // 병렬로 이미지 및 설명 가져오기
+        const [imageUrl, description] = await Promise.all([
+          searchMealImage(mealName),
+          searchMealDescription(mealName)
+        ]);
+        
+        // 결과 렌더링
+        renderEnhancedMealDetails(
+          mealName, 
+          imageUrl, 
+          description, 
+          menuItemInfo ? menuItemInfo.allergens : [],
+          originInfo,
+          calorieInfo,
+          nutritionInfo,
+          mealCount
+        );
+      } catch (error) {
+        console.error('메뉴 상세 정보를 가져오는 중 오류 발생:', error);
+        
+        // 오류 시 기본 정보 표시
+        renderMealDetailsError(mealName);
+      }
     }
+
+
+
+
+
+
+
+
+    function preloadImage(url) {
+      return new Promise((resolve, reject) => {
+        if (!url) {
+          reject(new Error('이미지 URL이 없음'));
+          return;
+        }
+        
+        const img = new Image();
+        img.onload = () => resolve(url);
+        img.onerror = () => reject(new Error('이미지 로드 실패'));
+        img.src = url;
+      });
+    }
+
+
+
+
+
+
+
+
+
+
+
+    async function searchMealDescription(mealName) {
+      try {
+        // 설명 생성을 위한 기본 템플릿
+        let description = `${mealName}`;
+        
+        // 검색어 전처리
+        let searchTerm = mealName
+          .replace(/\([^)]*\)/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+        
+        // CORS 프록시와 위키백과 검색 시도
+        const corsProxies = [
+          'https://corsproxy.io/?',
+          'https://api.allorigins.win/raw?url='
+        ];
+        
+        const wikiSearchUrl = `https://ko.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro=true&titles=${encodeURIComponent(searchTerm)}&origin=*`;
+        
+        for (const corsProxy of corsProxies) {
+          try {
+            const response = await fetch(corsProxy + encodeURIComponent(wikiSearchUrl));
+            
+            if (!response.ok) continue;
+            
+            const data = await response.json();
+            const pages = data.query.pages;
+            
+            for (const pageId in pages) {
+              if (pageId !== '-1') { // 유효한 페이지가 존재
+                const extract = pages[pageId].extract;
+                
+                if (extract && extract.length > 5) {
+                  // HTML 태그 제거 및 문자열 정리
+                  const cleanExtract = extract
+                    .replace(/<\/?[^>]+(>|$)/g, "")
+                    .replace(/\s+/g, " ")
+                    .trim();
+                  
+                  if (cleanExtract.length > 10) {
+                    // 첫 2문장 또는 100자 이내로 제한
+                    let shortDesc = cleanExtract.split(/[.!?]/).slice(0, 2).join('. ') + '.';
+                    if (shortDesc.length > 100) {
+                      shortDesc = shortDesc.substring(0, 100) + '...';
+                    }
+                    
+                    description = shortDesc;
+                    break;
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            console.warn('위키백과 정보 검색 실패:', e);
+            continue;
+          }
+        }
+        
+        return description;
+      } catch (error) {
+        console.error('설명 검색 중 오류 발생:', error);
+        return `${mealName}`;
+      }
+    }
+
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'hidden') {
+        // 페이지가 백그라운드로 갈 때 캐시 저장
+        saveImageCache();
+      }
+    });
 
     // 개선된 메뉴 상세 정보 렌더링 함수
     function renderEnhancedMealDetails(mealName, imageUrl, description, allergens, originInfo, calorieInfo, nutritionInfo, mealCount) {
+      // 이미지 URL을 먼저 검증
+      if (imageUrl) {
+        // 이미지 프리로드 시도
+        preloadImage(imageUrl)
+          .catch(() => {
+            // 이미지 로드 실패 시 URL을 null로 설정
+            console.warn('이미지 프리로드 실패:', imageUrl);
+            imageUrl = null;
+            
+            // UI 재렌더링
+            renderMealDetailsContent();
+          });
+      }
+      
+      // 실제 렌더링 함수
+      renderMealDetailsContent();
+      
+      function renderMealDetailsContent() {
         let content = '';
         
         // 이미지 섹션 - 이미지가 없을 경우 아이콘 표시
         if (imageUrl) {
-            content += `
-            <div>
-                <div class="meal-detail-image" style="background-image: url('${imageUrl}');">
-                </div>
-                <p class="meal-image-disclaimer">본 사진은 예시 사진입니다. 정확하지 않을 수 있습니다.</p>
+          content += `
+          <div>
+            <div class="meal-detail-image" style="background-image: url('${imageUrl}');">
             </div>
-            `;
+            <p class="meal-image-disclaimer">본 사진은 예시 사진입니다. 정확하지 않을 수 있습니다.</p>
+          </div>
+          `;
         } else {
-            // 이미지 없는 경우 대체 디자인
-            content += `
-            <div>
-                <div class="meal-detail-no-image">
-                    <div class="meal-detail-image-placeholder">
-                    <i class="fas fa-utensils"></i>
-                    <p>이미지를 찾을 수 없습니다</p>
-                    </div>
-                </div>
-                <p class="meal-image-disclaimer">예시 이미지를 표시할 수 없습니다.</p>
+          // 이미지 없는 경우 대체 디자인
+          content += `
+          <div>
+            <div class="meal-detail-no-image">
+              <div class="meal-detail-image-placeholder">
+                <i class="fas fa-utensils"></i>
+                <p>이미지를 찾을 수 없습니다</p>
+              </div>
             </div>
-            `;
+            <p class="meal-image-disclaimer">예시 이미지를 표시할 수 없습니다.</p>
+          </div>
+          `;
         }
         
         // 제목 및 설명 섹션
         content += `
-            <div class="meal-detail-header">
+          <div class="meal-detail-header">
             <h4 class="meal-detail-title">${mealName}</h4>
             <p class="meal-detail-description">${description}</p>
-            </div>
+          </div>
         `;
         
         // 급식 인원 정보 (있을 경우만)
         if (mealCount && mealCount !== '정보 없음') {
-            content += `
-            <div class="info-item">
-                <div class="info-label"><i class="fas fa-users"></i> 급식 인원</div>
-                <div class="info-value">${mealCount}명</div>
-            </div>
-            `;
+          content += `
+          <div class="info-item">
+            <div class="info-label"><i class="fas fa-users"></i> 급식 인원</div>
+            <div class="info-value">${mealCount}명</div>
+          </div>
+          `;
         }
-        
         
         // 원산지 정보 (있을 경우만)
         if (originInfo && originInfo !== '정보 없음') {
-            content += `
-            <div class="info-item">
-                <div class="info-label"><i class="fas fa-globe-asia"></i> 원산지 정보</div>
-                <div class="info-value">${originInfo}</div>
-            </div>
-            `;
+          content += `
+          <div class="info-item">
+            <div class="info-label"><i class="fas fa-globe-asia"></i> 원산지 정보</div>
+            <div class="info-value">${originInfo}</div>
+          </div>
+          `;
+        }
+        
+        // 칼로리 정보 (있을 경우만)
+        if (calorieInfo && calorieInfo !== '정보 없음') {
+          content += `
+          <div class="info-item">
+            <div class="info-label"><i class="fas fa-fire"></i> 칼로리 정보</div>
+            <div class="info-value">${calorieInfo}</div>
+          </div>
+          `;
         }
         
         // 알레르기 정보 (있을 경우만)
         if (allergens && allergens.length > 0) {
-            content += `
-            <div class="info-item">
-                <div class="info-label"><i class="fas fa-exclamation-triangle"></i> 알레르기 정보</div>
-                <div class="info-value">
-                ${allergens.map(allergen => `<span class="allergen-tag">${allergen}</span>`).join(' ')}
-                </div>
+          content += `
+          <div class="info-item">
+            <div class="info-label"><i class="fas fa-exclamation-triangle"></i> 알레르기 정보</div>
+            <div class="info-value">
+              ${allergens.map(allergen => `<span class="allergen-tag">${allergen}</span>`).join(' ')}
             </div>
-            `;
+          </div>
+          `;
         }
         
         // 액션 버튼 섹션
         content += `
-            <div class="meal-actions-row">
+          <div class="meal-actions-row">
             <button class="meal-action-btn" onclick="searchOnGoogle('${mealName} 레시피')">
-                <i class="fas fa-utensils"></i> 레시피 검색
+              <i class="fas fa-utensils"></i> 레시피 검색
             </button>
             <button class="meal-action-btn" onclick="shareMeal('${mealName}')">
-                <i class="fas fa-share-alt"></i> 공유하기
+              <i class="fas fa-share-alt"></i> 공유하기
             </button>
-            </div>
+          </div>
         `;
         
         mealDetailContent.innerHTML = content;
+      }
     }
 
     // 메뉴 상세 정보 로딩 오류 시 대체 화면
@@ -4863,67 +5064,72 @@
         };
         
         // 메뉴 상세 정보 모달 표시 (완전 재구현)
+
+
         window.showMealDetail = function(mealName) {
-            // 이벤트 전파 중지 (클릭 이벤트가 모달까지 전파되는 것 방지)
-            event && event.stopPropagation();
-            
-            const modal = document.getElementById('mealDetailModal');
-            if (!modal) {
-                console.error('메뉴 상세 모달 요소를 찾을 수 없음');
-                return;
-            }
-            
-            // 모달 제목 설정
-            const titleElement = document.getElementById('mealDetailTitle');
-            if (titleElement) titleElement.textContent = mealName;
-            
-            // 로딩 상태 표시
-            const contentElement = document.getElementById('mealDetailContent');
-            if (contentElement) {
-                contentElement.innerHTML = `
-                    <div class="loading-container">
-                    <div class="loading-spinner">
-                        <div class="loading-cube">
-                        <div class="loading-face face-front"></div>
-                        <div class="loading-face face-back"></div>
-                        <div class="loading-face face-right"></div>
-                        <div class="loading-face face-left"></div>
-                        <div class="loading-face face-top"></div>
-                        <div class="loading-face face-bottom"></div>
-                        </div>
-                    </div>
-                    <div class="loading-text">상세 정보를 불러오는 중...</div>
-                    </div>
-                `;
-            }
-            
-            // 모달 표시
-            modal.style.display = 'flex';
-            modal.style.opacity = '1';
-            modal.style.visibility = 'visible';
-            modal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-            
-            console.log('메뉴 상세 모달 표시됨:', mealName);
-            
-            // 상세 정보 가져오기
-            setTimeout(() => {
-                fetchEnhancedMealDetails(mealName)
-                .catch(error => {
-                    console.error('메뉴 상세 정보 가져오기 실패:', error);
-                    renderMealDetailsError(mealName);
-                })
-                .finally(() => {
-                    // 모든 버튼에 이벤트 전파 중지 적용
-                    const allButtons = modal.querySelectorAll('button, a, .meal-action-btn');
-                    allButtons.forEach(button => {
-                        button.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                        });
-                    });
+          // 이벤트 전파 중지 (클릭 이벤트가 모달까지 전파되는 것 방지)
+          event && event.stopPropagation();
+          
+          const modal = document.getElementById('mealDetailModal');
+          if (!modal) {
+            console.error('메뉴 상세 모달 요소를 찾을 수 없음');
+            return;
+          }
+          
+          // 모달 제목 설정
+          const titleElement = document.getElementById('mealDetailTitle');
+          if (titleElement) titleElement.textContent = mealName;
+          
+          // 로딩 상태 표시
+          const contentElement = document.getElementById('mealDetailContent');
+          if (contentElement) {
+            contentElement.innerHTML = `
+              <div class="loading-container">
+                <div class="loading-spinner">
+                  <div class="loading-cube">
+                    <div class="loading-face face-front"></div>
+                    <div class="loading-face face-back"></div>
+                    <div class="loading-face face-right"></div>
+                    <div class="loading-face face-left"></div>
+                    <div class="loading-face face-top"></div>
+                    <div class="loading-face face-bottom"></div>
+                  </div>
+                </div>
+                <div class="loading-text">상세 정보를 불러오는 중...</div>
+              </div>
+            `;
+          }
+          
+          // 모달 표시
+          modal.style.display = 'flex';
+          modal.style.opacity = '1';
+          modal.style.visibility = 'visible';
+          modal.classList.add('show');
+          document.body.style.overflow = 'hidden';
+          
+          console.log('메뉴 상세 모달 표시됨:', mealName);
+          
+          // 상세 정보 가져오기
+          setTimeout(() => {
+            fetchEnhancedMealDetails(mealName)
+            .catch(error => {
+              console.error('메뉴 상세 정보 가져오기 실패:', error);
+              renderMealDetailsError(mealName);
+            })
+            .finally(() => {
+              // 모든 버튼에 이벤트 전파 중지 적용
+              const allButtons = modal.querySelectorAll('button, a, .meal-action-btn');
+              allButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                  e.stopPropagation();
                 });
-            }, 50);
+              });
+            });
+          }, 50);
         };
+
+
+
         
         // 메뉴 공유 함수
         window.shareMeal = function(mealName) {
@@ -6106,167 +6312,257 @@
     }
     
     // 날씨 데이터 가져오기 (경주시 위치 기반)
+
+
+
+
     async function fetchWeatherData() {
+      try {
+        // 로딩 상태 표시
+        weatherInfo.innerHTML = `
+        <div class="weather-icon">
+          <i class="fas fa-cloud-sun"></i>
+        </div>
+        <div class="weather-details">
+          <div class="weather-temp">날씨 로딩 중...</div>
+          <div class="weather-desc">잠시만 기다려주세요</div>
+        </div>
+        `;
+        
+        // 1. Open-Meteo API (무료, API 키 필요 없음)
+        const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${appState.userLocation.lat}&longitude=${appState.userLocation.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia/Seoul&lang=ko`;
+        
         try {
-            // 로딩 상태 표시
-            weatherInfo.innerHTML = `
-            <div class="weather-icon">
-                <i class="fas fa-cloud-sun"></i>
-            </div>
-            <div class="weather-details">
-                <div class="weather-temp">경주시 날씨 로딩 중...</div>
-                <div class="weather-desc">잠시만 기다려주세요</div>
-            </div>
-            `;
-            
-            // OpenWeatherMap API를 통한 날씨 데이터 가져오기
-            const apiKey = WEATHER_API_KEY;
-            
-            // API 키가 없는 경우 (개발 환경)
-            if (!apiKey) {
-                // 경주시 날씨 데이터 시뮬레이션
-                const currentTime = new Date();
-                const hour = currentTime.getHours();
-                const season = getSeason(currentTime);
-                
-                let weatherData;
-                
-                // 계절과 시간대에 따른 날씨 시뮬레이션
-                if (hour >= 6 && hour < 18) {
-                    // 주간
-                    if (season === 'spring') {
-                        weatherData = { temp: Math.floor(Math.random() * 5) + 18, description: "경주시 - 맑음", icon: "01d" };
-                    } else if (season === 'summer') {
-                        weatherData = { temp: Math.floor(Math.random() * 5) + 28, description: "경주시 - 맑음", icon: "01d" };
-                    } else if (season === 'autumn') {
-                        weatherData = { temp: Math.floor(Math.random() * 5) + 20, description: "경주시 - 맑음", icon: "01d" };
-                    } else {
-                        weatherData = { temp: Math.floor(Math.random() * 5) + 5, description: "경주시 - 맑음", icon: "01d" };
-                    }
-                } else {
-                    // 야간
-                    if (season === 'spring') {
-                        weatherData = { temp: Math.floor(Math.random() * 5) + 10, description: "경주시 - 맑은 밤", icon: "01n" };
-                    } else if (season === 'summer') {
-                        weatherData = { temp: Math.floor(Math.random() * 5) + 22, description: "경주시 - 맑은 밤", icon: "01n" };
-                    } else if (season === 'autumn') {
-                        weatherData = { temp: Math.floor(Math.random() * 5) + 12, description: "경주시 - 맑은 밤", icon: "01n" };
-                    } else {
-                        weatherData = { temp: Math.floor(Math.random() * 5) + 0, description: "경주시 - 맑은 밤", icon: "01n" };
-                    }
-                }
-                
-                updateWeatherUI(weatherData);
-                return;
-            }
-            
-            // 계절 확인 함수
-            function getSeason(date) {
-                const month = date.getMonth() + 1;
-                if (month >= 3 && month <= 5) return 'spring';
-                if (month >= 6 && month <= 8) return 'summer';
-                if (month >= 9 && month <= 11) return 'autumn';
-                return 'winter';
-            }
-            
-            // 실제 날씨 API 호출 (키가 있는 경우)
-            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${appState.userLocation.lat}&lon=${appState.userLocation.lon}&units=metric&lang=kr&appid=${apiKey}`;
-            
-            const response = await fetch(apiUrl);
-            
-            if (!response.ok) {
-                throw new Error(`날씨 API 응답 오류: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            // 날씨 데이터 처리
-            const weatherData = {
-                temp: Math.round(data.main.temp),
-                description: data.weather[0].description,
-                icon: data.weather[0].icon,
-                humidity: data.main.humidity,
-                windSpeed: data.wind.speed
-            };
-            
-            // UI 업데이트
-            updateWeatherUI(weatherData);
-        } catch (error) {
-            console.error('날씨 정보를 가져오는 중 오류 발생:', error);
-            
-            // 오류 시 대체 메시지
-            weatherInfo.innerHTML = `
-            <div class="weather-icon">
-                <i class="fas fa-exclamation-circle"></i>
-            </div>
-            <div class="weather-details">
-                <div class="weather-temp">날씨 정보 없음</div>
-                <div class="weather-desc">날씨 정보를 불러올 수 없습니다</div>
-            </div>
-            `;
+          const response = await fetch(openMeteoUrl);
+          
+          if (!response.ok) {
+            throw new Error(`Open-Meteo API 응답 오류: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          // Open-Meteo 날씨 코드 변환
+          const weatherCodes = {
+            0: { icon: 'fas fa-sun', description: '맑음' },
+            1: { icon: 'fas fa-sun', description: '대체로 맑음' },
+            2: { icon: 'fas fa-cloud-sun', description: '약간 흐림' },
+            3: { icon: 'fas fa-cloud', description: '흐림' },
+            45: { icon: 'fas fa-smog', description: '안개' },
+            48: { icon: 'fas fa-smog', description: '짙은 안개' },
+            51: { icon: 'fas fa-cloud-rain', description: '가벼운 이슬비' },
+            53: { icon: 'fas fa-cloud-rain', description: '이슬비' },
+            55: { icon: 'fas fa-cloud-rain', description: '강한 이슬비' },
+            56: { icon: 'fas fa-cloud-rain', description: '얼어붙은 이슬비' },
+            57: { icon: 'fas fa-cloud-rain', description: '강한 얼어붙은 이슬비' },
+            61: { icon: 'fas fa-cloud-rain', description: '약한 비' },
+            63: { icon: 'fas fa-cloud-rain', description: '비' },
+            65: { icon: 'fas fa-cloud-showers-heavy', description: '강한 비' },
+            66: { icon: 'fas fa-cloud-rain', description: '얼어붙은 비' },
+            67: { icon: 'fas fa-cloud-rain', description: '강한 얼어붙은 비' },
+            71: { icon: 'fas fa-snowflake', description: '약한 눈' },
+            73: { icon: 'fas fa-snowflake', description: '눈' },
+            75: { icon: 'fas fa-snowflake', description: '강한 눈' },
+            77: { icon: 'fas fa-snowflake', description: '눈 알갱이' },
+            80: { icon: 'fas fa-cloud-rain', description: '약한 소나기' },
+            81: { icon: 'fas fa-cloud-showers-heavy', description: '소나기' },
+            82: { icon: 'fas fa-cloud-showers-heavy', description: '강한 소나기' },
+            85: { icon: 'fas fa-snowflake', description: '약한 눈 소나기' },
+            86: { icon: 'fas fa-snowflake', description: '강한 눈 소나기' },
+            95: { icon: 'fas fa-bolt', description: '뇌우' },
+            96: { icon: 'fas fa-bolt', description: '약한 우박을 동반한 뇌우' },
+            99: { icon: 'fas fa-bolt', description: '강한 우박을 동반한 뇌우' }
+          };
+          
+          const weatherCode = data.current.weather_code;
+          const weatherInfo = weatherCodes[weatherCode] || { icon: 'fas fa-cloud', description: '날씨 정보' };
+          
+          const weatherData = {
+            temp: Math.round(data.current.temperature_2m),
+            description: weatherInfo.description,
+            icon: weatherInfo.icon,
+            humidity: data.current.relative_humidity_2m,
+            windSpeed: data.current.wind_speed_10m
+          };
+          
+          // UI 업데이트
+          updateWeatherUI(weatherData);
+          return;
+          
+        } catch (openMeteoError) {
+          console.warn('Open-Meteo API 오류:', openMeteoError);
+          // 다음 대체 API로 진행
         }
-    }
-    
-    // 날씨 UI 업데이트
-    function updateWeatherUI(weatherData) {
-        // 날씨 아이콘 매핑
-        const iconMapping = {
-            '01d': 'fas fa-sun', // 맑음 (낮)
-            '01n': 'fas fa-moon', // 맑음 (밤)
-            '02d': 'fas fa-cloud-sun', // 구름 조금 (낮)
-            '02n': 'fas fa-cloud-moon', // 구름 조금 (밤)
-            '03d': 'fas fa-cloud', // 구름 많음
-            '03n': 'fas fa-cloud',
-            '04d': 'fas fa-cloud', // 흐림
-            '04n': 'fas fa-cloud',
-            '09d': 'fas fa-cloud-showers-heavy', // 소나기
-            '09n': 'fas fa-cloud-showers-heavy',
-            '10d': 'fas fa-cloud-rain', // 비 (낮)
-            '10n': 'fas fa-cloud-rain', // 비 (밤)
-            '11d': 'fas fa-bolt', // 천둥번개
-            '11n': 'fas fa-bolt',
-            '13d': 'fas fa-snowflake', // 눈
-            '13n': 'fas fa-snowflake',
-            '50d': 'fas fa-smog', // 안개
-            '50n': 'fas fa-smog',
-            'default': 'fas fa-cloud-sun' // 기본값
+        
+        // 2. 대체 API: WeatherAPI.com (무료 티어)
+        try {
+          // 무료 CORS 프록시를 사용
+          const corsProxy = 'https://corsproxy.io/?';
+          const weatherApiUrl = `https://api.weatherapi.com/v1/current.json?key=fe13d04c3d4e4319896180104232706&q=${appState.userLocation.lat},${appState.userLocation.lon}&lang=ko`;
+          
+          const response = await fetch(corsProxy + encodeURIComponent(weatherApiUrl));
+          
+          if (!response.ok) {
+            throw new Error(`WeatherAPI 응답 오류: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          // 아이콘 코드 가져오기 및 변환
+          const iconCode = data.current.condition.icon;
+          let iconClass = 'fas fa-cloud';
+          
+          // 날씨 아이콘 코드에 따른 FontAwesome 아이콘 매핑
+          if (iconCode.includes('sunny') || iconCode.includes('clear')) {
+            iconClass = 'fas fa-sun';
+          } else if (iconCode.includes('partly')) {
+            iconClass = 'fas fa-cloud-sun';
+          } else if (iconCode.includes('cloudy')) {
+            iconClass = 'fas fa-cloud';
+          } else if (iconCode.includes('rain') || iconCode.includes('drizzle')) {
+            iconClass = 'fas fa-cloud-rain';
+          } else if (iconCode.includes('thunder')) {
+            iconClass = 'fas fa-bolt';
+          } else if (iconCode.includes('snow') || iconCode.includes('sleet')) {
+            iconClass = 'fas fa-snowflake';
+          } else if (iconCode.includes('fog') || iconCode.includes('mist')) {
+            iconClass = 'fas fa-smog';
+          }
+          
+          const weatherData = {
+            temp: Math.round(data.current.temp_c),
+            description: data.current.condition.text,
+            icon: iconClass,
+            humidity: data.current.humidity,
+            windSpeed: data.current.wind_kph / 3.6 // km/h를 m/s로 변환
+          };
+          
+          // UI 업데이트
+          updateWeatherUI(weatherData);
+          return;
+          
+        } catch (weatherApiError) {
+          console.warn('WeatherAPI 오류:', weatherApiError);
+          // 대체 방안 진행
+        }
+        
+        // 3. 모든 API가 실패한 경우: 위치 및 시간 기반 예상 날씨
+        const now = new Date();
+        const hour = now.getHours();
+        const month = now.getMonth() + 1;
+        
+        // 시간대 및 계절 기반 날씨 예측
+        let icon = 'fas fa-cloud-sun';
+        let description = '날씨 정보';
+        let temp = 20; // 기본 온도
+        
+        // 계절 기반 온도 조정
+        if (month >= 3 && month <= 5) { // 봄
+          temp = 18;
+        } else if (month >= 6 && month <= 8) { // 여름
+          temp = 28;
+        } else if (month >= 9 && month <= 11) { // 가을
+          temp = 20;
+        } else { // 겨울
+          temp = 5;
+        }
+        
+        // 시간대 기반 아이콘 및 설명 조정
+        if (hour >= 6 && hour < 18) { // 주간
+          icon = 'fas fa-sun';
+          description = '주간 예상 날씨';
+        } else { // 야간
+          icon = 'fas fa-moon';
+          description = '야간 예상 날씨';
+          temp -= 5; // 야간은 더 시원함
+        }
+        
+        const weatherData = {
+          temp: temp,
+          description: `${description} (추정)`,
+          icon: icon,
+          humidity: null,
+          windSpeed: null
         };
         
-        // 아이콘 선택
-        let iconClass = iconMapping.default;
+        // UI 업데이트
+        updateWeatherUI(weatherData);
         
-        if (weatherData.icon && iconMapping[weatherData.icon]) {
-            iconClass = iconMapping[weatherData.icon];
-        } else if (weatherData.description) {
-            // 설명에 따른 아이콘 선택
-            if (weatherData.description.includes('맑음')) iconClass = 'fas fa-sun';
-            else if (weatherData.description.includes('구름') && weatherData.description.includes('약간')) iconClass = 'fas fa-cloud-sun';
-            else if (weatherData.description.includes('구름')) iconClass = 'fas fa-cloud';
-            else if (weatherData.description.includes('비') || weatherData.description.includes('소나기')) iconClass = 'fas fa-cloud-rain';
-            else if (weatherData.description.includes('천둥') || weatherData.description.includes('번개')) iconClass = 'fas fa-bolt';
-            else if (weatherData.description.includes('눈')) iconClass = 'fas fa-snowflake';
-            else if (weatherData.description.includes('안개') || weatherData.description.includes('박무')) iconClass = 'fas fa-smog';
-        }
+      } catch (error) {
+        console.error('날씨 정보를 가져오는 중 오류 발생:', error);
         
-        // 추가 날씨 정보 문자열
-        let additionalInfo = '';
-        if (weatherData.humidity) {
-            additionalInfo += ` · 습도 ${weatherData.humidity}%`;
-        }
-        if (weatherData.windSpeed) {
-            additionalInfo += ` · 풍속 ${weatherData.windSpeed}m/s`;
-        }
-        
+        // 오류 시 대체 메시지
         weatherInfo.innerHTML = `
-            <div class="weather-icon">
-            <i class="${iconClass}"></i>
-            </div>
-            <div class="weather-details">
-            <div class="weather-temp">${weatherData.temp}°C</div>
-            <div class="weather-desc">${weatherData.description}${additionalInfo}</div>
-            </div>
+        <div class="weather-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="weather-details">
+          <div class="weather-temp">날씨 정보 없음</div>
+          <div class="weather-desc">날씨 정보를 불러올 수 없습니다</div>
+        </div>
         `;
+      }
     }
+
+
+
+
+
+    
+    // 날씨 UI 업데이트
+
+
+    function updateWeatherUI(weatherData) {
+      // 아이콘 클래스 가져오기
+      let iconClass = weatherData.icon || 'fas fa-cloud-sun';
+      
+      // 추가 날씨 정보 문자열
+      let additionalInfo = '';
+      if (weatherData.humidity) {
+        additionalInfo += ` · 습도 ${weatherData.humidity}%`;
+      }
+      if (weatherData.windSpeed) {
+        additionalInfo += ` · 풍속 ${weatherData.windSpeed.toFixed(1)}m/s`;
+      }
+      
+      weatherInfo.innerHTML = `
+        <div class="weather-icon">
+          <i class="${iconClass}"></i>
+        </div>
+        <div class="weather-details">
+          <div class="weather-temp">${weatherData.temp}°C</div>
+          <div class="weather-desc">${weatherData.description}${additionalInfo}</div>
+        </div>
+      `;
+    }
+
+
+
+    function optimizeImageCache() {
+      try {
+        const maxCacheItems = 300; // 최대 캐시 항목 수 제한
+        const cacheEntries = Object.entries(imageSearchCache);
+        
+        // 캐시 크기가 제한을 초과하면 가장 오래된 항목부터 삭제
+        if (cacheEntries.length > maxCacheItems) {
+          // 삭제할 항목 수 계산
+          const itemsToRemove = cacheEntries.length - maxCacheItems;
+          
+          // 오래된 항목 삭제
+          for (let i = 0; i < itemsToRemove; i++) {
+            delete imageSearchCache[cacheEntries[i][0]];
+          }
+          
+          console.log(`캐시 최적화: ${itemsToRemove}개 항목 제거됨`);
+          
+          // 캐시 저장
+          saveImageCache();
+        }
+      } catch (error) {
+        console.error('이미지 캐시 최적화 오류:', error);
+      }
+    }
+
+
     
     // 토스트 메시지 표시
     function showToast(type, message) {
